@@ -13,3 +13,10 @@ You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 - Add Level Editor: based on textfile to load level
 - Input via joystick
 - Allow to render game in browser (WASM?)
+
+
+# Assets
+https://github.com/MariaLetta/free-gophers-pack/tree/master
+License CC0 for those is public domain.
+
+The Go Gopher by Renee French is licensed under the Creative Commons Attribution 4.0 License.
