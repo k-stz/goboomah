@@ -6,8 +6,10 @@ type cell struct {
 	solid bool
 }
 
+type tilemap [][]int
+
 type Stage struct {
-	Layout [][]int
+	Layout tilemap
 }
 
 func NewStage(layout [][]int) {
