@@ -16,7 +16,9 @@ import (
 )
 
 // implement ebiten.Game
-type Game struct{}
+type Game struct {
+	stage Stage
+}
 
 var count int = 1000
 
@@ -97,6 +99,25 @@ func mustLoadImage(name string) *ebiten.Image {
 
 var move float64 = 0
 
+func (g *Game) DrawStage(screen *ebiten.Image) {
+	tilesize := g.stage.tilesize
+	// op.GeoM.Scale(4, 4)
+	op := &ebiten.DrawImageOptions{}
+	for x, row := range g.stage.Grid {
+		for y, val := range row {
+			if val == 0 {
+				// TODO: can't I set the translation directly
+				// instead of Reset()ing it each time?
+				op.GeoM.Translate(float64(y*tilesize), float64(x*tilesize))
+				screen.DrawImage(meadow_tile, op)
+				op.GeoM.Reset()
+			}
+		}
+	}
+	// screen.DrawImage(meadow_tile, op)
+	// op.GeoM.Translate(16*4, 16*4)
+	// screen.DrawImage(meadow_tile, op)
+}
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	count--
@@ -111,22 +132,27 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	op.GeoM.Translate(10, move)
 	screen.DrawImage(PlayerSprite, op)
 
-	op2 := &ebiten.DrawImageOptions{}
-
-	op2.GeoM.Scale(4, 4)
-	screen.DrawImage(meadow_tile, op2)
-
+	g.DrawStage(screen)
 }
 
 var PlayerSprite = mustLoadImage("assets/player.png")
 var gopher = mustLoadImage("assets/gopher.png")
-var meadow_tile = mustLoadImage("assets/tiles/meadow.png")
+var meadow_tile *ebiten.Image = mustLoadImage("assets/tiles/meadow.png")
+
+func NewGame(tilesize int) *Game {
+	debugStage := DebugStage2()
+	debugStage.tilesize = tilesize
+	return &Game{
+		stage: debugStage,
+	}
+}
 
 func main() {
-
+	tilesize := meadow_tile.Bounds().Dx()
+	game := NewGame(tilesize)
 	ebiten.SetWindowSize(640, 480)
 	ebiten.SetWindowTitle("GoBoomer")
-	if err := ebiten.RunGame(&Game{}); err != nil {
+	if err := ebiten.RunGame(game); err != nil {
 		slog.Error("ebiten.RunGame", "err", err)
 	}
 }
