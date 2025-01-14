@@ -9,6 +9,8 @@ import (
 
 	_ "image/png"
 
+	"image/color"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -95,9 +97,11 @@ func mustLoadImage(name string) *ebiten.Image {
 
 var move float64 = 0
 
+
 func (g *Game) Draw(screen *ebiten.Image) {
 	count--
 	move++
+	screen.Fill(color.RGBA{0xff, 0, 0, 0xff})
 
 	message := fmt.Sprintf("Hello, World\ncount: %d\n", count)
 	ebitenutil.DebugPrint(screen, message)
@@ -106,10 +110,17 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	op.GeoM.Scale(0.10, 0.10)
 	op.GeoM.Translate(10, move)
 	screen.DrawImage(PlayerSprite, op)
+
+	op2 := &ebiten.DrawImageOptions{}
+
+	op2.GeoM.Scale(4, 4)
+	screen.DrawImage(meadow_tile, op2)
+
 }
 
 var PlayerSprite = mustLoadImage("assets/player.png")
 var gopher = mustLoadImage("assets/gopher.png")
+var meadow_tile = mustLoadImage("assets/tiles/meadow.png")
 
 func main() {
 

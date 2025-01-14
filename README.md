@@ -14,6 +14,13 @@ You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 - Input via joystick
 - Allow to render game in browser (WASM?)
 
+# Concepts
+
+## ECS - Entity component system
+use this for spirte mangement, rendering, control
+
+## tilemap
+Use this for the stage representation
 
 # Assets
 https://github.com/MariaLetta/free-gophers-pack/tree/master
