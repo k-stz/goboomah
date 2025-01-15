@@ -9,15 +9,24 @@ type cell struct {
 type tilemap [][]int
 
 type Stage struct {
-	Grid     tilemap
-	tilesize int
+	Grid             tilemap
+	tilesize         float64
+	offsetX, offsetY float64
+	scaleXY          float64 // by how much to scale all tiles when rendering
 }
 
-func NewStage(layout [][]int) {
+func NewStage(grid tilemap, tilesize, offsetX, offsetY, scaleXY float64) *Stage {
+	return &Stage{
+		Grid:     grid,
+		tilesize: tilesize,
+		offsetX:  offsetX,
+		offsetY:  offsetY,
+		scaleXY:  scaleXY,
+	}
 
 }
 
-func PrintStage(stage Stage) {
+func PrintStage(stage *Stage) {
 	for _, row := range stage.Grid {
 		for _, v := range row {
 			fmt.Printf("%d ", v)
@@ -33,7 +42,7 @@ func PrintStage(stage Stage) {
 	}
 }
 
-func DebugStage2() Stage {
+func DebugStage3() *Stage {
 	a := [][]int{
 		{0, 0, 0, 0, 0},
 		{0, 1, 0, 1, 0},
@@ -41,25 +50,6 @@ func DebugStage2() Stage {
 		{0, 1, 0, 1, 0},
 		{0, 0, 0, 0, 0},
 	}
-	return Stage{Grid: a}
-}
-
-func DebugStage() Stage {
-	row0 := []int{0, 0, 0, 0, 0}
-	row1 := []int{0, 1, 0, 1, 0}
-	row2 := []int{0, 0, 0, 0, 0}
-	row3 := []int{0, 1, 0, 1, 0}
-	row4 := []int{0, 0, 0, 0, 0}
-
-	stage := Stage{
-		Grid: [][]int{
-			row0,
-			row1,
-			row2,
-			row3,
-			row4,
-		},
-	}
-	fmt.Println("stage:", stage)
+	stage := NewStage(a, 1.0, 100.0, 100.0, 4.0)
 	return stage
 }

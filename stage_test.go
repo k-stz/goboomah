@@ -7,7 +7,7 @@ import (
 
 func TestStage(t *testing.T) {
 	fmt.Println("Building Stage")
-	stg := DebugStage2()
+	stg := DebugStage3()
 	fmt.Println("Debug Stage Layout:")
 	PrintStage(stg)
 }

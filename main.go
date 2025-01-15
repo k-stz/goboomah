@@ -100,18 +100,30 @@ func mustLoadImage(name string) *ebiten.Image {
 var move float64 = 0
 
 func (g *Game) DrawStage(screen *ebiten.Image) {
-	tilesize := g.stage.tilesize
+	scale := g.stage.scaleXY
+	tilesize := g.stage.tilesize * scale
+	offsetOp := &ebiten.DrawImageOptions{}
+	offsetOp.GeoM.Translate(g.stage.offsetX, g.stage.offsetY)
+	stageOffset := offsetOp.GeoM
 	// op.GeoM.Scale(4, 4)
 	op := &ebiten.DrawImageOptions{}
+
 	for x, row := range g.stage.Grid {
 		for y, val := range row {
-			if val == 0 {
-				// TODO: can't I set the translation directly
-				// instead of Reset()ing it each time?
-				op.GeoM.Translate(float64(y*tilesize), float64(x*tilesize))
+			op.GeoM.Scale(scale, scale)
+			op.GeoM.Translate(float64(y)*tilesize, float64(x)*tilesize)
+			// op.GeoM.Translate(100.0, 100.0)
+			op.GeoM.Concat(stageOffset)
+
+			switch val {
+			case 0:
 				screen.DrawImage(meadow_tile, op)
-				op.GeoM.Reset()
+			case 1:
+				screen.DrawImage(wall_tile, op)
 			}
+			// TODO: can't I set the translation directly
+			// instead of Reset()ing it each time?
+			op.GeoM.Reset()
 		}
 	}
 	// screen.DrawImage(meadow_tile, op)
@@ -138,18 +150,20 @@ func (g *Game) Draw(screen *ebiten.Image) {
 var PlayerSprite = mustLoadImage("assets/player.png")
 var gopher = mustLoadImage("assets/gopher.png")
 var meadow_tile *ebiten.Image = mustLoadImage("assets/tiles/meadow.png")
+var bush_tile *ebiten.Image = mustLoadImage("assets/tiles/bush.png")
+var wall_tile *ebiten.Image = mustLoadImage("assets/tiles/wall.png")
 
-func NewGame(tilesize int) *Game {
-	debugStage := DebugStage2()
+func NewGame(tilesize float64) *Game {
+	debugStage := DebugStage3()
 	debugStage.tilesize = tilesize
 	return &Game{
-		stage: debugStage,
+		stage: *debugStage,
 	}
 }
 
 func main() {
 	tilesize := meadow_tile.Bounds().Dx()
-	game := NewGame(tilesize)
+	game := NewGame(float64(tilesize))
 	ebiten.SetWindowSize(640, 480)
 	ebiten.SetWindowTitle("GoBoomer")
 	if err := ebiten.RunGame(game); err != nil {
