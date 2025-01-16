@@ -19,6 +19,12 @@ You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 ## ECS - Entity component system
 use this for spirte mangement, rendering, control
 
+Sources:
+- "How to build animations with ebiten using the ECS pattern" https://co0p.github.io/posts/ecs-animation/
+
+- "Entity Component System | Game Engine series" by the Cherno https://www.youtube.com/watch?v=Z-CILn2w9K0 Summary: Great problem desciption of what problem ECS solves. Starting with the struggle of inheritence based system, then an improvement of Entity with a Components vector as a field, which has a leg up on inheritence (composition over inheritence) but suffers performnace hits due to no cache hits! Finally to a data-driven approach of ECS: associating a bunch of components by an Entity-ID. Where each components is part of an array, such that it has data locatlity and the associated lookup is problably a tree on those pure components type arrays. 
+
+
 ## tilemap
 Use this for the stage representation
 
