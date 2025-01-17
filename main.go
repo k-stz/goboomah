@@ -7,9 +7,8 @@ import (
 	"image"
 	"log/slog"
 
-	_ "image/png"
-
 	"image/color"
+	_ "image/png"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -18,6 +17,9 @@ import (
 // implement ebiten.Game
 type Game struct {
 	stage Stage
+	// ecs test
+	bounds image.Rectangle
+	scene  Scene
 }
 
 var count int = 1000
@@ -34,6 +36,7 @@ func (g *Game) Update() error {
 	if count < 0 {
 		return errors.New("Countdown zero!")
 	}
+	g.scene.Update()
 	return nil
 }
 
@@ -142,9 +145,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Scale(0.10, 0.10)
 	op.GeoM.Translate(10, move)
-	screen.DrawImage(PlayerSprite, op)
-
+	//screen.DrawImage(PlayerSprite, op)
 	g.DrawStage(screen)
+	g.scene.Draw(screen)
 }
 
 var PlayerSprite = mustLoadImage("assets/player.png")
@@ -164,8 +167,11 @@ func NewGame(tilesize float64) *Game {
 func main() {
 	tilesize := meadow_tile.Bounds().Dx()
 	game := NewGame(float64(tilesize))
+	game = NewGameEcs()
+
 	ebiten.SetWindowSize(640, 480)
 	ebiten.SetWindowTitle("GoBoomer")
+
 	if err := ebiten.RunGame(game); err != nil {
 		slog.Error("ebiten.RunGame", "err", err)
 	}
