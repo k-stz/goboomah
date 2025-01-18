@@ -2,17 +2,21 @@ package main
 
 import (
 	"embed"
-	"errors"
 	"fmt"
 	"image"
 	"log/slog"
 
-	"image/color"
 	_ "image/png"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/k-stz/goboomer/scenes"
 )
+
+type Scene interface {
+	Draw(screen *ebiten.Image)
+	Update()
+}
 
 // implement ebiten.Game
 type Game struct {
@@ -34,20 +38,24 @@ var count int = 1000
 func (g *Game) Update() error {
 	count--
 	if count < 0 {
-		return errors.New("Countdown zero!")
+		// ebiten.Termination signifies a clean, wanted, termination of the game
+		return ebiten.Termination
 	}
 	g.scene.Update()
 	return nil
 }
 
+// Draw draws the game screen.
+// Draw is called every frame (typically 1/60[s] for 60Hz display).
+// So roughly every 16ms, in this time everything needs to be rendered
 // This is called every "Frame". Frame is a time unit
 // for rendering and this depends on the display's
 // refresh rate! If the monitor refresh rate is 60 [Hz]
 // Draw is called 60 times per second!
 //
-// ebiten.Image: In Ebitengine all images, like
+// Screen is an ebiten.Image. In Ebitengine all images, like
 // images created from image files, offscreen images
-// (temporary render target), and the scree are represented
+// (temporary render target), and the screen are represented
 // as ebiten.Image objects!
 //
 // screen: is the final destination of rendering!
@@ -55,6 +63,21 @@ func (g *Game) Update() error {
 // Whenever Draw is called, screen is also reset.
 // that's why the ebitenutil.DebugPrint needs to be
 // called on every Draw(..) rendering
+func (g *Game) Draw(screen *ebiten.Image) {
+	g.scene.Draw(screen)
+	count--
+	move++
+	//screen.Fill(color.RGBA{0xff, 0, 0, 0xff})
+
+	message := fmt.Sprintf("Hello, World\ncount: %d\n", count)
+	ebitenutil.DebugPrint(screen, message)
+	screen.DrawImage(gopher, nil)
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Scale(0.10, 0.10)
+	op.GeoM.Translate(350, move)
+	screen.DrawImage(PlayerSprite, op)
+	g.DrawStage(screen)
+}
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screnHeight int) {
 	return 640, 480
@@ -110,7 +133,6 @@ func (g *Game) DrawStage(screen *ebiten.Image) {
 	stageOffset := offsetOp.GeoM
 	// op.GeoM.Scale(4, 4)
 	op := &ebiten.DrawImageOptions{}
-
 	for x, row := range g.stage.Grid {
 		for y, val := range row {
 			op.GeoM.Scale(scale, scale)
@@ -134,40 +156,36 @@ func (g *Game) DrawStage(screen *ebiten.Image) {
 	// screen.DrawImage(meadow_tile, op)
 }
 
-func (g *Game) Draw(screen *ebiten.Image) {
-	count--
-	move++
-	screen.Fill(color.RGBA{0xff, 0, 0, 0xff})
-
-	message := fmt.Sprintf("Hello, World\ncount: %d\n", count)
-	ebitenutil.DebugPrint(screen, message)
-	screen.DrawImage(gopher, nil)
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Scale(0.10, 0.10)
-	op.GeoM.Translate(10, move)
-	//screen.DrawImage(PlayerSprite, op)
-	g.DrawStage(screen)
-	g.scene.Draw(screen)
-}
-
 var PlayerSprite = mustLoadImage("assets/player.png")
 var gopher = mustLoadImage("assets/gopher.png")
 var meadow_tile *ebiten.Image = mustLoadImage("assets/tiles/meadow.png")
 var bush_tile *ebiten.Image = mustLoadImage("assets/tiles/bush.png")
 var wall_tile *ebiten.Image = mustLoadImage("assets/tiles/wall.png")
 
-func NewGame(tilesize float64) *Game {
-	debugStage := DebugStage3()
-	debugStage.tilesize = tilesize
-	return &Game{
-		stage: *debugStage,
+// use it to draw the arena!
+// func NewGame(tilesize float64) *Game {
+// 	debugStage := DebugStage3()
+// 	debugStage.tilesize = tilesize
+// 	return &Game{
+// 		stage: *debugStage,
+// 	}
+// }
+
+func NewGame() *Game {
+	g := &Game{
+		bounds: image.Rectangle{},
+		scene:  &scenes.GameScene{},
 	}
+	return g
 }
 
 func main() {
-	tilesize := meadow_tile.Bounds().Dx()
-	game := NewGame(float64(tilesize))
-	game = NewGameEcs()
+	//tilesize := meadow_tile.Bounds().Dx()
+	//gameold := NewGame(float64(tilesize))
+	//game := NewEcsTestGame()
+	//game := NewGame(16.0)
+	game := NewGame()
+	//game.stage = gameold.stage
 
 	ebiten.SetWindowSize(640, 480)
 	ebiten.SetWindowTitle("GoBoomer")

@@ -33,3 +33,9 @@ https://github.com/MariaLetta/free-gophers-pack/tree/master
 License CC0 for those is public domain.
 
 The Go Gopher by Renee French is licensed under the Creative Commons Attribution 4.0 License.
+
+# Gamedev questions
+
+## Using ECS how to model the Game level?
+That is the game takes place in an arena on 2d grid. That is rendered
+based on a 2d-slice. But I don't see how other projects do it, it seems to be obscued
