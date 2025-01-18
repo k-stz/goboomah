@@ -30,12 +30,24 @@ Use this for the stage representation
 
 # Assets
 https://github.com/MariaLetta/free-gophers-pack/tree/master
-License CC0 for those is public domain.
+License CC0 for those is in the public domain.
 
 The Go Gopher by Renee French is licensed under the Creative Commons Attribution 4.0 License.
 
-# Gamedev questions
+# Dev Journal
+
+## Donburi ECS System: Many layers of indirection
+My first experience with the donburi ECS system was a daunting one, simply adopting it for a hello world example was very tough. First I took the example code for the "platformer" and removed all indirection to make it run in a single file. Still not fully understanding the modules involved (entities, components, systems).
+
+Finally I've got a simple object rendered (a measily brown rectangle) I was embolden to try to emulate the donburi example project layout. This was even harder. After a few hours of working thourgh example code following the many branching paths accross multiple folders and files I got to adopt it to my code and rendered, yet again, a single measily brown rectangle.
+
+What blocked me was that I wanted to start with the game arena as the background. But the platformer example didn't have an object corresponding to a "background". It instead placed platforms, floating platforms, walls and ramps directly into the scene. I looked at a game that did: "airplanes" by m110. But carefully reading through the code, finding my self being n-layers deep in indirections I found many gameobjects but not the background.
+I gave up trying to find a solution and match it and simply decided its just another "Object" and created a "Arena" Archtype for it and successfuly reandered, you guessed it, a meassly brown rectangle as a placeholder for the glorious arena to follow hopefully soon.
+
+With a better intuition of how the donburi ecs works, I'm looking forward
+to building the game with it.
 
 ## Using ECS how to model the Game level?
 That is the game takes place in an arena on 2d grid. That is rendered
-based on a 2d-slice. But I don't see how other projects do it, it seems to be obscued
+based on a 2d-slice. But I don't see how other projects do it, it seems to be obscured
+
