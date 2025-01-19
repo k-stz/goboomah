@@ -6,6 +6,7 @@ import (
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
 	"github.com/yohamta/donburi/ecs"
+	"github.com/yohamta/donburi/features/transform"
 )
 
 // func UpdateFloatingPlatform(ecs *ecs.ECS) {
@@ -45,14 +46,17 @@ func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 		tg := components.TileGrid.Get(entry)
 		tileMap := *components.TileMap.Get(entry)
 		//components.PrintGrid(tg.Grid)
+		tf := transform.Transform.Get(entry)
 		dx := tg.TileDiameter
+		var tileImage *ebiten.Image
 		for x, row := range tg.Grid {
 			for y, tileID := range row {
 				// yes, looking up the image in a hash will kill locality
 				// causing cache misses
-				tileImage := tileMap[tileID]
+				tileImage = tileMap[tileID]
 				op := &ebiten.DrawImageOptions{}
 				op.GeoM.Translate(float64(x)*dx, float64(y)*dx)
+				op.GeoM.Translate(tf.LocalPosition.X, tf.LocalPosition.Y)
 				screen.DrawImage(tileImage, op)
 			}
 		}

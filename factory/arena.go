@@ -6,6 +6,8 @@ import (
 	"github.com/k-stz/goboomer/components"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
+	"github.com/yohamta/donburi/features/math"
+	"github.com/yohamta/donburi/features/transform"
 )
 
 type TileGrid [][]int
@@ -24,9 +26,19 @@ func CreateArena(ecs *ecs.ECS) *donburi.Entry {
 	}
 	components.TileMap.SetValue(arenaEntry, level1TileMap)
 
-	// How about here build a tilemaper
-	// index_0 = wall_tile
-	// index_1 = meadow_tile
+	tf := transform.Transform.Get(arenaEntry)
+	tf.LocalPosition = math.Vec2{
+		// TODO: this is a good idea, lets store screen dimensions
+		// in a common game object (which in turn is in our ECS)
+		// X: float64(game.Settings.ScreenWidth) * 0.75,
+		//Y: cameraPos.Y + float64(game.Settings.ScreenHeight)*0.9,
+		X: 200.0,
+		Y: 200.0,
+	}
+	// TODO: next look at the donburi transform feature
+	// can it be used to scale/translte the arena and then
+	// place everything in it relative to it?
+
 	//dresolv.SetObject(platform, object)
 	return arenaEntry
 }

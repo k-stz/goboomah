@@ -8,6 +8,7 @@ import (
 	"github.com/k-stz/goboomer/tags"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
+	"github.com/yohamta/donburi/features/transform"
 )
 
 var (
@@ -16,6 +17,7 @@ var (
 		components.TileGrid,
 		components.Rectangle, // offset used as origin for arena
 		components.TileMap,   // maps TileIDs to ebiten.Images
+		transform.Transform,  // Testing: used instead of Rectangle... 
 	)
 
 	ArenaTile = newArchetype(
