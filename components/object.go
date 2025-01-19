@@ -7,12 +7,12 @@ import (
 	"github.com/yohamta/donburi"
 )
 
-type Rectangle struct {
+type RectangleData struct {
 	X, Y, W, H float64
 }
 
-func NewRectangle(x, y, w, h float64) *Rectangle {
-	return &Rectangle{
+func NewRectangle(x, y, w, h float64) *RectangleData {
+	return &RectangleData{
 		X: x,
 		Y: y,
 		W: w,
@@ -30,14 +30,25 @@ type TileID int
 type tileGrid [][]int
 
 type TileGridData struct {
-	Grid tileGrid
+	Grid         tileGrid
+	TileDiameter float64 // of each Tile in Grid
 }
 
-func NewTileGridData(tileGrid tileGrid) *TileGridData {
+func NewTileGridData(tileGrid tileGrid, tileDiameter float64) *TileGridData {
 	tg := &TileGridData{
-		Grid: tileGrid,
+		Grid:         tileGrid,
+		TileDiameter: tileDiameter,
 	}
 	return tg
+}
+
+type TileMapData map[TileID]*ebiten.Image
+
+func NewTileMap() TileMapData {
+	tm := TileMapData{
+		//TileID(1): ebiten.NewImage(),
+	}
+	return tm
 }
 
 func Level1() *TileGridData {
@@ -49,7 +60,7 @@ func Level1() *TileGridData {
 		{0, 0, 0, 0, 0},
 	}
 
-	return NewTileGridData(tg)
+	return NewTileGridData(tg, 16.0)
 }
 
 func PrintGrid(tg tileGrid) {
@@ -68,6 +79,7 @@ func PrintGrid(tg tileGrid) {
 	}
 }
 
+// Use SpriteData instead?
 type TileData struct {
 	Id TileID
 }
@@ -101,10 +113,11 @@ type SpriteData struct {
 }
 
 // I can give it a default value in the parenthesis here..
-var Object = donburi.NewComponentType[Rectangle]()
+var Rectangle = donburi.NewComponentType[RectangleData]()
 var Image = donburi.NewComponentType[ebiten.Image]()
 var Tile = donburi.NewComponentType[TileData]()
 var TileGrid = donburi.NewComponentType[TileGridData]()
+var TileMap = donburi.NewComponentType[TileMapData]()
 var GridPosition = donburi.NewComponentType[GridPositionData]()
 var Sprite = donburi.NewComponentType[SpriteData]()
 var Collidable = donburi.NewComponentType[SpriteData]()

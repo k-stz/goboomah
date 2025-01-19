@@ -14,12 +14,12 @@ var (
 	Arena = newArchetype(
 		tags.Arena,
 		components.TileGrid,
-		//components.Object,
+		components.Rectangle, // offset used as origin for arena
+		components.TileMap,   // maps TileIDs to ebiten.Images
 	)
 
 	ArenaTile = newArchetype(
 		tags.Arena,
-		components.Tile,
 	)
 
 	Tile = newArchetype(
@@ -70,9 +70,8 @@ func newArchetype(cs ...donburi.IComponentType) *archetype {
 
 // Spawn adds a new entry to the ecs
 func (a *archetype) Spawn(ecs *ecs.ECS, cs ...donburi.IComponentType) *donburi.Entry {
-	fmt.Println("REACHED SPAWN")
 	fmt.Println("archtype components:", a.components)
-	fmt.Println("cs:", cs)
+	fmt.Println("additional components:", cs)
 	e := ecs.World.Entry(ecs.Create(
 		layers.Default,
 		append(a.components, cs...)...,

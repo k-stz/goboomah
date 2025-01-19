@@ -14,6 +14,10 @@ func CreateArena(ecs *ecs.ECS) *donburi.Entry {
 	arenaEntry := archtypes.Arena.Spawn(ecs)
 	// TODO create tile objects based on TileGrid!
 	components.TileGrid.SetValue(arenaEntry, *components.Level1())
+
+	// How about here build a tilemaper
+	// index_0 = wall_tile
+	// index_1 = meadow_tile
 	//dresolv.SetObject(platform, object)
 	return arenaEntry
 }

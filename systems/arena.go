@@ -1,10 +1,8 @@
 package systems
 
 import (
-	"fmt"
-	"image/color"
-
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/k-stz/goboomer/assets"
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
 	"github.com/yohamta/donburi/ecs"
@@ -31,18 +29,35 @@ func UpdateArena(ecs *ecs.ECS) {
 	// the map itself is w
 }
 
-// TODO draw all the tiles in here
+var mt = assets.Meadow_tile
+
 // query all tiles and render them based on a tilemap, see stage.go
+// Draw the stage which is referred to as an "Arena"
 func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
-	// this is were I query the ecs to get all the data
-	// to render the Stage (which is an "Arena")
+	// This is where we get the query the Arena Archetype
+	// which contains the TileGrid, a 2d array of tileID
+	// we will map the TileIDs to ebiten.Images to draw them
+	//
+	//
 	// The Arena itself gets created in factory.CreateArena
 	for entry := range tags.Arena.Iter(ecs.World) {
 		//o := dresolv.GetObject(e)
-		o := components.TileGrid.Get(entry)
-		drawColor := color.RGBA{180, 100, 0, 255}
-		components.PrintGrid(o.Grid)
-		fmt.Println("color", drawColor)
+		tg := components.TileGrid.Get(entry)
+		//drawColor := color.RGBA{180, 100, 0, 255}
+		//components.PrintGrid(tg.Grid)
+		dx := tg.TileDiameter
+		for x, row := range tg.Grid {
+			x := float64(x)
+			for y, _ := range row {
+				y := float64(y)
+				//screen.DrawImage(main, )
+				// TODO implement int => ebiten-Image mapping
+				op := &ebiten.DrawImageOptions{}
+				op.GeoM.Translate(x*dx, y*dx)
+				screen.DrawImage(assets.Meadow_tile, op)
+				// ebitenutil.DrawRect(screen, float64(x), float64(y), float64(x)*dx, float64(y)*dx, drawColor)
+			}
+		}
 		//ebitenutil.DrawRect(screen, o.X, o.Y, o.W, o.H, drawColor)
 	}
 }

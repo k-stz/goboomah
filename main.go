@@ -10,6 +10,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/k-stz/goboomer/assets"
 	"github.com/k-stz/goboomer/scenes"
 )
 
@@ -83,33 +84,18 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screnHeight
 	return 640, 480
 }
 
-// func mustLoadImage(name string) *ebiten.Image {
-// 	f, err := assets.Open(name)
-// 	if err != nil {
-// 		fmt.Println("cant open assets! name:", name)
-// 		panic(err)
-// 	}
-// 	defer f.Close()
-
-// 	//img, _, err := image.Decode(f)
-// 	img, _, err := ebitenutil.NewImageFromFile(name)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	//fmt.Println("eimg", eimg)
-// 	//fmt.Println("img", img)
-// 	return img
-// }
-
 // All files directly under the "assets/"-dir will be
 // embedded in the go binary and will be accessible from
 // the "assets" variable of type embed.FS
 
 //go:embed assets/*
-var assets embed.FS
+var assetsTest embed.FS
 
 func mustLoadImage(name string) *ebiten.Image {
-	f, err := assets.Open(name)
+	fmt.Println("main.go load image name:", name)
+	fmt.Println("assets embed.FS:", assetsTest)
+
+	f, err := assetsTest.Open(name)
 	if err != nil {
 		panic(err)
 	}
@@ -172,6 +158,7 @@ var wall_tile *ebiten.Image = mustLoadImage("assets/tiles/wall.png")
 // }
 
 func NewGame() *Game {
+	assets.MustLoadAssets()
 	g := &Game{
 		bounds: image.Rectangle{},
 		scene:  &scenes.GameScene{},
