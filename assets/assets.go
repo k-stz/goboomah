@@ -17,10 +17,13 @@ var (
 	assetsFS embed.FS
 
 	Meadow_tile *ebiten.Image
+	Wall_tile   *ebiten.Image
 )
 
 func MustLoadAssets() {
 	Meadow_tile = mustLoadImage("tiles/meadow.png")
+	Wall_tile = mustLoadImage("tiles/wall.png")
+
 }
 
 func mustLoadImage(name string) *ebiten.Image {

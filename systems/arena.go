@@ -43,22 +43,19 @@ func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 	for entry := range tags.Arena.Iter(ecs.World) {
 		//o := dresolv.GetObject(e)
 		tg := components.TileGrid.Get(entry)
-		//drawColor := color.RGBA{180, 100, 0, 255}
+		tileMap := *components.TileMap.Get(entry)
 		//components.PrintGrid(tg.Grid)
 		dx := tg.TileDiameter
 		for x, row := range tg.Grid {
-			x := float64(x)
-			for y, _ := range row {
-				y := float64(y)
-				//screen.DrawImage(main, )
-				// TODO implement int => ebiten-Image mapping
+			for y, tileID := range row {
+				// yes, looking up the image in a hash will kill locality
+				// causing cache misses
+				tileImage := tileMap[tileID]
 				op := &ebiten.DrawImageOptions{}
-				op.GeoM.Translate(x*dx, y*dx)
-				screen.DrawImage(assets.Meadow_tile, op)
-				// ebitenutil.DrawRect(screen, float64(x), float64(y), float64(x)*dx, float64(y)*dx, drawColor)
+				op.GeoM.Translate(float64(x)*dx, float64(y)*dx)
+				screen.DrawImage(tileImage, op)
 			}
 		}
-		//ebitenutil.DrawRect(screen, o.X, o.Y, o.W, o.H, drawColor)
 	}
 }
 

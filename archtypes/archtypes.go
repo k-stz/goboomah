@@ -25,6 +25,7 @@ var (
 	Tile = newArchetype(
 		tags.Tile,
 		components.GridPosition,
+		components.Sprite,
 		components.Collidable,
 	)
 	// FloatingPlatform = newArchetype(

@@ -27,7 +27,7 @@ type Player struct {
 
 // iota Enum better?
 type TileID int
-type tileGrid [][]int
+type tileGrid [][]TileID
 
 type TileGridData struct {
 	Grid         tileGrid
@@ -120,4 +120,4 @@ var TileGrid = donburi.NewComponentType[TileGridData]()
 var TileMap = donburi.NewComponentType[TileMapData]()
 var GridPosition = donburi.NewComponentType[GridPositionData]()
 var Sprite = donburi.NewComponentType[SpriteData]()
-var Collidable = donburi.NewComponentType[SpriteData]()
+var Collidable = donburi.NewComponentType[CollidableData]()

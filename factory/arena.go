@@ -2,6 +2,7 @@ package factory
 
 import (
 	"github.com/k-stz/goboomer/archtypes"
+	"github.com/k-stz/goboomer/assets"
 	"github.com/k-stz/goboomer/components"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
@@ -13,7 +14,15 @@ func CreateArena(ecs *ecs.ECS) *donburi.Entry {
 	//level1 := components.Level1()
 	arenaEntry := archtypes.Arena.Spawn(ecs)
 	// TODO create tile objects based on TileGrid!
-	components.TileGrid.SetValue(arenaEntry, *components.Level1())
+	level := *components.Level1()
+	components.TileGrid.SetValue(arenaEntry, level)
+
+	// Creat Tile Mapping, used for dynamic render loop
+	level1TileMap := components.TileMapData{
+		0: assets.Meadow_tile,
+		1: assets.Wall_tile,
+	}
+	components.TileMap.SetValue(arenaEntry, level1TileMap)
 
 	// How about here build a tilemaper
 	// index_0 = wall_tile
