@@ -27,5 +27,5 @@ go.work.sum
 # Binary
 /bin/*
 
-# Game
-/assets/*
+# Game Assets
+/assets/large/*

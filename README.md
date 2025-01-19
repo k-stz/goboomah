@@ -29,10 +29,11 @@ Sources:
 Use this for the stage representation
 
 # Assets
-https://github.com/MariaLetta/free-gophers-pack/tree/master
-License CC0 for those is in the public domain.
+- The tiles are from https://kenney.nl/assets/tiny-town and in the public domain (CC0 License)
+- https://github.com/MariaLetta/free-gophers-pack/tree/master
+License CC0 for those in the public domain.
 
-The Go Gopher by Renee French is licensed under the Creative Commons Attribution 4.0 License.
+- Gopher Pictures: The Go Gopher by Renee French is licensed under the Creative Commons Attribution 4.0 License.
 
 # Dev Journal
 
