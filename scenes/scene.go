@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/factory"
 	"github.com/k-stz/goboomer/layers"
 	"github.com/k-stz/goboomer/systems"
@@ -36,7 +35,7 @@ func (gs *GameScene) configure() {
 	//ecs.AddSystem(systems.UpdateLevelMap)
 
 	ecs.AddRenderer(layers.Default, systems.DrawArena)
-
+	//ecs.AddRenderer(layers.Default, systems.DrawArenaTiles)
 	// Now we create the LevelMap
 
 	// creates a new entity
@@ -46,8 +45,7 @@ func (gs *GameScene) configure() {
 
 	gs.ecs = ecs
 
-	arenaEntry := factory.CreateArena(gs.ecs,
-		components.NewRectangle(200.0, 200.0, 200.0, 50.0))
+	arenaEntry := factory.CreateArena(gs.ecs)
 	fmt.Println("CreatedArena Entry in ECS hopefully. Entry:", arenaEntry)
 
 	//MyWall.SetValue(entry, WallComponent{x: 100, y: 100, w: 100.0, h: 100.0})

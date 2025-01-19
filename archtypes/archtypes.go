@@ -1,6 +1,8 @@
 package archtypes
 
 import (
+	"fmt"
+
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/layers"
 	"github.com/k-stz/goboomer/tags"
@@ -11,7 +13,19 @@ import (
 var (
 	Arena = newArchetype(
 		tags.Arena,
-		components.Object,
+		components.TileGrid,
+		//components.Object,
+	)
+
+	ArenaTile = newArchetype(
+		tags.Arena,
+		components.Tile,
+	)
+
+	Tile = newArchetype(
+		tags.Tile,
+		components.GridPosition,
+		components.Collidable,
 	)
 	// FloatingPlatform = newArchetype(
 	// 	tags.FloatingPlatform,
@@ -56,9 +70,13 @@ func newArchetype(cs ...donburi.IComponentType) *archetype {
 
 // Spawn adds a new entry to the ecs
 func (a *archetype) Spawn(ecs *ecs.ECS, cs ...donburi.IComponentType) *donburi.Entry {
+	fmt.Println("REACHED SPAWN")
+	fmt.Println("archtype components:", a.components)
+	fmt.Println("cs:", cs)
 	e := ecs.World.Entry(ecs.Create(
 		layers.Default,
 		append(a.components, cs...)...,
 	))
+	fmt.Println("POST SPAWN")
 	return e
 }

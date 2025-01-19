@@ -1,10 +1,10 @@
 package systems
 
 import (
+	"fmt"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
 	"github.com/yohamta/donburi/ecs"
@@ -31,15 +31,19 @@ func UpdateArena(ecs *ecs.ECS) {
 	// the map itself is w
 }
 
+// TODO draw all the tiles in here
+// query all tiles and render them based on a tilemap, see stage.go
 func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 	// this is were I query the ecs to get all the data
 	// to render the Stage (which is an "Arena")
 	// The Arena itself gets created in factory.CreateArena
 	for entry := range tags.Arena.Iter(ecs.World) {
 		//o := dresolv.GetObject(e)
-		o := components.Object.Get(entry)
+		o := components.TileGrid.Get(entry)
 		drawColor := color.RGBA{180, 100, 0, 255}
-		ebitenutil.DrawRect(screen, o.X, o.Y, o.W, o.H, drawColor)
+		components.PrintGrid(o.Grid)
+		fmt.Println("color", drawColor)
+		//ebitenutil.DrawRect(screen, o.X, o.Y, o.W, o.H, drawColor)
 	}
 }
 

@@ -7,9 +7,13 @@ import (
 	"github.com/yohamta/donburi/ecs"
 )
 
-func CreateArena(ecs *ecs.ECS, object *components.Rectangle) *donburi.Entry {
+type TileGrid [][]int
+
+func CreateArena(ecs *ecs.ECS) *donburi.Entry {
+	//level1 := components.Level1()
 	arenaEntry := archtypes.Arena.Spawn(ecs)
-	components.Object.SetValue(arenaEntry, *object)
+	// TODO create tile objects based on TileGrid!
+	components.TileGrid.SetValue(arenaEntry, *components.Level1())
 	//dresolv.SetObject(platform, object)
 	return arenaEntry
 }

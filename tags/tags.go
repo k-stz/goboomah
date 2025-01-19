@@ -6,4 +6,5 @@ var (
 	//Player           = donburi.NewTag().SetName("Player")
 	Arena = donburi.NewTag().SetName("Arena")
 	//Wall             = donburi.NewTag().SetName("Wall")
+	Tile = donburi.NewTag().SetName("Tile")
 )
