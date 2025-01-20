@@ -50,5 +50,16 @@ to building the game with it.
 
 ## Using ECS how to model the Game level?
 That is the game takes place in an arena on 2d grid. That is rendered
-based on a 2d-slice. But I don't see how other projects do it, it seems to be obscured
+based on a 2d-slice. But I don't see how other projects do it, it seems to be obscured.
+
+I decided to create a 2d-Slice of ints, which I then map to `ebiten.Images`. I dislike this approach as it goes against the ECS pitch where you retrieve a contigious array of the thing you want to process and then iterate over it without pointer jumps, reducing cache misses.
+Also I'm afraid that deriving tiles from a 2d-array TileID instead of having the tiles them instances of some "Tile"-Archtype, will later make it harder to built complex interactions with them, like placing items or rearranging them dynamically for creative gameplay mechanics.
+
+## ECS: Open Source examples to the rescue 
+I found myself when stuck on how to ECS for my gamedev that I would lean havily on the examples on `donburi`, like the Platformer or the `airplanes`-game by `m110` (link: https://github.com/m110/airplanes).
+Though it was painful to undestand the code at first, even the simplest examples being spread over multiple files. I steadily got the hang of it.
+
+What helped was aiming at a focus on a single feature first, like rendering the background level ("the arena") and if its too complex break it down to even smalle parts. Then move on to the next. The very first step was the hardest as the boilerplate is enormous, but the great thing about donburi's ECS is, that once start getting it, it scales greatly. 
+
+What I love the most about ECS, I think, is that now I can much clearly imagine how to implement any feature I can think of. I love the feeling when your skills and knowledge suddenly catch up with what seemed to be insurmountable before, but it was "just" around the corner all along. I had this experience many times in IT, and I try to instill it in others.
 
