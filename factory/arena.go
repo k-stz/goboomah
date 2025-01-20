@@ -32,12 +32,14 @@ func CreateArena(ecs *ecs.ECS) *donburi.Entry {
 		// in a common game object (which in turn is in our ECS)
 		// X: float64(game.Settings.ScreenWidth) * 0.75,
 		//Y: cameraPos.Y + float64(game.Settings.ScreenHeight)*0.9,
-		X: 200.0,
-		Y: 200.0,
+		X: 100.0,
+		Y: 100.0,
 	}
-	// TODO: next look at the donburi transform feature
-	// can it be used to scale/translte the arena and then
-	// place everything in it relative to it?
+	tf.LocalScale = math.Vec2{
+		X: 4.0,
+		Y: 4.0,
+	}
+	tf.LocalRotation = 90.0
 
 	//dresolv.SetObject(platform, object)
 	return arenaEntry

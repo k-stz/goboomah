@@ -2,7 +2,6 @@ package systems
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/k-stz/goboomer/assets"
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
 	"github.com/yohamta/donburi/ecs"
@@ -24,13 +23,24 @@ import (
 // 	}
 // }
 
+// Cool spiral effect, just for asthetics.
+// Use for stage transitions?
+func tileSpiralEffect(ecs *ecs.ECS) {
+	entry, ok := tags.Arena.First(ecs.World)
+	if !ok {
+		return
+	}
+	tf := transform.Transform.Get(entry)
+	tf.LocalRotation = tf.LocalRotation + 0.01
+
+}
+
 // The Arena is the 2d-grid where the player walks inside
 // For now we don't have any logic to update in here
 func UpdateArena(ecs *ecs.ECS) {
-	// the map itself is w
-}
+	//tileSpiralEffect(ecs)
 
-var mt = assets.Meadow_tile
+}
 
 // query all tiles and render them based on a tilemap, see stage.go
 // Draw the stage which is referred to as an "Arena"
@@ -47,16 +57,22 @@ func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 		tileMap := *components.TileMap.Get(entry)
 		//components.PrintGrid(tg.Grid)
 		tf := transform.Transform.Get(entry)
-		dx := tg.TileDiameter
+
 		var tileImage *ebiten.Image
+		dx := tg.TileDiameter * tf.LocalScale.X
+		var offsetX float64
+		var offsetY float64
 		for x, row := range tg.Grid {
 			for y, tileID := range row {
 				// yes, looking up the image in a hash will kill locality
 				// causing cache misses
 				tileImage = tileMap[tileID]
+				offsetX = (float64(x) * dx) + tf.LocalPosition.X
+				offsetY = float64(y)*dx + tf.LocalPosition.Y
 				op := &ebiten.DrawImageOptions{}
-				op.GeoM.Translate(float64(x)*dx, float64(y)*dx)
-				op.GeoM.Translate(tf.LocalPosition.X, tf.LocalPosition.Y)
+				op.GeoM.Rotate(tf.LocalRotation)
+				op.GeoM.Scale(tf.LocalScale.X, tf.LocalScale.Y)
+				op.GeoM.Translate(offsetX, offsetY)
 				screen.DrawImage(tileImage, op)
 			}
 		}

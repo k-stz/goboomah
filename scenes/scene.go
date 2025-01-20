@@ -34,6 +34,8 @@ func (gs *GameScene) configure() {
 
 	//ecs.AddSystem(systems.UpdateLevelMap)
 
+	ecs.AddSystem(systems.UpdateArena)
+
 	ecs.AddRenderer(layers.Default, systems.DrawArena)
 	//ecs.AddRenderer(layers.Default, systems.DrawArenaTiles)
 	// Now we create the LevelMap

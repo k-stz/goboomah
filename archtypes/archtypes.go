@@ -17,7 +17,7 @@ var (
 		components.TileGrid,
 		components.Rectangle, // offset used as origin for arena
 		components.TileMap,   // maps TileIDs to ebiten.Images
-		transform.Transform,  // Testing: used instead of Rectangle... 
+		transform.Transform,  // Testing: used instead of Rectangle...
 	)
 
 	ArenaTile = newArchetype(
