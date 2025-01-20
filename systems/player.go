@@ -5,6 +5,7 @@ import (
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
 	"github.com/yohamta/donburi/ecs"
+	"github.com/yohamta/donburi/features/math"
 	"github.com/yohamta/donburi/features/transform"
 )
 
@@ -12,6 +13,29 @@ import (
 // laeter collision response will be collected from here
 func UpdatePlayer(ecs *ecs.ECS) {
 	//tileSpiralEffect(ecs)
+	playerEntry, _ := tags.Player.First(ecs.World)
+	tf := transform.Transform.Get(playerEntry)
+	var x float64
+	var y float64
+	velocity := 1.0
+	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
+		x = -velocity
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyRight) {
+		x = velocity
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyUp) {
+		y = -velocity
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyDown) {
+		y = velocity
+	}
+	//  tf.LocalPosition + math.Vec2{x, y}
+	tf.LocalPosition = tf.LocalPosition.Add(math.NewVec2(x, y))
+	// rotation for fun
+	if ebiten.IsKeyPressed(ebiten.KeyR) {
+		tf.LocalRotation += 1.0
+	}
 
 }
 

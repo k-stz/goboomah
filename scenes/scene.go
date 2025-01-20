@@ -35,6 +35,7 @@ func (gs *GameScene) configure() {
 	//ecs.AddSystem(systems.UpdateLevelMap)
 
 	ecs.AddSystem(systems.UpdateArena)
+	ecs.AddSystem(systems.UpdatePlayer)
 
 	ecs.AddRenderer(layers.Default, systems.DrawArena)
 	ecs.AddRenderer(layers.Default, systems.DrawPlayer)

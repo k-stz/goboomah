@@ -21,12 +21,12 @@ func CreatePlayer(ecs *ecs.ECS) *donburi.Entry {
 		// in a common game object (which in turn is in our ECS)
 		// X: float64(game.Settings.ScreenWidth) * 0.75,
 		//Y: cameraPos.Y + float64(game.Settings.ScreenHeight)*0.9,
-		X: 0.0,
-		Y: 300.0,
+		X: 50.0,
+		Y: 200.0,
 	}
 	tf.LocalScale = math.Vec2{
-		X: 1.0,
-		Y: 1.0,
+		X: 0.5,
+		Y: 0.5,
 	}
 	tf.LocalRotation = 0.0
 

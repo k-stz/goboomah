@@ -20,11 +20,6 @@ func NewRectangle(x, y, w, h float64) *RectangleData {
 	}
 }
 
-type Player struct {
-	health int
-	badges int
-}
-
 // iota Enum better?
 type TileID int
 type tileGrid [][]TileID

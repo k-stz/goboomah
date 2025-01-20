@@ -8,6 +8,8 @@ import (
 	"github.com/yohamta/donburi/features/transform"
 )
 
+// Oh tweening is about inbetween animation
+// this should be pretty useful!
 // func UpdateFloatingPlatform(ecs *ecs.ECS) {
 // 	for e := range tags.FloatingPlatform.Iter(ecs.World) {
 // 		tw := components.Tween.Get(e)
@@ -38,6 +40,7 @@ func tileSpiralEffect(ecs *ecs.ECS) {
 // The Arena is the 2d-grid where the player walks inside
 // For now we don't have any logic to update in here
 func UpdateArena(ecs *ecs.ECS) {
+	// Need some global timer to trigger the effect for a short time?
 	//tileSpiralEffect(ecs)
 
 }

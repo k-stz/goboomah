@@ -72,7 +72,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	message := fmt.Sprintf("Hello, World\ncount: %d\n", count)
 	ebitenutil.DebugPrint(screen, message)
-	screen.DrawImage(gopher, nil)
+	//screen.DrawImage(gopher, nil)
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Scale(0.10, 0.10)
 	op.GeoM.Translate(350, move)
