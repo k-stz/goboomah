@@ -108,16 +108,15 @@ type CollidableData struct {
 // draw in tilemap cells or for the player. A map of pics,
 // for easy implementation
 type SpriteData struct {
-	// TODO implement a map[string]image
-	SpriteID string
+	Image *ebiten.Image
 }
 
 // I can give it a default value in the parenthesis here..
+var TileGrid = donburi.NewComponentType[TileGridData]()
+var GridPosition = donburi.NewComponentType[GridPositionData]()
+var Sprite = donburi.NewComponentType[SpriteData]()
 var Rectangle = donburi.NewComponentType[RectangleData]()
 var Image = donburi.NewComponentType[ebiten.Image]()
 var Tile = donburi.NewComponentType[TileData]()
-var TileGrid = donburi.NewComponentType[TileGridData]()
 var TileMap = donburi.NewComponentType[TileMapData]()
-var GridPosition = donburi.NewComponentType[GridPositionData]()
-var Sprite = donburi.NewComponentType[SpriteData]()
 var Collidable = donburi.NewComponentType[CollidableData]()

@@ -3,8 +3,8 @@ package tags
 import "github.com/yohamta/donburi"
 
 var (
-	//Player           = donburi.NewTag().SetName("Player")
-	Arena = donburi.NewTag().SetName("Arena")
+	Player = donburi.NewTag().SetName("Player")
+	Arena  = donburi.NewTag().SetName("Arena")
+	Tile   = donburi.NewTag().SetName("Tile")
 	//Wall             = donburi.NewTag().SetName("Wall")
-	Tile = donburi.NewTag().SetName("Tile")
 )

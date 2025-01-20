@@ -20,6 +20,12 @@ var (
 		transform.Transform,  // Testing: used instead of Rectangle...
 	)
 
+	Player = newArchetype(
+		tags.Player,
+		components.Sprite,   // maps TileIDs to ebiten.Images
+		transform.Transform, // Testing: used instead of Rectangle...
+	)
+
 	ArenaTile = newArchetype(
 		tags.Arena,
 	)

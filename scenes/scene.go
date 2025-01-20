@@ -37,6 +37,8 @@ func (gs *GameScene) configure() {
 	ecs.AddSystem(systems.UpdateArena)
 
 	ecs.AddRenderer(layers.Default, systems.DrawArena)
+	ecs.AddRenderer(layers.Default, systems.DrawPlayer)
+
 	//ecs.AddRenderer(layers.Default, systems.DrawArenaTiles)
 	// Now we create the LevelMap
 
@@ -48,7 +50,9 @@ func (gs *GameScene) configure() {
 	gs.ecs = ecs
 
 	arenaEntry := factory.CreateArena(gs.ecs)
-	fmt.Println("CreatedArena Entry in ECS hopefully. Entry:", arenaEntry)
+	playerEntry := factory.CreatePlayer(gs.ecs)
+
+	fmt.Println("Cerated Entries", arenaEntry, playerEntry)
 
 	//MyWall.SetValue(entry, WallComponent{x: 100, y: 100, w: 100.0, h: 100.0})
 	//ecs.AddRenderer(Default, DrawWall)
