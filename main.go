@@ -23,11 +23,12 @@ type Scene interface {
 type Game struct {
 	stage Stage
 	// ecs test
-	bounds image.Rectangle
-	scene  Scene
+	bounds                   image.Rectangle
+	scene                    Scene
+	ScreenWidth, ScreenHeigh int
 }
 
-var count int = 1000
+var count int = 10000
 
 // called every tick
 // Tick is a time unit for logical updating
@@ -81,6 +82,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screnHeight int) {
+	fmt.Println("Layout called", outsideWidth, outsideHeight)
 	return 640, 480
 }
 
@@ -157,13 +159,19 @@ var wall_tile *ebiten.Image = mustLoadImage("assets/tiles/wall.png")
 // 	}
 // }
 
-func NewGame() *Game {
+func NewGame(config Config) *Game {
 	assets.MustLoadAssets()
 	g := &Game{
-		bounds: image.Rectangle{},
-		scene:  &scenes.GameScene{},
+		bounds:      image.Rectangle{},
+		scene:       &scenes.GameScene{},
+		ScreenWidth: config.ScreenWidth,
+		ScreenHeigh: config.ScreenHeight,
 	}
 	return g
+}
+
+type Config struct {
+	ScreenWidth, ScreenHeight int
 }
 
 func main() {
@@ -171,11 +179,17 @@ func main() {
 	//gameold := NewGame(float64(tilesize))
 	//game := NewEcsTestGame()
 	//game := NewGame(16.0)
-	game := NewGame()
+	config := Config{
+		ScreenWidth:  480,
+		ScreenHeight: 640,
+	}
+
+	game := NewGame(config)
 	//game.stage = gameold.stage
 
 	ebiten.SetWindowSize(640, 480)
 	ebiten.SetWindowTitle("GoBoomer")
+	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 
 	if err := ebiten.RunGame(game); err != nil {
 		slog.Error("ebiten.RunGame", "err", err)
