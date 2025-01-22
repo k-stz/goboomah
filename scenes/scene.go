@@ -14,8 +14,9 @@ import (
 )
 
 type GameScene struct {
-	ecs  *ecs.ECS
-	once sync.Once
+	ecs                      *ecs.ECS
+	once                     sync.Once
+	ScreenWidth, ScreenHeigh int
 }
 
 func (gs *GameScene) Update() {
@@ -30,6 +31,7 @@ func (gs *GameScene) Draw(screen *ebiten.Image) {
 
 // the the ECS gets initialized
 func (gs *GameScene) configure() {
+	// add width, heigh to gamescene
 	ecs := ecs.NewECS(donburi.NewWorld())
 
 	//ecs.AddSystem(systems.UpdateLevelMap)
@@ -50,11 +52,21 @@ func (gs *GameScene) configure() {
 
 	gs.ecs = ecs
 
+	gameEntry := factory.CreateGame(gs.ecs, gs.ScreenWidth, gs.ScreenHeigh)
+
 	arenaEntry := factory.CreateArena(gs.ecs)
 	playerEntry := factory.CreatePlayer(gs.ecs)
 
-	fmt.Println("Cerated Entries", arenaEntry, playerEntry)
-
 	//MyWall.SetValue(entry, WallComponent{x: 100, y: 100, w: 100.0, h: 100.0})
 	//ecs.AddRenderer(Default, DrawWall)
+
+	// Define the world's Space. Here, a Space is essentially a grid
+	// (the game's width and height, or 640x360), made up of 16x16
+	// cells. Each cell can have 0 or more Objects within it,
+	// and collisions can be found by checking the Space to see if
+	// the Cells at specific positions contain (or would contain)
+	// Objects. This is a broad, simplified approach to collision
+	// detection.
+	spaceEntry := factory.CreateSpace(gs.ecs, gs.ScreenWidth, gs.ScreenHeigh)
+	fmt.Println("Created Entries", arenaEntry, playerEntry, gameEntry, spaceEntry)
 }

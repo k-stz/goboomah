@@ -4,6 +4,7 @@ go 1.23.4
 
 require (
 	github.com/hajimehoshi/ebiten/v2 v2.8.6
+	github.com/solarlune/resolv v0.8.1
 	github.com/yohamta/donburi v1.15.6
 )
 

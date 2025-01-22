@@ -35,6 +35,11 @@ License CC0 for those in the public domain.
 
 - Gopher Pictures: The Go Gopher by Renee French is licensed under the Creative Commons Attribution 4.0 License.
 
+# TODOs
+- [ ] add "resolv" physics engine (great examples)
+- [ ] derive solid tiles from the Arena tilemap and add to "resolv" space
+- [ ] Add animation, see here: https://github.com/egonelbre/gophers
+
 # Dev Journal
 
 ## Donburi ECS System: Many layers of indirection

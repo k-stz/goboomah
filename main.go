@@ -162,8 +162,11 @@ var wall_tile *ebiten.Image = mustLoadImage("assets/tiles/wall.png")
 func NewGame(config Config) *Game {
 	assets.MustLoadAssets()
 	g := &Game{
-		bounds:      image.Rectangle{},
-		scene:       &scenes.GameScene{},
+		bounds: image.Rectangle{},
+		scene: &scenes.GameScene{
+			ScreenWidth: config.ScreenWidth,
+			ScreenHeigh: config.ScreenHeight,
+		},
 		ScreenWidth: config.ScreenWidth,
 		ScreenHeigh: config.ScreenHeight,
 	}

@@ -36,6 +36,11 @@ var (
 		components.Sprite,
 		components.Collidable,
 	)
+
+	// "resolv"'s physics engine "space"
+	Space = newArchetype(
+		components.Space,
+	)
 	// FloatingPlatform = newArchetype(
 	// 	tags.FloatingPlatform,
 	// 	components.Object,
