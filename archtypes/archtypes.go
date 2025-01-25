@@ -15,9 +15,8 @@ var (
 	Arena = newArchetype(
 		tags.Arena,
 		components.TileGrid,
-		components.Rectangle, // offset used as origin for arena
-		components.TileMap,   // maps TileIDs to ebiten.Images
-		transform.Transform,  // Testing: used instead of Rectangle...
+		components.TileMap,  // maps TileIDs to ebiten.Images
+		transform.Transform, // Testing: used instead of Rectangle...
 	)
 
 	Player = newArchetype(
@@ -36,8 +35,9 @@ var (
 
 	Tile = newArchetype(
 		tags.Tile,
-		components.GridPosition,
+		//components.GridPosition,
 		components.Sprite,
+		components.ConvexPolygonBBox,
 		components.Collidable,
 	)
 

@@ -70,6 +70,7 @@ func (gs *GameScene) configure() {
 
 	// Create objects
 	arenaEntry := factory.CreateArena(gs.ecs)
+	factory.CreateSolidTiles(gs.ecs, arenaEntry)
 	playerEntry := factory.CreatePlayer(gs.ecs)
 	fmt.Println("Created Entries", arenaEntry, playerEntry, gameEntry, spaceEntry)
 

@@ -1,7 +1,10 @@
 package systems
 
 import (
+	"image/color"
+
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
 	"github.com/yohamta/donburi/ecs"
@@ -79,6 +82,20 @@ func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 				screen.DrawImage(tileImage, op)
 			}
 		}
+	}
+
+	// Draw collision for all the
+	for entry := range tags.Tile.Iter(ecs.World) {
+		// tf := transform.Transform.Get(entry)
+		bbox := components.ConvexPolygonBBox.Get(entry)
+		x := float32(bbox.Position().X)
+		y := float32(bbox.Position().Y)
+		bbox.Bounds()
+		//
+		vector.DrawFilledRect(screen, x, y, 10, 10, color.RGBA{0xff, 0, 0, uint8(entry.Id())}, false)
+		//x := tf.LocalPosition.X
+		// y := tf.LocalPosition.Y
+		// fmt.Println("x,y", x, y)
 	}
 }
 
