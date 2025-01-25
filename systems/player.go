@@ -65,8 +65,8 @@ func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
 		//o := dresolv.GetObject(e)
 		playerSprite := components.Sprite.Get(entry)
 
-		// halfW := float64(playerSprite.Image.Bounds().Dx() / 2)
-		// halfH := float64(playerSprite.Image.Bounds().Dy() / 2)
+		halfW := float64(playerSprite.Image.Bounds().Dx() / 2)
+		halfH := float64(playerSprite.Image.Bounds().Dy() / 2)
 
 		tf := transform.Transform.Get(entry)
 		var offsetX float64
@@ -78,19 +78,21 @@ func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
 		op := &ebiten.DrawImageOptions{}
 		// translate to origin, so scaling and rotation work
 		// intuitively
-		// op.GeoM.Translate(-halfW, -halfH)
-		// op.GeoM.Rotate(tf.LocalRotation)
-		// op.GeoM.Scale(tf.LocalScale.X, tf.LocalScale.Y)
-		// op.GeoM.Translate(halfW, halfH)
+		op.GeoM.Translate(-halfW, -halfH)
+		op.GeoM.Rotate(tf.LocalRotation)
+		op.GeoM.Scale(tf.LocalScale.X, tf.LocalScale.Y)
+		op.GeoM.Translate(halfW, halfH)
 		//fmt.Println("player op", tf.LocalPosition)
 		op.GeoM.Translate(offsetX, offsetY)
 		screen.DrawImage(playerSprite.Image, op)
 
 		// draw bounding box of player
+		// TODO: Add toggle to control this via a Config Setting
+		// for the game!
 		playerObject := components.CircleBBox.Get(entry)
 		c := playerObject.Position() // position should be center for a circle...
 		radius := float32(playerObject.Radius())
-		vector.DrawFilledCircle(screen, float32(c.X), float32(c.Y), radius/2, color.RGBA{0xff, 0, 0, 10}, false)
+		vector.DrawFilledCircle(screen, float32(c.X), float32(c.Y), radius, color.RGBA{0xff, 0, 0, 10}, false)
 		//		"github.com/hajimehoshi/ebiten/v2/vector"
 
 	}

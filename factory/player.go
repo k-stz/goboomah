@@ -23,16 +23,6 @@ func CreatePlayer(ecs *ecs.ECS) *donburi.Entry {
 
 	x, y := 50.0, 200.0
 	scale := 1.0
-	// FIXME the rectangle x,y are the _center_
-	// of the rectangle!
-	// also use transform.Transform as the basis for the collision object?
-	//obj := resolv.NewRectangleFromCorners(x, y, x+w, y+h)
-	//obj := resolv.NewCircle(x+w, y+w, w)
-	obj := resolv.NewCircle(x+w/2, y+h-w/2, w)
-	// THIS: resolv.IntersectionSet.MTV
-	components.CircleBBox.Set(playerEntry, obj)
-
-	fmt.Println("added player collision obj:", obj)
 
 	tf := transform.Transform.Get(playerEntry)
 	tf.LocalPosition = math.Vec2{
@@ -48,6 +38,12 @@ func CreatePlayer(ecs *ecs.ECS) *donburi.Entry {
 		Y: scale,
 	}
 	tf.LocalRotation = 0.0
+
+	circleObj := resolv.NewCircle(x+w/2, y+h-w/2, w)
+	components.SetCircleBBox(circleObj, tf, playerSprite.Image)
+	components.CircleBBox.Set(playerEntry, circleObj)
+
+	fmt.Println("added player collision obj:", circleObj)
 
 	//dresolv.SetObject(platform, object)
 	return playerEntry

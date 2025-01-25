@@ -13,18 +13,14 @@ import (
 
 var rect = resolv.NewRectangle(200, 100, 32, 32)
 
-func CircleBottomLeftPos(c *resolv.Circle) resolv.Vector {
-	x := c.Position().X - c.Radius()
-	y := c.Position().Y - c.Radius()
-	return resolv.NewVector(x, y)
-}
-
 // Here we handle all the collisions detection and response
 func UpdateObjects(ecs *ecs.ECS) {
 	playerEntry, _ := tags.Player.First(ecs.World)
 	player := components.Player.Get(playerEntry)
 	tf := transform.Transform.Get(playerEntry)
+	playerSprite := components.Sprite.Get(playerEntry)
 	playerCircleBBox := components.CircleBBox.Get(playerEntry)
+	components.SetCircleBBox(playerCircleBBox, tf, playerSprite.Image)
 
 	var movePlayer math.Vec2
 	//fmt.Println("player speed:", player.Speed)
