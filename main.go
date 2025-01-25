@@ -82,7 +82,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screnHeight int) {
-	fmt.Println("Layout called", outsideWidth, outsideHeight)
 	return 640, 480
 }
 
@@ -139,9 +138,6 @@ func (g *Game) DrawStage(screen *ebiten.Image) {
 			op.GeoM.Reset()
 		}
 	}
-	// screen.DrawImage(meadow_tile, op)
-	// op.GeoM.Translate(16*4, 16*4)
-	// screen.DrawImage(meadow_tile, op)
 }
 
 var PlayerSprite = mustLoadImage("assets/large/player.png")

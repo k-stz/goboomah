@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/k-stz/goboomer/collisions"
 	"github.com/k-stz/goboomer/factory"
 	"github.com/k-stz/goboomer/layers"
 	"github.com/k-stz/goboomer/systems"
@@ -36,6 +37,7 @@ func (gs *GameScene) configure() {
 
 	//ecs.AddSystem(systems.UpdateLevelMap)
 
+	ecs.AddSystem(systems.UpdateObjects)
 	ecs.AddSystem(systems.UpdateArena)
 	ecs.AddSystem(systems.UpdatePlayer)
 
@@ -54,9 +56,6 @@ func (gs *GameScene) configure() {
 
 	gameEntry := factory.CreateGame(gs.ecs, gs.ScreenWidth, gs.ScreenHeigh)
 
-	arenaEntry := factory.CreateArena(gs.ecs)
-	playerEntry := factory.CreatePlayer(gs.ecs)
-
 	//MyWall.SetValue(entry, WallComponent{x: 100, y: 100, w: 100.0, h: 100.0})
 	//ecs.AddRenderer(Default, DrawWall)
 
@@ -68,5 +67,11 @@ func (gs *GameScene) configure() {
 	// Objects. This is a broad, simplified approach to collision
 	// detection.
 	spaceEntry := factory.CreateSpace(gs.ecs, gs.ScreenWidth, gs.ScreenHeigh)
+
+	// Create objects
+	arenaEntry := factory.CreateArena(gs.ecs)
+	playerEntry := factory.CreatePlayer(gs.ecs)
 	fmt.Println("Created Entries", arenaEntry, playerEntry, gameEntry, spaceEntry)
+
+	collisions.AddCircleBBox(spaceEntry, playerEntry)
 }

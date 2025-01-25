@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 )
 
@@ -115,3 +116,17 @@ var Image = donburi.NewComponentType[ebiten.Image]()
 var Tile = donburi.NewComponentType[TileData]()
 var TileMap = donburi.NewComponentType[TileMapData]()
 var Collidable = donburi.NewComponentType[CollidableData]()
+
+// used for collision detection/response
+// IShape is an interface that can fit any shape
+// like ConvexRectangle and Circle which should
+// be the only shapes we need
+
+// Circle Bounding Box. Becuase can't use a generic container
+// like resolv.IShape becuase the "NewComponentType" creates a
+// pointer of it and at this point I can't put things inside it
+var CircleBBox = donburi.NewComponentType[resolv.Circle]()
+var ConvexPolygonBBox = donburi.NewComponentType[resolv.ConvexPolygon]()
+
+// doesn't work...
+//var Object = donburi.NewComponentType[resolv.IShape]()

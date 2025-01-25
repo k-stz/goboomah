@@ -22,8 +22,12 @@ var (
 
 	Player = newArchetype(
 		tags.Player,
-		components.Sprite,   // maps TileIDs to ebiten.Images
-		transform.Transform, // Testing: used instead of Rectangle...
+		// will store speed vector for input in collision system
+		components.Player,
+		components.Sprite,     // maps TileIDs to ebiten.Images
+		transform.Transform,   // Contains transform data
+		components.CircleBBox, // used for collision detection
+		// why don't I need to add the AddCirecle... yet?
 	)
 
 	ArenaTile = newArchetype(
