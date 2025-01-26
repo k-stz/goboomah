@@ -1,7 +1,6 @@
 package systems
 
 import (
-	"fmt"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -9,8 +8,6 @@ import (
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
 	"github.com/yohamta/donburi/ecs"
-	"github.com/yohamta/donburi/features/math"
-	"github.com/yohamta/donburi/features/transform"
 )
 
 // Here handle player input and update velocity/movement
@@ -18,7 +15,7 @@ import (
 func UpdatePlayer(ecs *ecs.ECS) {
 	//tileSpiralEffect(ecs)
 	playerEntry, _ := tags.Player.First(ecs.World)
-	tf := transform.Transform.Get(playerEntry)
+	//tf := transform.Transform.Get(playerEntry)
 	player := components.Player.Get(playerEntry)
 	var x float64
 	var y float64
@@ -43,21 +40,21 @@ func UpdatePlayer(ecs *ecs.ECS) {
 	// rotation for fun
 
 	// this can be done without colision detection
-	if ebiten.IsKeyPressed(ebiten.KeyR) {
-		tf.LocalRotation += 0.25
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyE) {
-		tf.LocalRotation -= 0.25
-	}
-	scaleSpeed := 0.01
-	if ebiten.IsKeyPressed(ebiten.KeyG) {
-		tf.LocalScale = tf.LocalScale.Add(math.NewVec2(
-			scaleSpeed, scaleSpeed))
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyF) {
-		tf.LocalScale = tf.LocalScale.Add(math.NewVec2(
-			-scaleSpeed, -scaleSpeed))
-	}
+	// if ebiten.IsKeyPressed(ebiten.KeyR) {
+	// 	tf.LocalRotation += 0.25
+	// }
+	// if ebiten.IsKeyPressed(ebiten.KeyE) {
+	// 	tf.LocalRotation -= 0.25
+	// }
+	// scaleSpeed := 0.01
+	// if ebiten.IsKeyPressed(ebiten.KeyG) {
+	// 	tf.LocalScale = tf.LocalScale.Add(math.NewVec2(
+	// 		scaleSpeed, scaleSpeed))
+	// }
+	// if ebiten.IsKeyPressed(ebiten.KeyF) {
+	// 	tf.LocalScale = tf.LocalScale.Add(math.NewVec2(
+	// 		-scaleSpeed, -scaleSpeed))
+	// }
 }
 
 func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
@@ -70,9 +67,9 @@ func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
 
 		// TODO: use bbox as basis to draw player not the
 		// other way around
-		circleBBox := components.CircleBBox.Get(entry)
-		pos := circleBBox.Position()
-		rad := circleBBox.Radius()
+		circleShape := components.ShapeCircle.Get(entry)
+		pos := circleShape.Circle.Position()
+		rad := circleShape.Circle.Radius()
 		diameter := max(halfW, halfH)
 		// diameter * x = radius
 		scale := rad / diameter
@@ -95,9 +92,9 @@ func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
 		// draw bounding box of player
 		// TODO: Add toggle to control this via a Config Setting
 		// for the game! Put this into a bbox-render ecs system
-		playerObject := components.CircleBBox.Get(entry)
-		c := playerObject.Position() // position should be center for a circle...
-		radius := float32(playerObject.Radius())
+		playerObject := components.ShapeCircle.Get(entry)
+		c := playerObject.Circle.Position() // position should be center for a circle...
+		radius := float32(playerObject.Circle.Radius())
 		vector.DrawFilledCircle(screen, float32(c.X), float32(c.Y), radius, color.RGBA{0xff, 0, 0, 10}, false)
 	}
 }

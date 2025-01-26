@@ -67,9 +67,9 @@ func UpdateObjects(ecs *ecs.ECS) {
 	playerEntry, _ := tags.Player.First(ecs.World)
 	player := components.Player.Get(playerEntry)
 	tf := transform.Transform.Get(playerEntry)
-	playerSprite := components.Sprite.Get(playerEntry)
-	playerCircleBBox := components.CircleBBox.Get(playerEntry)
-	components.SetCircleBBox(playerCircleBBox, tf, playerSprite.Image)
+	//playerSprite := components.Sprite.Get(playerEntry)
+	playerCircle := components.ShapeCircle.Get(playerEntry).Circle
+	//components.SetCircleBBox(playerCircleBBox, tf, playerSprite.Image)
 
 	//fmt.Println("player speed:", player.Speed)
 	// if player.Speed.IsZero() {
@@ -93,12 +93,12 @@ func UpdateObjects(ecs *ecs.ECS) {
 
 	Movement = Movement.Add(movement.Scale(accel)).SubMagnitude(friction).ClampMagnitude(maxSpd)
 
-	playerCircleBBox.MoveVec(resolv.NewVector(player.Speed.X, player.Speed.Y))
+	playerCircle.MoveVec(resolv.NewVector(player.Speed.X, player.Speed.Y))
 
-	playerCircleBBox.IntersectionTest(resolv.IntersectionTestSettings{
-		TestAgainst: playerCircleBBox.SelectTouchingCells(1).FilterShapes(),
+	playerCircle.IntersectionTest(resolv.IntersectionTestSettings{
+		TestAgainst: playerCircle.SelectTouchingCells(1).FilterShapes(),
 		OnIntersect: func(set resolv.IntersectionSet) bool {
-			playerCircleBBox.MoveVec(set.MTV)
+			playerCircle.MoveVec(set.MTV)
 			fmt.Println("COLLISION, applying MTV", set.MTV)
 			// also update the tf.LocalTransform
 			//player.Speed.X = 0

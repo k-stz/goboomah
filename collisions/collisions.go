@@ -6,9 +6,9 @@ import (
 	"github.com/yohamta/donburi"
 )
 
-func AddCircleBBox(space *donburi.Entry, objects ...*donburi.Entry) {
+func AddCircle(space *donburi.Entry, objects ...*donburi.Entry) {
 	for _, obj := range objects {
-		components.Space.Get(space).Add(GetCircleBBox(obj))
+		components.Space.Get(space).Add(GetCircleShape(obj))
 	}
 }
 
@@ -18,8 +18,8 @@ func AddConvexPolygonBBox(space *donburi.Entry, objects ...*donburi.Entry) {
 	}
 }
 
-func GetCircleBBox(entry *donburi.Entry) *resolv.Circle {
-	return components.CircleBBox.Get(entry)
+func GetCircleShape(entry *donburi.Entry) *resolv.Circle {
+	return components.ShapeCircle.Get(entry).Circle
 }
 
 func GetConvexPolygonBBox(entry *donburi.Entry) *resolv.ConvexPolygon {

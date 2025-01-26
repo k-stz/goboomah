@@ -1,6 +1,7 @@
 package components
 
 import (
+	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/features/math"
 )
@@ -14,4 +15,16 @@ type PlayerData struct {
 	Speed math.Vec2
 }
 
+// Used for Collision detection and also to superimpose the
+// objects Image on top of it. That's why Scale, Radius, Rotation
+// is added to derive the values when later drawing e.g. the
+// players image on top of it.
+type ShapeCircleData struct {
+	Circle   *resolv.Circle
+	Radius   float64 // original radius used for scaling
+	Scale    float64 // Used to update Radius
+	Rotation float64 // used to superimpose image inside
+}
+
 var Player = donburi.NewComponentType[PlayerData]()
+var ShapeCircle = donburi.NewComponentType[ShapeCircleData]()

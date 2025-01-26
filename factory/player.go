@@ -25,10 +25,15 @@ func CreatePlayer(ecs *ecs.ECS) *donburi.Entry {
 
 	circleObj := resolv.NewCircle(x+w/2, y+h-w/2, w)
 	//components.SetCircleBBox(circleObj, tf, playerSprite.Image)
-	components.CircleBBox.Set(playerEntry, circleObj)
-
 	scale := 1.0
+	components.ShapeCircle.Set(playerEntry, &components.ShapeCircleData{
+		Circle:   circleObj,
+		Radius:   w,
+		Scale:    scale,
+		Rotation: 0.0,
+	})
 
+	// TODO deltete all transform.Transform references once this is done
 	tf := transform.Transform.Get(playerEntry)
 	tf.LocalPosition = math.Vec2{
 		// TODO: this is a good idea, lets store screen dimensions
