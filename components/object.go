@@ -60,6 +60,26 @@ func Level1() *TileGridData {
 	return NewTileGridData(tg, 16.0)
 }
 
+// Fix: Level layout not intuitive..
+// doesn't look like you write it in here
+// Fixme 2: the last row sollids are not noticed?
+func LevelLa() *TileGridData {
+	tg := tileGrid{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 1, 1, 1, 1, 1, 0},
+		{0, 0, 0, 0, 0, 1, 0},
+		{0, 0, 0, 0, 0, 1, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 1, 1, 1, 1, 0},
+		{0, 1, 0, 1, 0, 0, 0},
+		{0, 1, 0, 1, 0, 0, 0},
+		{0, 0, 1, 1, 1, 1, 0},
+		{1, 0, 0, 0, 0, 0, 0},
+	}
+
+	return NewTileGridData(tg, 16.0)
+}
+
 func PrintGrid(tg tileGrid) {
 	for _, row := range tg {
 		for _, v := range row {
