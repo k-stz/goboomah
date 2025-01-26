@@ -83,13 +83,11 @@ func UpdateObjects(ecs *ecs.ECS) {
 		fmt.Println("Tiles exists, yes?", count, entry.Id())
 	}
 
-	//movement := resolv.NewVectorZero()
+	// This doesn't modulate the speed properly
 	movement := resolv.NewVector(player.Speed.X, player.Speed.Y)
 	maxSpd := 1.0
 	friction := 0.5
 	accel := 0.5 + friction
-
-	//Movement := resolv.NewVector(player.Speed.X, player.Speed.Y)
 
 	movement = movement.Add(movement.Scale(accel)).SubMagnitude(friction).ClampMagnitude(maxSpd)
 
@@ -110,27 +108,6 @@ func UpdateObjects(ecs *ecs.ECS) {
 	// Update scale
 	circle := playerShape.Circle
 	circle.SetRadius(playerShape.Scale * playerShape.Radius)
-
-	// movePlayer := math.NewVec2(Movement.X, Movement.Y)
-
-	//center := playerCircleBBox.Position()
-
-	//bbxy := CircleBottomLeftPos(playerCircleBBox)
-	//fmt.Println("Player BBox", playerCircleBBox.Position())
-	//fmt.Println("corners:", playerCircleBBox.Bounds())
-	//playerCircleBBox.MoveVec(resolv.NewVector(player.Speed.X, player.Speed.Y))
-
-	//tf.LocalPosition = tf.LocalPosition.Add(movePlayer)
-
-	// for e := range components.Object.Iter(ecs.World) {
-	// 	obj := collisions.GetObject(e)
-
-	// 	//fmt.Println("obj bounds", obj.Points)
-	// 	intersection := obj.Intersection(rect)
-	// 	if !intersection.IsEmpty() {
-	// 		fmt.Println("They're touching! Here's the data:", intersection)
-	// 	}
-	// }
 }
 
 func DrawPhysics(ecs *ecs.ECS, screen *ebiten.Image) {

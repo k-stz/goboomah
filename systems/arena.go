@@ -92,8 +92,8 @@ func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 	for entry := range tags.Tile.Iter(ecs.World) {
 		// tf := transform.Transform.Get(entry)
 		bbox := components.ConvexPolygonBBox.Get(entry)
-		x := float32(bbox.Position().X)
-		y := float32(bbox.Position().Y)
+		x := float32(bbox.Position().X - bbox.Bounds().Width()/2)
+		y := float32(bbox.Position().Y - bbox.Bounds().Width()/2)
 		bbox.Bounds()
 		//
 		vector.DrawFilledRect(screen, x, y, tileDiameter32, tileDiameter32, color.RGBA{0xff, 0, 0, uint8(entry.Id())}, false)

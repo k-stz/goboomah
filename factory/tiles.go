@@ -30,7 +30,7 @@ func CreateSolidTiles(ecs *ecs.ECS, arenaEntry *donburi.Entry) *donburi.Entry {
 				components.Sprite.Get(entry).Image = tileMap[tileID]
 				offsetX := (float64(x) * dx) + tf.LocalPosition.X
 				offsetY := float64(y)*dx + tf.LocalPosition.Y
-				bbox := resolv.NewRectangle(offsetX, offsetY, dx, dx)
+				bbox := resolv.NewRectangle(offsetX+dx/2, offsetY+dx/2, dx, dx)
 				components.ConvexPolygonBBox.Set(entry, bbox)
 			}
 		}

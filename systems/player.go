@@ -1,10 +1,7 @@
 package systems
 
 import (
-	"image/color"
-
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
 	"github.com/yohamta/donburi/ecs"
@@ -92,9 +89,9 @@ func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
 		// draw bounding box of player
 		// TODO: Add toggle to control this via a Config Setting
 		// for the game! Put this into a bbox-render ecs system
-		playerObject := components.ShapeCircle.Get(entry)
-		c := playerObject.Circle.Position() // position should be center for a circle...
-		radius := float32(playerObject.Circle.Radius())
-		vector.DrawFilledCircle(screen, float32(c.X), float32(c.Y), radius, color.RGBA{0xff, 0, 0, 10}, false)
+		// playerObject := components.ShapeCircle.Get(entry)
+		// c := playerObject.Circle.Position() // position should be center for a circle...
+		// radius := float32(playerObject.Circle.Radius())
+		// vector.DrawFilledCircle(screen, float32(c.X), float32(c.Y), radius, color.RGBA{0xff, 0, 0, 10}, false)
 	}
 }
