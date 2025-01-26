@@ -22,6 +22,11 @@ func CreatePlayer(ecs *ecs.ECS) *donburi.Entry {
 	h := float64(playerSprite.Image.Bounds().Dy())
 
 	x, y := -20.0, 200.0
+
+	circleObj := resolv.NewCircle(x+w/2, y+h-w/2, w)
+	//components.SetCircleBBox(circleObj, tf, playerSprite.Image)
+	components.CircleBBox.Set(playerEntry, circleObj)
+
 	scale := 1.0
 
 	tf := transform.Transform.Get(playerEntry)
@@ -38,10 +43,6 @@ func CreatePlayer(ecs *ecs.ECS) *donburi.Entry {
 		Y: scale,
 	}
 	tf.LocalRotation = 0.0
-
-	circleObj := resolv.NewCircle(x+w/2, y+h-w/2, w)
-	components.SetCircleBBox(circleObj, tf, playerSprite.Image)
-	components.CircleBBox.Set(playerEntry, circleObj)
 
 	fmt.Println("added player collision obj:", circleObj)
 

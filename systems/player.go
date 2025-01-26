@@ -1,6 +1,7 @@
 package systems
 
 import (
+	"fmt"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -21,18 +22,17 @@ func UpdatePlayer(ecs *ecs.ECS) {
 	player := components.Player.Get(playerEntry)
 	var x float64
 	var y float64
-	velocity := 1.0
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
-		x = velocity * -1.0
+		x = -1.0
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyRight) {
-		x = velocity * 1.0
+		x = 1.0
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		y = velocity * -1.0
+		y = -1.0
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyDown) {
-		y = velocity * 1.0
+		y = 1.0
 	}
 	player.Speed.X = x
 	player.Speed.Y = y
@@ -68,21 +68,27 @@ func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
 		halfW := float64(playerSprite.Image.Bounds().Dx() / 2)
 		halfH := float64(playerSprite.Image.Bounds().Dy() / 2)
 
-		tf := transform.Transform.Get(entry)
-		var offsetX float64
-		var offsetY float64
-		// yes, looking up the image in a hash will kill locality
-		// causing cache misses
-		offsetX = tf.LocalPosition.X
-		offsetY = tf.LocalPosition.Y
+		// TODO: use bbox as basis to draw player not the
+		// other way around
+		circleBBox := components.CircleBBox.Get(entry)
+		pos := circleBBox.Position()
+		rad := circleBBox.Radius()
+		diameter := max(halfW, halfH)
+		// diameter * x = radius
+		scale := rad / diameter
+
+		var offsetX float64 = pos.X
+		var offsetY float64 = pos.Y //- halfH + halfW
+
+		//tf := transform.Transform.Get(entry)
 		op := &ebiten.DrawImageOptions{}
 		// translate to origin, so scaling and rotation work
 		// intuitively
+		//
 		op.GeoM.Translate(-halfW, -halfH)
-		op.GeoM.Rotate(tf.LocalRotation)
-		op.GeoM.Scale(tf.LocalScale.X, tf.LocalScale.Y)
-		op.GeoM.Translate(halfW, halfH)
-		//fmt.Println("player op", tf.LocalPosition)
+		//op.GeoM.Rotate(tf.LocalRotation)
+		op.GeoM.Scale(scale, scale)
+		//op.GeoM.Translate(halfW, halfH)
 		op.GeoM.Translate(offsetX, offsetY)
 		screen.DrawImage(playerSprite.Image, op)
 

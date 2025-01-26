@@ -10,10 +10,57 @@ import (
 	"github.com/k-stz/goboomer/tags"
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi/ecs"
+	"github.com/yohamta/donburi/features/math"
 	"github.com/yohamta/donburi/features/transform"
 )
 
 var rect = resolv.NewRectangle(200, 100, 32, 32)
+
+func UpdateObjects2(ecs *ecs.ECS) {
+	playerEntry, _ := tags.Player.First(ecs.World)
+	//player := components.Player.Get(playerEntry)
+	tf := transform.Transform.Get(playerEntry)
+	playerSprite := components.Sprite.Get(playerEntry)
+	playerCircleBBox := components.CircleBBox.Get(playerEntry)
+	components.SetCircleBBox(playerCircleBBox, tf, playerSprite.Image)
+
+	c := playerCircleBBox
+
+	movement := resolv.NewVectorZero()
+	maxSpd := 4.0
+	friction := 0.5
+	accel := 0.5 + friction
+
+	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
+		movement.X -= 1
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyRight) {
+		movement.X += 1
+	}
+
+	if ebiten.IsKeyPressed(ebiten.KeyUp) {
+		movement.Y -= 1
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyDown) {
+		movement.Y += 1
+	}
+
+	Movement := resolv.NewVector(tf.LocalPosition.X, tf.LocalPosition.Y)
+	Movement = Movement.Add(movement.Scale(accel)).SubMagnitude(friction).ClampMagnitude(maxSpd)
+
+	//tf.LocalPosition = math.NewVec2(Movement.X, Movement.Y)
+
+	c.MoveVec(Movement)
+
+	c.IntersectionTest(resolv.IntersectionTestSettings{
+		TestAgainst: c.SelectTouchingCells(1).FilterShapes(),
+		OnIntersect: func(set resolv.IntersectionSet) bool {
+			fmt.Println("Intersectiong!")
+			c.MoveVec(set.MTV)
+			return true
+		},
+	})
+}
 
 // Here we handle all the collisions detection and response
 func UpdateObjects(ecs *ecs.ECS) {
@@ -25,13 +72,11 @@ func UpdateObjects(ecs *ecs.ECS) {
 	components.SetCircleBBox(playerCircleBBox, tf, playerSprite.Image)
 
 	//fmt.Println("player speed:", player.Speed)
-	if player.Speed.IsZero() {
-		fmt.Println("is zero")
-		return
-	}
+	// if player.Speed.IsZero() {
+	// 	return
+	// }
 	// calculate player position handle colliison here
 	// Collision Detection and Response time!
-	fmt.Println("##### Shape Filter", playerCircleBBox.SelectTouchingCells(1).FilterShapes())
 
 	count := 0
 	for entry := range components.Tile.Iter(ecs.World) {
@@ -39,19 +84,29 @@ func UpdateObjects(ecs *ecs.ECS) {
 		fmt.Println("Tiles exists, yes?", count, entry.Id())
 	}
 
+	movement := resolv.NewVectorZero()
+	maxSpd := 4.0
+	friction := 0.5
+	accel := 0.5 + friction
+
+	Movement := resolv.NewVector(player.Speed.X, player.Speed.Y)
+
+	Movement = Movement.Add(movement.Scale(accel)).SubMagnitude(friction).ClampMagnitude(maxSpd)
+
 	playerCircleBBox.MoveVec(resolv.NewVector(player.Speed.X, player.Speed.Y))
+
 	playerCircleBBox.IntersectionTest(resolv.IntersectionTestSettings{
 		TestAgainst: playerCircleBBox.SelectTouchingCells(1).FilterShapes(),
 		OnIntersect: func(set resolv.IntersectionSet) bool {
 			playerCircleBBox.MoveVec(set.MTV)
 			fmt.Println("COLLISION, applying MTV", set.MTV)
 			// also update the tf.LocalTransform
-			player.Speed.X = 0
-			player.Speed.Y = 0
+			//player.Speed.X = 0
+			//player.Speed.Y = 0
 			return true
 		},
 	})
-	movePlayer := player.Speed
+	movePlayer := math.NewVec2(Movement.X, Movement.Y)
 
 	//center := playerCircleBBox.Position()
 
