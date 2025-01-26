@@ -10,6 +10,10 @@ import (
 // Here handle player input and update velocity/movement
 // laeter collision response will be collected from here
 func UpdatePlayer(ecs *ecs.ECS) {
+	// NEXT TODO: implement within which Arena Cell the player
+	// is. This will be used for placing, spawns and placing
+	// bombs
+
 	//tileSpiralEffect(ecs)
 	playerEntry, _ := tags.Player.First(ecs.World)
 	player := components.Player.Get(playerEntry)

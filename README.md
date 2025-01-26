@@ -17,7 +17,7 @@ You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 # Concepts
 
 ## ECS - Entity component system
-use this for spirte mangement, rendering, control
+use this for spire mangement, rendering, control
 
 Sources:
 - "How to build animations with ebiten using the ECS pattern" https://co0p.github.io/posts/ecs-animation/
@@ -28,12 +28,18 @@ Sources:
 ## tilemap
 Use this for the stage representation
 
-# Assets
+# Licenses / Credit
+## Assets
 - The tiles are from https://kenney.nl/assets/tiny-town and in the public domain (CC0 License)
 - https://github.com/MariaLetta/free-gophers-pack/tree/master
 License CC0 for those in the public domain.
 
 - Gopher Pictures: The Go Gopher by Renee French is licensed under the Creative Commons Attribution 4.0 License.
+
+## Libararies
+- ebitengine: " A dead simple 2D game engine for Go" by Hajime Hoshi, Apache-2.0 license 
+- donburi: "ECS library for Go/Ebitengine", MIT License, (c) 2022 Yota Hamada
+- resolv: "A Simple 2D Golang collision detection and resolution library" by "SolarLune", MIT License Copyright (c) 2018-2021 SolarLune
 
 # TODOs
 - [ ] add "resolv" physics engine (great examples)
