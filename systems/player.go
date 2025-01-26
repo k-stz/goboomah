@@ -88,12 +88,10 @@ func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
 
 		// draw bounding box of player
 		// TODO: Add toggle to control this via a Config Setting
-		// for the game!
+		// for the game! Put this into a bbox-render ecs system
 		playerObject := components.CircleBBox.Get(entry)
 		c := playerObject.Position() // position should be center for a circle...
 		radius := float32(playerObject.Radius())
 		vector.DrawFilledCircle(screen, float32(c.X), float32(c.Y), radius, color.RGBA{0xff, 0, 0, 10}, false)
-		//		"github.com/hajimehoshi/ebiten/v2/vector"
-
 	}
 }

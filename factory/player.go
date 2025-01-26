@@ -21,7 +21,7 @@ func CreatePlayer(ecs *ecs.ECS) *donburi.Entry {
 	w := float64(playerSprite.Image.Bounds().Dx())
 	h := float64(playerSprite.Image.Bounds().Dy())
 
-	x, y := 50.0, 200.0
+	x, y := -20.0, 200.0
 	scale := 1.0
 
 	tf := transform.Transform.Get(playerEntry)

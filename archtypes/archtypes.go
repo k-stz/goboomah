@@ -1,8 +1,6 @@
 package archtypes
 
 import (
-	"fmt"
-
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/layers"
 	"github.com/k-stz/goboomer/tags"
@@ -43,6 +41,7 @@ var (
 
 	// "resolv"'s physics engine "space"
 	Space = newArchetype(
+		tags.Space,
 		components.Space,
 	)
 	// FloatingPlatform = newArchetype(
@@ -88,12 +87,9 @@ func newArchetype(cs ...donburi.IComponentType) *archetype {
 
 // Spawn adds a new entry to the ecs
 func (a *archetype) Spawn(ecs *ecs.ECS, cs ...donburi.IComponentType) *donburi.Entry {
-	fmt.Println("archtype components:", a.components)
-	fmt.Println("additional components:", cs)
 	e := ecs.World.Entry(ecs.Create(
 		layers.Default,
 		append(a.components, cs...)...,
 	))
-	fmt.Println("POST SPAWN")
 	return e
 }

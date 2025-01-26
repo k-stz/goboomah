@@ -57,34 +57,38 @@ func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 	//
 	//
 	// The Arena itself gets created in factory.CreateArena
-	for entry := range tags.Arena.Iter(ecs.World) {
-		//o := dresolv.GetObject(e)
-		tg := components.TileGrid.Get(entry)
-		tileMap := *components.TileMap.Get(entry)
-		//components.PrintGrid(tg.Grid)
-		tf := transform.Transform.Get(entry)
 
-		var tileImage *ebiten.Image
-		dx := tg.TileDiameter * tf.LocalScale.X
-		var offsetX float64
-		var offsetY float64
-		for x, row := range tg.Grid {
-			for y, tileID := range row {
-				// yes, looking up the image in a hash will kill locality
-				// causing cache misses
-				tileImage = tileMap[tileID]
-				offsetX = (float64(x) * dx) + tf.LocalPosition.X
-				offsetY = float64(y)*dx + tf.LocalPosition.Y
-				op := &ebiten.DrawImageOptions{}
-				op.GeoM.Rotate(tf.LocalRotation)
-				op.GeoM.Scale(tf.LocalScale.X, tf.LocalScale.Y)
-				op.GeoM.Translate(offsetX, offsetY)
-				screen.DrawImage(tileImage, op)
-			}
+	// Draw collision for all the
+	arenaEntry, ok := tags.Arena.First(ecs.World)
+	if !ok {
+		panic("No arenaEntry")
+	}
+	//o := dresolv.GetObject(e)
+	tg := components.TileGrid.Get(arenaEntry)
+	tileMap := *components.TileMap.Get(arenaEntry)
+	//components.PrintGrid(tg.Grid)
+	tf := transform.Transform.Get(arenaEntry)
+
+	var tileImage *ebiten.Image
+	tileDiameter := tg.TileDiameter
+	var offsetX float64
+	var offsetY float64
+	for x, row := range tg.Grid {
+		for y, tileID := range row {
+			// yes, looking up the image in a hash will kill locality
+			// causing cache misses
+			tileImage = tileMap[tileID]
+			offsetX = (float64(x) * tileDiameter) + tf.LocalPosition.X
+			offsetY = float64(y)*tileDiameter + tf.LocalPosition.Y
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Rotate(tf.LocalRotation)
+			op.GeoM.Scale(tf.LocalScale.X, tf.LocalScale.Y)
+			op.GeoM.Translate(offsetX, offsetY)
+			screen.DrawImage(tileImage, op)
 		}
 	}
 
-	// Draw collision for all the
+	tileDiameter32 := float32(tileDiameter)
 	for entry := range tags.Tile.Iter(ecs.World) {
 		// tf := transform.Transform.Get(entry)
 		bbox := components.ConvexPolygonBBox.Get(entry)
@@ -92,7 +96,7 @@ func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 		y := float32(bbox.Position().Y)
 		bbox.Bounds()
 		//
-		vector.DrawFilledRect(screen, x, y, 10, 10, color.RGBA{0xff, 0, 0, uint8(entry.Id())}, false)
+		vector.DrawFilledRect(screen, x, y, tileDiameter32, tileDiameter32, color.RGBA{0xff, 0, 0, uint8(entry.Id())}, false)
 		//x := tf.LocalPosition.X
 		// y := tf.LocalPosition.Y
 		// fmt.Println("x,y", x, y)

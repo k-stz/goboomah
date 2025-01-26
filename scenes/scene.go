@@ -10,6 +10,7 @@ import (
 	"github.com/k-stz/goboomer/factory"
 	"github.com/k-stz/goboomer/layers"
 	"github.com/k-stz/goboomer/systems"
+	"github.com/k-stz/goboomer/tags"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
 )
@@ -43,6 +44,7 @@ func (gs *GameScene) configure() {
 
 	ecs.AddRenderer(layers.Default, systems.DrawArena)
 	ecs.AddRenderer(layers.Default, systems.DrawPlayer)
+	ecs.AddRenderer(layers.Default, systems.DrawPhysics)
 
 	//ecs.AddRenderer(layers.Default, systems.DrawArenaTiles)
 	// Now we create the LevelMap
@@ -53,8 +55,6 @@ func (gs *GameScene) configure() {
 	//entry := ecs.World.Entry(myWallEntitty)
 
 	gs.ecs = ecs
-
-	gameEntry := factory.CreateGame(gs.ecs, gs.ScreenWidth, gs.ScreenHeigh)
 
 	//MyWall.SetValue(entry, WallComponent{x: 100, y: 100, w: 100.0, h: 100.0})
 	//ecs.AddRenderer(Default, DrawWall)
@@ -72,7 +72,17 @@ func (gs *GameScene) configure() {
 	arenaEntry := factory.CreateArena(gs.ecs)
 	factory.CreateSolidTiles(gs.ecs, arenaEntry)
 	playerEntry := factory.CreatePlayer(gs.ecs)
-	fmt.Println("Created Entries", arenaEntry, playerEntry, gameEntry, spaceEntry)
+	fmt.Println("Created Entries IDs:", arenaEntry.Id(), playerEntry.Id(), spaceEntry.Id())
 
 	collisions.AddCircleBBox(spaceEntry, playerEntry)
+	addSolidTilesSpace(spaceEntry, ecs)
+}
+
+func addSolidTilesSpace(spaceEntry *donburi.Entry, ecs *ecs.ECS) {
+	// just save them in the arenaentry instead?
+	// they should be recalculated with the areana?
+	// We might want to implement a Camera later for larger stages...
+	for entry := range tags.Tile.Iter(ecs.World) {
+		collisions.AddConvexPolygonBBox(spaceEntry, entry)
+	}
 }

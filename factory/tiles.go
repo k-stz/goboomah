@@ -21,6 +21,7 @@ func CreateSolidTiles(ecs *ecs.ECS, arenaEntry *donburi.Entry) *donburi.Entry {
 	tf := transform.Transform.Get(arenaEntry)
 
 	dx := tg.TileDiameter * tf.LocalScale.X
+	tg.TileDiameter = dx
 	for x, row := range tg.Grid {
 		for y, tileID := range row {
 			// 1 == is solid tiles
