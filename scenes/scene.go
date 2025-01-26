@@ -6,7 +6,9 @@ import (
 	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/k-stz/goboomer/collisions"
+	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/factory"
 	"github.com/k-stz/goboomer/layers"
 	"github.com/k-stz/goboomer/systems"
@@ -29,6 +31,13 @@ func (gs *GameScene) Update() {
 func (gs *GameScene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{20, 20, 40, 255})
 	gs.ecs.Draw(screen)
+	// Render player debugging information
+	playerEntry, _ := tags.Player.First(gs.ecs.World)
+	playerShape := components.ShapeCircle.Get(playerEntry)
+	playerPosStr := fmt.Sprintf("Pos: %s\n Radius: %f",
+		playerShape.Circle.Position(), playerShape.Circle.Radius())
+	ebitenutil.DebugPrintAt(screen, playerPosStr, 0, 40)
+
 }
 
 // the the ECS gets initialized

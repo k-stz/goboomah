@@ -110,6 +110,7 @@ func UpdateObjects(ecs *ecs.ECS) {
 	circle.SetRadius(playerShape.Scale * playerShape.Radius)
 }
 
+// This renders the Collision Detection Bounding Boxes and Circles
 func DrawPhysics(ecs *ecs.ECS, screen *ebiten.Image) {
 	spaceEntry, _ := tags.Space.First(ecs.World)
 	space := components.Space.Get(spaceEntry)
@@ -123,6 +124,7 @@ func DrawPhysics(ecs *ecs.ECS, screen *ebiten.Image) {
 		drawColor := color.RGBA{32, 255, 128, 255}
 
 		switch o := shape.(type) {
+		// currently Circle is just the player
 		case *resolv.Circle:
 			vector.StrokeCircle(screen, float32(o.Position().X), float32(o.Position().Y), float32(o.Radius()), 2, drawColorCircle, false)
 		case *resolv.ConvexPolygon:

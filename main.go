@@ -39,10 +39,10 @@ var count int = 10000
 // non nil error!
 func (g *Game) Update() error {
 	count--
-	if count < 0 {
-		// ebiten.Termination signifies a clean, wanted, termination of the game
-		return ebiten.Termination
-	}
+	// if count < 0 {
+	// 	// ebiten.Termination signifies a clean, wanted, termination of the game
+	// 	return ebiten.Termination
+	// }
 	g.scene.Update()
 	return nil
 }
