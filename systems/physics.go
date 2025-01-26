@@ -10,7 +10,6 @@ import (
 	"github.com/k-stz/goboomer/tags"
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi/ecs"
-	"github.com/yohamta/donburi/features/math"
 	"github.com/yohamta/donburi/features/transform"
 )
 
@@ -66,9 +65,9 @@ func UpdateObjects2(ecs *ecs.ECS) {
 func UpdateObjects(ecs *ecs.ECS) {
 	playerEntry, _ := tags.Player.First(ecs.World)
 	player := components.Player.Get(playerEntry)
-	tf := transform.Transform.Get(playerEntry)
+	//tf := transform.Transform.Get(playerEntry)
 	//playerSprite := components.Sprite.Get(playerEntry)
-	playerCircle := components.ShapeCircle.Get(playerEntry).Circle
+	playerShape := components.ShapeCircle.Get(playerEntry)
 	//components.SetCircleBBox(playerCircleBBox, tf, playerSprite.Image)
 
 	//fmt.Println("player speed:", player.Speed)
@@ -84,21 +83,22 @@ func UpdateObjects(ecs *ecs.ECS) {
 		fmt.Println("Tiles exists, yes?", count, entry.Id())
 	}
 
-	movement := resolv.NewVectorZero()
-	maxSpd := 4.0
+	//movement := resolv.NewVectorZero()
+	movement := resolv.NewVector(player.Speed.X, player.Speed.Y)
+	maxSpd := 1.0
 	friction := 0.5
 	accel := 0.5 + friction
 
-	Movement := resolv.NewVector(player.Speed.X, player.Speed.Y)
+	//Movement := resolv.NewVector(player.Speed.X, player.Speed.Y)
 
-	Movement = Movement.Add(movement.Scale(accel)).SubMagnitude(friction).ClampMagnitude(maxSpd)
+	movement = movement.Add(movement.Scale(accel)).SubMagnitude(friction).ClampMagnitude(maxSpd)
 
-	playerCircle.MoveVec(resolv.NewVector(player.Speed.X, player.Speed.Y))
+	playerShape.Circle.MoveVec(movement.Scale(5))
 
-	playerCircle.IntersectionTest(resolv.IntersectionTestSettings{
-		TestAgainst: playerCircle.SelectTouchingCells(1).FilterShapes(),
+	playerShape.Circle.IntersectionTest(resolv.IntersectionTestSettings{
+		TestAgainst: playerShape.Circle.SelectTouchingCells(1).FilterShapes(),
 		OnIntersect: func(set resolv.IntersectionSet) bool {
-			playerCircle.MoveVec(set.MTV)
+			playerShape.Circle.MoveVec(set.MTV)
 			fmt.Println("COLLISION, applying MTV", set.MTV)
 			// also update the tf.LocalTransform
 			//player.Speed.X = 0
@@ -106,7 +106,12 @@ func UpdateObjects(ecs *ecs.ECS) {
 			return true
 		},
 	})
-	movePlayer := math.NewVec2(Movement.X, Movement.Y)
+
+	// Update scale
+	circle := playerShape.Circle
+	circle.SetRadius(playerShape.Scale * playerShape.Radius)
+
+	// movePlayer := math.NewVec2(Movement.X, Movement.Y)
 
 	//center := playerCircleBBox.Position()
 
@@ -115,7 +120,7 @@ func UpdateObjects(ecs *ecs.ECS) {
 	//fmt.Println("corners:", playerCircleBBox.Bounds())
 	//playerCircleBBox.MoveVec(resolv.NewVector(player.Speed.X, player.Speed.Y))
 
-	tf.LocalPosition = tf.LocalPosition.Add(movePlayer)
+	//tf.LocalPosition = tf.LocalPosition.Add(movePlayer)
 
 	// for e := range components.Object.Iter(ecs.World) {
 	// 	obj := collisions.GetObject(e)

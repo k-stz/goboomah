@@ -17,6 +17,7 @@ func UpdatePlayer(ecs *ecs.ECS) {
 	playerEntry, _ := tags.Player.First(ecs.World)
 	//tf := transform.Transform.Get(playerEntry)
 	player := components.Player.Get(playerEntry)
+	playerShape := components.ShapeCircle.Get(playerEntry)
 	var x float64
 	var y float64
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
@@ -46,15 +47,14 @@ func UpdatePlayer(ecs *ecs.ECS) {
 	// if ebiten.IsKeyPressed(ebiten.KeyE) {
 	// 	tf.LocalRotation -= 0.25
 	// }
-	// scaleSpeed := 0.01
-	// if ebiten.IsKeyPressed(ebiten.KeyG) {
-	// 	tf.LocalScale = tf.LocalScale.Add(math.NewVec2(
-	// 		scaleSpeed, scaleSpeed))
-	// }
-	// if ebiten.IsKeyPressed(ebiten.KeyF) {
-	// 	tf.LocalScale = tf.LocalScale.Add(math.NewVec2(
-	// 		-scaleSpeed, -scaleSpeed))
-	// }
+	scaleSpeed := 0.01
+	if ebiten.IsKeyPressed(ebiten.KeyG) {
+		playerShape.Scale += scaleSpeed
+
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyF) {
+		playerShape.Scale -= scaleSpeed
+	}
 }
 
 func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
