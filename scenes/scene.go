@@ -34,10 +34,16 @@ func (gs *GameScene) Draw(screen *ebiten.Image) {
 	// Render player debugging information
 	playerEntry, _ := tags.Player.First(gs.ecs.World)
 	playerShape := components.ShapeCircle.Get(playerEntry)
-	playerPosStr := fmt.Sprintf("Pos: %s\n Radius: %f",
-		playerShape.Circle.Position(), playerShape.Circle.Radius())
-	ebitenutil.DebugPrintAt(screen, playerPosStr, 0, 40)
+	playerData := components.Player.Get(playerEntry)
 
+	totalBombs := 0
+	gameSceneStateStr := fmt.Sprintf("Pos: %s\n Radius: %f\nBombs: %d\nPower: %d\nTotalBombs: %d\n",
+		playerShape.Circle.Position(),
+		playerShape.Circle.Radius(),
+		playerData.Bombs,
+		playerData.Power,
+		totalBombs)
+	ebitenutil.DebugPrintAt(screen, gameSceneStateStr, 0, 40)
 }
 
 // the the ECS gets initialized
@@ -49,9 +55,11 @@ func (gs *GameScene) configure() {
 
 	ecs.AddSystem(systems.UpdateObjects)
 	ecs.AddSystem(systems.UpdateArena)
+	ecs.AddSystem(systems.UpdateBomb)
 	ecs.AddSystem(systems.UpdatePlayer)
 
 	ecs.AddRenderer(layers.Default, systems.DrawArena)
+	ecs.AddRenderer(layers.Default, systems.DrawBomb)
 	ecs.AddRenderer(layers.Default, systems.DrawPlayer)
 	ecs.AddRenderer(layers.Default, systems.DrawPhysics)
 

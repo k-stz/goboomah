@@ -1,6 +1,8 @@
 package systems
 
 import (
+	"fmt"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
@@ -43,6 +45,24 @@ func UpdatePlayer(ecs *ecs.ECS) {
 	if ebiten.IsKeyPressed(ebiten.KeyF) {
 		playerShape.Scale -= scaleSpeed
 	}
+	rotateSpeed := 0.1
+	if ebiten.IsKeyPressed(ebiten.KeyR) {
+		playerShape.Rotation += rotateSpeed
+
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyE) {
+		playerShape.Rotation -= rotateSpeed
+	}
+
+	// Bombs
+	if ebiten.IsKeyPressed(ebiten.KeySpace) {
+		if CanPlaceBombs(player) {
+			player.Bombs--
+			CreateBomb(playerShape.Circle.Position(), player, ecs)
+		} else {
+			fmt.Println("Player bombs exhausted")
+		}
+	}
 }
 
 func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
@@ -56,6 +76,7 @@ func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
 		circleShape := components.ShapeCircle.Get(entry)
 		pos := circleShape.Circle.Position()
 		rad := circleShape.Circle.Radius()
+		rotation := circleShape.Rotation
 		diameter := max(halfW, halfH)
 		// diameter * x = radius
 		scale := rad / diameter
@@ -68,6 +89,7 @@ func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
 		// intuitively
 		op.GeoM.Translate(-halfW, -halfH)
 		op.GeoM.Scale(scale, scale)
+		op.GeoM.Rotate(rotation)
 		op.GeoM.Translate(offsetX, offsetY)
 		screen.DrawImage(playerSprite.Image, op)
 	}

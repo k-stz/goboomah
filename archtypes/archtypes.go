@@ -32,6 +32,13 @@ var (
 		tags.Arena,
 	)
 
+	Bomb = newArchetype(
+		tags.Bomb,
+		components.Sprite,
+		components.Bomb,
+		components.ConvexPolygonBBox,
+	)
+
 	Tile = newArchetype(
 		tags.Tile,
 		//components.GridPosition,

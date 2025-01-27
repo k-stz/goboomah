@@ -13,6 +13,17 @@ type PlayerData struct {
 	// position this results into and will update the
 	// players actual position (stored in another component)
 	Speed math.Vec2
+	// how many bombs can be carried
+	Bombs int
+	// What Firepower placed bombs have
+	Power int
+}
+
+func NewPlayer(bombs, power int) *PlayerData {
+	return &PlayerData{
+		Bombs: bombs,
+		Power: power,
+	}
 }
 
 // Used for Collision detection and also to superimpose the
