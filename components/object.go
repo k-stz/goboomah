@@ -72,10 +72,17 @@ func LevelLa() *TileGridData {
 		{0, 0, 1, 1, 1, 0, 0, 0, 0, 0},
 		{0, 1, 0, 1, 0, 0, 1, 0, 1, 0},
 		{0, 1, 0, 1, 0, 0, 0, 0, 0, 0},
-		{0, 0, 1, 1, 1, 0, 1, 0, 1, 0},
+		{0, 0, 1, 1, 1, 1, 0, 0, 1, 0},
 		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	}
 
+	return NewTileGridData(tg, 16.0)
+}
+
+func LevelTile1() *TileGridData {
+	tg := tileGrid{
+		{1},
+	}
 	return NewTileGridData(tg, 16.0)
 }
 
