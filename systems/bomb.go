@@ -48,8 +48,11 @@ func UpdateBomb(ecs *ecs.ECS) {
 
 // Snaps to the Center point of a grid
 func SnapToGridPosition(pos resolv.Vector, tileDiameter float64) (newPosition resolv.Vector) {
-	pos.X = math.Round(pos.X/tileDiameter) * tileDiameter
-	pos.Y = math.Round(pos.Y/tileDiameter) * tileDiameter
+	//pos.X = math.Round(pos.X/tileDiameter) * tileDiameter
+	//pos.Y = math.Round(pos.Y/tileDiameter) * tileDiameter
+	pos.X = math.Ceil(pos.X/tileDiameter) * tileDiameter
+	pos.Y = math.Ceil(pos.Y/tileDiameter) * tileDiameter
+
 	return pos
 }
 
