@@ -2,6 +2,7 @@ package systems
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/k-stz/goboomer/archtypes"
@@ -10,6 +11,7 @@ import (
 	"github.com/k-stz/goboomer/tags"
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi/ecs"
+	"github.com/yohamta/donburi/features/transform"
 )
 
 func CreateBomb(position resolv.Vector, player *components.PlayerData, ecs *ecs.ECS) {
@@ -20,10 +22,14 @@ func CreateBomb(position resolv.Vector, player *components.PlayerData, ecs *ecs.
 	})
 	// Sprite
 	components.Sprite.Set(bombEntry, &components.SpriteData{
+		//Image: assets.Bomb_tile,
 		Image: assets.Bomb_tile,
 	})
 	// Shape
-	bbox := resolv.NewRectangle(position.X, position.Y, 320, 320)
+	dx := GetWorldTileDiameter(ecs)
+	fmt.Println("before snap pos:", position)
+	position = SnapToGridPosition(position, dx)
+	bbox := resolv.NewRectangle(position.X-dx/2, position.Y-dx/2, dx, dx)
 	components.ConvexPolygonBBox.Set(bombEntry, bbox)
 	fmt.Println("Bomb created", bombEntry.Id(), position)
 }
@@ -40,8 +46,14 @@ func UpdateBomb(ecs *ecs.ECS) {
 
 }
 
+// Snaps to the Center point of a grid
+func SnapToGridPosition(pos resolv.Vector, tileDiameter float64) (newPosition resolv.Vector) {
+	pos.X = math.Round(pos.X/tileDiameter) * tileDiameter
+	pos.Y = math.Round(pos.Y/tileDiameter) * tileDiameter
+	return pos
+}
+
 func DrawBomb(ecs *ecs.ECS, screen *ebiten.Image) {
-	// TODO scale bombs
 	for entry := range tags.Bomb.Iter(ecs.World) {
 		//o := dresolv.GetObject(e)
 		bombSprite := components.Sprite.Get(entry)
@@ -57,15 +69,19 @@ func DrawBomb(ecs *ecs.ECS, screen *ebiten.Image) {
 		// // diameter * x = radius
 		// scale := rad / diameter
 
-		var offsetX float64 = pos.X
 		var offsetY float64 = pos.Y //- halfH + halfW
+		var offsetX float64 = pos.X
 
 		op := &ebiten.DrawImageOptions{}
 		// translate to origin, so scaling and rotation work
 		// intuitively
+		// Remove arena depending on scale
+		arenaEntry, _ := tags.Arena.First(ecs.World)
+		tf := transform.Transform.Get(arenaEntry)
+
 		op.GeoM.Translate(-halfW, -halfH)
-		op.GeoM.Scale(4.0, 4.0)
 		op.GeoM.Rotate(rotation)
+		op.GeoM.Scale(tf.LocalScale.X, tf.LocalScale.Y)
 		op.GeoM.Translate(offsetX, offsetY)
 		screen.DrawImage(bombSprite.Image, op)
 	}

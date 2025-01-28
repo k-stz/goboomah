@@ -17,6 +17,8 @@ func CreateArena(ecs *ecs.ECS) *donburi.Entry {
 	arenaEntry := archtypes.Arena.Spawn(ecs)
 	// TODO create tile objects based on TileGrid!
 	level := *components.LevelLa()
+	//level := *components.LevelTile1()
+	dx := level.TileDiameter
 	components.TileGrid.SetValue(arenaEntry, level)
 
 	// Creat Tile Mapping, used for dynamic render loop
@@ -32,12 +34,12 @@ func CreateArena(ecs *ecs.ECS) *donburi.Entry {
 		// in a common game object (which in turn is in our ECS)
 		// X: float64(game.Settings.ScreenWidth) * 0.75,
 		//Y: cameraPos.Y + float64(game.Settings.ScreenHeight)*0.9,
-		X: 100.0,
-		Y: 100.0,
+		X: dx * 2.5,
+		Y: dx * 2.5,
 	}
 	tf.LocalScale = math.Vec2{
-		X: 3.0,
-		Y: 3.0,
+		X: 2.5,
+		Y: 2.5,
 	}
 	tf.LocalRotation = 0
 

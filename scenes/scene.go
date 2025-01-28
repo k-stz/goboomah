@@ -37,13 +37,19 @@ func (gs *GameScene) Draw(screen *ebiten.Image) {
 	playerData := components.Player.Get(playerEntry)
 
 	totalBombs := 0
-	gameSceneStateStr := fmt.Sprintf("Pos: %s\n Radius: %f\nBombs: %d\nPower: %d\nTotalBombs: %d\n",
-		playerShape.Circle.Position(),
+	message := fmt.Sprintf("TPS: %0.2f\n", ebiten.ActualTPS())
+
+	message += fmt.Sprintf("Pos: %s\n", playerShape.Circle.Position())
+	message += fmt.Sprintf("SnapPosition: %v\n",
+		systems.SnapToGridPosition(playerShape.Circle.Position(),
+			systems.GetWorldTileDiameter(gs.ecs)))
+	message += fmt.Sprintf("Radius: %f\nBombs: %d\nPower: %d\nTotalBombs: %d\nTileDiameter: %02f\n",
 		playerShape.Circle.Radius(),
 		playerData.Bombs,
 		playerData.Power,
-		totalBombs)
-	ebitenutil.DebugPrintAt(screen, gameSceneStateStr, 0, 40)
+		totalBombs,
+		systems.GetWorldTileDiameter(gs.ecs))
+	ebitenutil.DebugPrintAt(screen, message, 0, 40)
 }
 
 // the the ECS gets initialized
