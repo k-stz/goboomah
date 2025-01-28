@@ -28,6 +28,12 @@ import (
 // 	}
 // }
 
+func GetWorldTileDiameter(ecs *ecs.ECS) (tileDiameter float64) {
+	// TODO for level extract Arena from GameScene object
+	arenaEntry, _ := tags.Arena.First(ecs.World)
+	return components.TileGrid.Get(arenaEntry).TileDiameter
+}
+
 // Cool spiral effect, just for asthetics.
 // Use for stage transitions?
 func tileSpiralEffect(ecs *ecs.ECS) {
@@ -83,6 +89,7 @@ func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Rotate(tf.LocalRotation)
 			op.GeoM.Scale(tf.LocalScale.X, tf.LocalScale.Y)
+			//fmt.Println("tile x, y,", offsetX, offsetY)
 			op.GeoM.Translate(offsetX, offsetY)
 			screen.DrawImage(tileImage, op)
 		}
@@ -94,7 +101,6 @@ func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 		bbox := components.ConvexPolygonBBox.Get(entry)
 		x := float32(bbox.Position().X - bbox.Bounds().Width()/2)
 		y := float32(bbox.Position().Y - bbox.Bounds().Width()/2)
-		bbox.Bounds()
 		//
 		vector.DrawFilledRect(screen, x, y, tileDiameter32, tileDiameter32, color.RGBA{0xff, 0, 0, uint8(entry.Id())}, false)
 		//x := tf.LocalPosition.X
@@ -102,11 +108,3 @@ func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 		// fmt.Println("x,y", x, y)
 	}
 }
-
-// func DrawFloatingPlatform(ecs *ecs.ECS, screen *ebiten.Image) {
-// 	for e := range tags.FloatingPlatform.Iter(ecs.World) {
-// 		o := dresolv.GetObject(e)
-// 		drawColor := color.RGBA{180, 100, 0, 255}
-// 		ebitenutil.DrawRect(screen, o.X, o.Y, o.W, o.H, drawColor)
-// 	}
-// }
