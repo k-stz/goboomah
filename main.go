@@ -43,6 +43,11 @@ func (g *Game) Update() error {
 	// 	// ebiten.Termination signifies a clean, wanted, termination of the game
 	// 	return ebiten.Termination
 	// }
+	// shutdown
+	if ebiten.IsKeyPressed(ebiten.KeyEscape) {
+		return ebiten.Termination
+	}
+
 	g.scene.Update()
 	return nil
 }
