@@ -46,9 +46,21 @@ func tileSpiralEffect(ecs *ecs.ECS) {
 
 }
 
+func GetTickCount(ecs *ecs.ECS) components.TickCount {
+	arenaEntry, _ := tags.Arena.First(ecs.World)
+	return *components.Tick.Get(arenaEntry)
+}
+
+func IncementTickCount(ecs *ecs.ECS) {
+	arenaEntry, _ := tags.Arena.First(ecs.World)
+	*components.Tick.Get(arenaEntry)++
+}
+
 // The Arena is the 2d-grid where the player walks inside
 // For now we don't have any logic to update in here
 func UpdateArena(ecs *ecs.ECS) {
+	IncementTickCount(ecs)
+
 	// Need some global timer to trigger the effect for a short time?
 	//tileSpiralEffect(ecs)
 
@@ -69,6 +81,8 @@ func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 	if !ok {
 		panic("No arenaEntry")
 	}
+	// count game ticks, used for game logic like bomb fuse
+
 	//o := dresolv.GetObject(e)
 	tg := components.TileGrid.Get(arenaEntry)
 	tileMap := *components.TileMap.Get(arenaEntry)

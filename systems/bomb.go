@@ -43,6 +43,11 @@ func CanPlaceBombs(player *components.PlayerData) bool {
 
 // Update bomb ticks
 func UpdateBomb(ecs *ecs.ECS) {
+	fmt.Println("tick", GetTickCount(ecs))
+	// for entry := range tags.Bomb.Iter(ecs.World) {
+	// 	bomb := components.Bomb.Get(entry)
+	// 	bomb.CountdownTicks
+	// }
 
 }
 

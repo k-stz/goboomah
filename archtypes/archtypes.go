@@ -15,6 +15,7 @@ var (
 		components.TileGrid,
 		components.TileMap,  // maps TileIDs to ebiten.Images
 		transform.Transform, // Testing: used instead of Rectangle...
+		components.Tick,     // count global Ticks here
 	)
 
 	Player = newArchetype(

@@ -43,6 +43,8 @@ func CreateArena(ecs *ecs.ECS) *donburi.Entry {
 	}
 	tf.LocalRotation = 0
 
+	components.Tick.SetValue(arenaEntry, 0)
+
 	//dresolv.SetObject(platform, object)
 	return arenaEntry
 }
