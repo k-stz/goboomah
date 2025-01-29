@@ -18,7 +18,7 @@ func CreateBomb(position resolv.Vector, player *components.PlayerData, ecs *ecs.
 	bombEntry := archtypes.Bomb.Spawn(ecs)
 	components.Bomb.Set(bombEntry, &components.BombData{
 		Power:          player.Power,
-		CountdownTicks: 500,
+		CountdownTicks: GetTickCount(ecs) + 200,
 	})
 	// Sprite
 	components.Sprite.Set(bombEntry, &components.SpriteData{
@@ -43,11 +43,24 @@ func CanPlaceBombs(player *components.PlayerData) bool {
 
 // Update bomb ticks
 func UpdateBomb(ecs *ecs.ECS) {
-	fmt.Println("tick", GetTickCount(ecs))
-	// for entry := range tags.Bomb.Iter(ecs.World) {
-	// 	bomb := components.Bomb.Get(entry)
-	// 	bomb.CountdownTicks
-	// }
+	currentGameTick := GetTickCount(ecs)
+	for entry := range tags.Bomb.Iter(ecs.World) {
+		bomb := components.Bomb.Get(entry)
+		if bomb.CountdownTicks <= currentGameTick {
+			// We set the bomb to exploding that's how we
+			// can later add other logic to make a bomb explode sooner
+			// blow up bomb
+			bomb.Detonate = true
+
+		}
+		if bomb.Detonate {
+			fmt.Println("Blowing up!", entry.Entity())
+			ecs.World.Remove(entry.Entity())
+			//CreateExplosion(ecs, components.Get)
+
+		}
+
+	}
 
 }
 
