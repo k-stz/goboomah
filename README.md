@@ -33,7 +33,7 @@ Use this for the stage representation
 - The tiles are from https://kenney.nl/assets/tiny-town and in the public domain (CC0 License)
 - https://github.com/MariaLetta/free-gophers-pack/tree/master
 License CC0 for those in the public domain.
-
+- Explosion effect is from Statik64 and is CC0 (public domain)
 - Gopher Pictures: The Go Gopher by Renee French is licensed under the Creative Commons Attribution 4.0 License.
 
 ## Libararies

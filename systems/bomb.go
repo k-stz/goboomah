@@ -19,6 +19,7 @@ func CreateBomb(position resolv.Vector, player *components.PlayerData, ecs *ecs.
 	components.Bomb.Set(bombEntry, &components.BombData{
 		Power:          player.Power,
 		CountdownTicks: GetTickCount(ecs) + 200,
+		Detonate:       false,
 	})
 	// Sprite
 	components.Sprite.Set(bombEntry, &components.SpriteData{
