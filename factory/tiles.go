@@ -3,6 +3,7 @@ package factory
 import (
 	"github.com/k-stz/goboomer/archtypes"
 	"github.com/k-stz/goboomer/components"
+	"github.com/k-stz/goboomer/tags"
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
@@ -31,6 +32,7 @@ func CreateSolidTiles(ecs *ecs.ECS, arenaEntry *donburi.Entry) *donburi.Entry {
 				offsetX := (float64(x) * dx) + tf.LocalPosition.X
 				offsetY := float64(y)*dx + tf.LocalPosition.Y
 				bbox := resolv.NewRectangle(offsetX+dx/2, offsetY+dx/2, dx, dx)
+				bbox.Tags().Set(tags.TagWall)
 				components.ConvexPolygonBBox.Set(entry, bbox)
 			}
 		}

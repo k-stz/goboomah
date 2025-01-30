@@ -31,6 +31,7 @@ func CreateBomb(position resolv.Vector, player *components.PlayerData, ecs *ecs.
 	fmt.Println("before snap pos:", position)
 	position = SnapToGridPosition(position, dx)
 	bbox := resolv.NewRectangle(position.X-dx/2, position.Y-dx/2, dx, dx)
+	bbox.Tags().Set(tags.TagBomb)
 	components.ConvexPolygonBBox.Set(bombEntry, bbox)
 	fmt.Println("Bomb created", bombEntry.Id(), position)
 }

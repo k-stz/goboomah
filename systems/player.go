@@ -6,6 +6,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
+	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi/ecs"
 )
 
@@ -62,6 +63,28 @@ func UpdatePlayer(ecs *ecs.ECS) {
 		} else {
 			fmt.Println("Player bombs exhausted")
 		}
+	}
+
+	if ebiten.IsKeyPressed(ebiten.KeyT) {
+		dx := GetWorldTileDiameter(ecs)
+		// TODO use snap position of player
+		pos := playerShape.Circle.Position()
+		checkTiles := 1
+		fmt.Printf("Checking %d tiles above player: ", checkTiles)
+		checks := []string{}
+		for i := range checkTiles {
+			offsetY := -(dx + (float64(i) * dx))
+			checkPos := pos.Add(resolv.NewVector(0, offsetY))
+			fmt.Println("checking pos: ", checkPos)
+			shapeTags := CheckTile(checkPos, ecs)
+			tags := ""
+			for _, st := range shapeTags {
+				tags += st.String() + ","
+			}
+			checks = append(checks, tags)
+
+		}
+		fmt.Println(checks)
 	}
 }
 

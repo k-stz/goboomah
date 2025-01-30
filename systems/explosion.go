@@ -27,8 +27,57 @@ func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 	dx := GetWorldTileDiameter(ecs)
 	position = SnapToGridPosition(position, dx)
 	bbox := resolv.NewRectangle(position.X-dx/2, position.Y-dx/2, dx, dx)
+	bbox.Tags().Set(tags.TagExplosion)
 	components.ConvexPolygonBBox.Set(explosionEntry, bbox)
 	fmt.Println("Bomb created", explosionEntry.Id(), position)
+}
+
+// func TileChecker(from resolv.Vector, to resolv.Vector, ecs *ecs.ECS) {
+// Returns all shapes intersection roughly with the tile
+func CheckTile(checkPosition resolv.Vector, ecs *ecs.ECS) []resolv.Tags {
+	//fmt.Printf("CheckTile at %v\n", checkPosition)
+	spaceEntry, _ := tags.Space.First(ecs.World)
+	space := components.Space.Get(spaceEntry)
+
+	dx := GetWorldTileDiameter(ecs)
+	// tc is a tile checker, which is a circle bounding box object
+	// used to scan over tiles for intersection to if it intersects in a particular
+	// tile with objects of interest
+	// For now dx/2 in diameter to not accidentally touch neighboring
+	//
+	tc := resolv.NewCircle(checkPosition.X, checkPosition.Y, dx/2)
+	space.Add(tc)
+	defer space.Remove(tc) // remove circle scanner
+
+	// TODO check if resolv.LineTest is better
+	var shapeTags []resolv.Tags
+	//intersectionFound :=
+	tc.IntersectionTest(resolv.IntersectionTestSettings{
+		TestAgainst: tc.SelectTouchingCells(1).FilterShapes(),
+		OnIntersect: func(set resolv.IntersectionSet) bool {
+			// lets report what we touched with rather
+			//playerShape.Circle.MoveVec(set.MTV)
+			// set.OtherShape = The other shape involved in the contact.
+			shapeTags = append(shapeTags, *set.OtherShape.Tags())
+			//fmt.Println("COLLISION tag", set.OtherShape)
+			return true
+		},
+	})
+	// if intersectionFound {
+	// 	fmt.Println("collision found at:", checkPosition)
+	// 	//fmt.Println("shapes:", shapes)
+	// 	for i, s := range shapes {
+	// 		fmt.Printf("%d tag: %v\n", i, s.Tags())
+	// 	}
+	// } else {
+	// 	fmt.Println("nothing")
+	// }
+
+	return shapeTags
+	//space.ForEachShape()
+
+	// test a selectino of shapes against a line
+	//resolv.LineTest(lts)
 }
 
 func UpdateExplosion(ecs *ecs.ECS) {

@@ -6,6 +6,7 @@ import (
 	"github.com/k-stz/goboomer/archtypes"
 	"github.com/k-stz/goboomer/assets"
 	"github.com/k-stz/goboomer/components"
+	"github.com/k-stz/goboomer/tags"
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
@@ -22,11 +23,12 @@ func CreatePlayer(ecs *ecs.ECS) *donburi.Entry {
 	w := float64(playerSprite.Image.Bounds().Dx())
 	h := float64(playerSprite.Image.Bounds().Dy())
 
-	x, y := -20.0, 200.0
+	x, y := 50.0, 170.0
 
 	// BoundingCircle
 	circleObj := resolv.NewCircle(x+w/2, y+h-w/2, w)
-	scale := 1.0
+	circleObj.Tags().Set(tags.TagPlayer)
+	scale := 0.20
 	components.ShapeCircle.Set(playerEntry, &components.ShapeCircleData{
 		Circle:   circleObj,
 		Radius:   w,

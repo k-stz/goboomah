@@ -1,6 +1,9 @@
 package tags
 
-import "github.com/yohamta/donburi"
+import (
+	"github.com/solarlune/resolv"
+	"github.com/yohamta/donburi"
+)
 
 var (
 	Player    = donburi.NewTag().SetName("Player")
@@ -11,4 +14,13 @@ var (
 	Space     = donburi.NewTag().SetName("Space")
 
 	//Wall             = donburi.NewTag().SetName("Wall")
+)
+
+// Resolv tags
+
+var (
+	TagWall      = resolv.NewTag("Wall")
+	TagBomb      = resolv.NewTag("Bomb")
+	TagExplosion = resolv.NewTag("Explosion")
+	TagPlayer    = resolv.NewTag("Player")
 )
