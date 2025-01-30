@@ -47,6 +47,7 @@ func UpdateBomb(ecs *ecs.ECS) {
 	currentGameTick := GetTickCount(ecs)
 	for entry := range tags.Bomb.Iter(ecs.World) {
 		bomb := components.Bomb.Get(entry)
+		bombPosition := components.ConvexPolygonBBox.Get(entry).Position()
 		if bomb.CountdownTicks <= currentGameTick {
 			// We set the bomb to exploding that's how we
 			// can later add other logic to make a bomb explode sooner
@@ -56,8 +57,8 @@ func UpdateBomb(ecs *ecs.ECS) {
 		}
 		if bomb.Detonate {
 			fmt.Println("Blowing up!", entry.Entity())
+			CreateExplosion(bombPosition, bomb.Power, ecs)
 			ecs.World.Remove(entry.Entity())
-			//CreateExplosion(ecs, components.Get)
 
 		}
 

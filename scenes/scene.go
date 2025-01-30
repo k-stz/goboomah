@@ -62,10 +62,13 @@ func (gs *GameScene) configure() {
 	ecs.AddSystem(systems.UpdateObjects)
 	ecs.AddSystem(systems.UpdateArena)
 	ecs.AddSystem(systems.UpdateBomb)
+	ecs.AddSystem(systems.UpdateExplosion)
 	ecs.AddSystem(systems.UpdatePlayer)
 
 	ecs.AddRenderer(layers.Default, systems.DrawArena)
 	ecs.AddRenderer(layers.Default, systems.DrawBomb)
+	ecs.AddRenderer(layers.Default, systems.DrawExplosion)
+
 	ecs.AddRenderer(layers.Default, systems.DrawPlayer)
 	ecs.AddRenderer(layers.Default, systems.DrawPhysics)
 

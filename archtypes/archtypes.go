@@ -40,6 +40,13 @@ var (
 		components.ConvexPolygonBBox,
 	)
 
+	Explosion = newArchetype(
+		tags.Explosion,
+		components.Sprite,
+		components.Explosion,
+		components.ConvexPolygonBBox,
+	)
+
 	Tile = newArchetype(
 		tags.Tile,
 		//components.GridPosition,
@@ -53,27 +60,6 @@ var (
 		tags.Space,
 		components.Space,
 	)
-	// FloatingPlatform = newArchetype(
-	// 	tags.FloatingPlatform,
-	// 	components.Object,
-	// 	components.Tween,
-	// )
-	// Player = newArchetype(
-	// 	tags.Player,
-	// 	components.Player,
-	// 	components.Object,
-	// )
-	// Ramp = newArchetype(
-	// 	tags.Ramp,
-	// 	components.Object,
-	// )
-	// Space = newArchetype(
-	// 	components.Space,
-	// )
-	// Wall = newArchetype(
-	// 	tags.Wall,
-	// 	components.Object,
-	// )
 )
 
 // type Arena struct {
