@@ -7,6 +7,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
+	"github.com/solarlune/resolv"
+	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
 	"github.com/yohamta/donburi/features/transform"
 )
@@ -27,6 +29,19 @@ import (
 // 		}
 // 	}
 // }
+
+func GetSpaceEntry(ecs *ecs.ECS) (spaceEntry *donburi.Entry) {
+	spaceEntry, ok := tags.Space.First(ecs.World)
+	if !ok {
+		panic("No Space in ecs yet.")
+	}
+	return spaceEntry
+}
+
+func GetSpace(ecs *ecs.ECS) *resolv.Space {
+	spaceEntry := GetSpaceEntry(ecs)
+	return components.Space.Get(spaceEntry)
+}
 
 func GetWorldTileDiameter(ecs *ecs.ECS) (tileDiameter float64) {
 	// TODO for level extract Arena from GameScene object

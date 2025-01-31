@@ -5,7 +5,9 @@ import (
 
 	"github.com/k-stz/goboomer/archtypes"
 	"github.com/k-stz/goboomer/assets"
+	"github.com/k-stz/goboomer/collisions"
 	"github.com/k-stz/goboomer/components"
+	"github.com/k-stz/goboomer/systems"
 	"github.com/k-stz/goboomer/tags"
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
@@ -28,13 +30,15 @@ func CreatePlayer(ecs *ecs.ECS) *donburi.Entry {
 	// BoundingCircle
 	circleObj := resolv.NewCircle(x+w/2, y+h-w/2, w)
 	circleObj.Tags().Set(tags.TagPlayer)
-	scale := 0.20
+	scale := 0.10
 	components.ShapeCircle.Set(playerEntry, &components.ShapeCircleData{
 		Circle:   circleObj,
 		Radius:   w,
 		Scale:    scale,
 		Rotation: 0.0,
 	})
+	spaceEntry := systems.GetSpaceEntry(ecs)
+	collisions.AddCircle(spaceEntry, playerEntry)
 	fmt.Println("added player collision obj:", circleObj)
 
 	//dresolv.SetObject(platform, object)

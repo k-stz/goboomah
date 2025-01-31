@@ -61,6 +61,7 @@ func DrawPhysics(ecs *ecs.ECS, screen *ebiten.Image) {
 	space.ForEachShape(func(shape resolv.IShape, index, maxCount int) bool {
 
 		var drawColorCircle color.Color = color.White
+		var drawDebugCircle color.RGBA = color.RGBA{255, 32, 128, 255}
 
 		// tags := shape.Tags()
 
@@ -69,7 +70,11 @@ func DrawPhysics(ecs *ecs.ECS, screen *ebiten.Image) {
 		switch o := shape.(type) {
 		// currently Circle is just the player
 		case *resolv.Circle:
-			vector.StrokeCircle(screen, float32(o.Position().X), float32(o.Position().Y), float32(o.Radius()), 2, drawColorCircle, false)
+			color := drawColorCircle
+			if o.Tags().Has(tags.TagDebug) {
+				color = drawDebugCircle
+			}
+			vector.StrokeCircle(screen, float32(o.Position().X), float32(o.Position().Y), float32(o.Radius()), 2, color, false)
 		case *resolv.ConvexPolygon:
 
 			for _, l := range o.Lines() {

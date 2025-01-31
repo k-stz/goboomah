@@ -102,7 +102,6 @@ func (gs *GameScene) configure() {
 	playerEntry := factory.CreatePlayer(gs.ecs)
 	fmt.Println("Created Entries IDs:", arenaEntry.Id(), playerEntry.Id(), spaceEntry.Id())
 
-	collisions.AddCircle(spaceEntry, playerEntry)
 	addSolidTilesSpace(spaceEntry, ecs)
 }
 

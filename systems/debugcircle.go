@@ -6,6 +6,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/k-stz/goboomer/archtypes"
 	"github.com/k-stz/goboomer/assets"
+	"github.com/k-stz/goboomer/collisions"
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
 	"github.com/solarlune/resolv"
@@ -30,12 +31,17 @@ func CreateDebugCircle(position resolv.Vector, radius float64, ecs *ecs.ECS) {
 		Scale:    1.0,
 		Rotation: 0.0,
 	})
+	spaceEntry := GetSpaceEntry(ecs)
+	collisions.AddCircle(spaceEntry, debugCircleEntry)
 	fmt.Println("DebugCircle created", debugCircleEntry.Id(), position)
 }
 
 func UpdateDebugCircle(ecs *ecs.ECS) {
 	if !ebiten.IsKeyPressed(ebiten.KeyT) {
 		for entry := range tags.DebugCircle.Iter(ecs.World) {
+			space := GetSpace(ecs)
+			boundingCircleObject := components.ShapeCircle.Get(entry).Circle
+			space.Remove(boundingCircleObject)
 			ecs.World.Remove(entry.Entity())
 		}
 	}
