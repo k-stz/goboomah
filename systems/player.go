@@ -65,6 +65,7 @@ func UpdatePlayer(ecs *ecs.ECS) {
 		}
 	}
 
+	// For Debugging
 	if ebiten.IsKeyPressed(ebiten.KeyT) {
 		dx := GetWorldTileDiameter(ecs)
 		pos := SnapToGridTileCenter(playerShape.Circle.Position(), dx)

@@ -46,7 +46,7 @@ func NewResolvTag(tagName string) resolv.Tags {
 }
 
 func ToString(tag resolv.Tags) string {
-	// TODO add "comma, ok" idiom check, return 
+	// TODO add "comma, ok" idiom check, return
 	// empty string then
 	return tagDirectory[tag]
 }

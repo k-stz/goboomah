@@ -44,20 +44,24 @@ func CheckTile(checkPosition resolv.Vector, radius float64, ecs *ecs.ECS) (tileS
 	// tc is a tile checker, which is a circle bounding box object
 	// used to scan over tiles for intersection to if it intersects in a particular
 	// tile with objects of interest
-	// For now dx/2 in diameter to not accidentally touch neighboring
-	//
 	tc := resolv.NewCircle(checkPosition.X, checkPosition.Y, radius)
 	space.Add(tc)
 	defer space.Remove(tc) // remove circle scanner
 
 	//intersectionFound :=
 	tc.IntersectionTest(resolv.IntersectionTestSettings{
-		TestAgainst: tc.SelectTouchingCells(1).FilterShapes(),
+		TestAgainst: tc.SelectTouchingCells(1).FilterShapes().ByTags(tags.TagWall),
 		OnIntersect: func(set resolv.IntersectionSet) bool {
 			// lets report what we touched with rather
 			//playerShape.Circle.MoveVec(set.MTV)
 			// set.OtherShape = The other shape involved in the contact.
-			tileShapeTags = append(tileShapeTags, *set.OtherShape.Tags())
+			// iscontainedby is what we need here!
+			insideWall := checkPosition.IsInside(set.OtherShape)
+			if insideWall {
+				tileShapeTags = append(tileShapeTags, *set.OtherShape.Tags())
+				return false // stop testing for further intersection
+			}
+			//set.OtherShape.(*resolv.ConvexPolygon).IsContainedBy(set.OtherShape)
 			//fmt.Println("COLLISION tag", set.OtherShape)
 			return true
 		},
