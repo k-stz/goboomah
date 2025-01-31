@@ -6,12 +6,13 @@ import (
 )
 
 var (
-	Player    = donburi.NewTag().SetName("Player")
-	Bomb      = donburi.NewTag().SetName("Bomb")
-	Explosion = donburi.NewTag().SetName("Bomb")
-	Arena     = donburi.NewTag().SetName("Arena")
-	Tile      = donburi.NewTag().SetName("Tile")
-	Space     = donburi.NewTag().SetName("Space")
+	Player      = donburi.NewTag().SetName("Player")
+	Bomb        = donburi.NewTag().SetName("Bomb")
+	Explosion   = donburi.NewTag().SetName("Bomb")
+	Arena       = donburi.NewTag().SetName("Arena")
+	Tile        = donburi.NewTag().SetName("Tile")
+	Space       = donburi.NewTag().SetName("Space")
+	DebugCircle = donburi.NewTag().SetName("DebugCircle")
 
 	//Wall             = donburi.NewTag().SetName("Wall")
 )
@@ -23,4 +24,5 @@ var (
 	TagBomb      = resolv.NewTag("Bomb")
 	TagExplosion = resolv.NewTag("Explosion")
 	TagPlayer    = resolv.NewTag("Player")
+	TagDebug     = resolv.NewTag("Debug")
 )

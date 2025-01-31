@@ -64,6 +64,7 @@ func (gs *GameScene) configure() {
 	ecs.AddSystem(systems.UpdateBomb)
 	ecs.AddSystem(systems.UpdateExplosion)
 	ecs.AddSystem(systems.UpdatePlayer)
+	ecs.AddSystem(systems.UpdateDebugCircle)
 
 	ecs.AddRenderer(layers.Default, systems.DrawArena)
 	ecs.AddRenderer(layers.Default, systems.DrawBomb)
@@ -71,6 +72,7 @@ func (gs *GameScene) configure() {
 
 	ecs.AddRenderer(layers.Default, systems.DrawPlayer)
 	ecs.AddRenderer(layers.Default, systems.DrawPhysics)
+	ecs.AddRenderer(layers.Default, systems.DrawDebugCircle)
 
 	//ecs.AddRenderer(layers.Default, systems.DrawArenaTiles)
 	// Now we create the LevelMap

@@ -47,6 +47,13 @@ var (
 		components.ConvexPolygonBBox,
 	)
 
+	// Used to visuallize logic in game
+	DebugCircle = newArchetype(
+		tags.DebugCircle,
+		components.Sprite,
+		components.ShapeCircle,
+	)
+
 	Tile = newArchetype(
 		tags.Tile,
 		//components.GridPosition,
