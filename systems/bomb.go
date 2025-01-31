@@ -29,8 +29,8 @@ func CreateBomb(position resolv.Vector, player *components.PlayerData, ecs *ecs.
 	// Shape
 	dx := GetWorldTileDiameter(ecs)
 	fmt.Println("before snap pos:", position)
-	position = SnapToGridPosition(position, dx)
-	bbox := resolv.NewRectangle(position.X-dx/2, position.Y-dx/2, dx, dx)
+	position = SnapToGridTileCenter(position, dx)
+	bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
 	bbox.Tags().Set(tags.TagBomb)
 	components.ConvexPolygonBBox.Set(bombEntry, bbox)
 	fmt.Println("Bomb created", bombEntry.Id(), position)
@@ -67,14 +67,29 @@ func UpdateBomb(ecs *ecs.ECS) {
 
 }
 
-// Snaps to the Center point of a grid
-func SnapToGridPosition(pos resolv.Vector, tileDiameter float64) (newPosition resolv.Vector) {
-	//pos.X = math.Round(pos.X/tileDiameter) * tileDiameter
-	//pos.Y = math.Round(pos.Y/tileDiameter) * tileDiameter
-	pos.X = math.Ceil(pos.X/tileDiameter) * tileDiameter
-	pos.Y = math.Ceil(pos.Y/tileDiameter) * tileDiameter
+// "Snaps into place" the position vector to the grid's tile
+// where the grid's tile has a diameter of "tileDiameter".
+// In whatever tile "pos"ition falls, the top-left corner will be returned.
+// if the grid starts and 0,0 and each tile/cell of the grid 40.0x40.0
+// then for the postion (20,30) it will return (0,0)
+// for the postion (50, 70) it will return (40,40)
+func SnapToGridTileTopLeft(position resolv.Vector, tileDiameter float64) (newPosition resolv.Vector) {
+	position.X = math.Floor(position.X/tileDiameter) * tileDiameter
+	position.Y = math.Floor(position.Y/tileDiameter) * tileDiameter
 
-	return pos
+	return position
+}
+
+// Like SnapToGridTileTopLeft but will snap in the center of a Tile.
+// if the grid starts at 0,0 and each tile/cell of the grid 40.0x40.0
+// then for the postion (20,30) it will return (20,20)
+// for the postion (50, 70) it will return (60,60)
+func SnapToGridTileCenter(position resolv.Vector, tileDiameter float64) (newPosition resolv.Vector) {
+	dx := tileDiameter
+	position.X = (math.Floor(position.X/dx) * dx) + dx/2
+	position.Y = (math.Floor(position.Y/dx) * dx) + dx/2
+
+	return position
 }
 
 func DrawBomb(ecs *ecs.ECS, screen *ebiten.Image) {

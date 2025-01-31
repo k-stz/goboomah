@@ -25,8 +25,8 @@ func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 	})
 	// Shape
 	dx := GetWorldTileDiameter(ecs)
-	position = SnapToGridPosition(position, dx)
-	bbox := resolv.NewRectangle(position.X-dx/2, position.Y-dx/2, dx, dx)
+	position = SnapToGridTileCenter(position, dx)
+	bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
 	bbox.Tags().Set(tags.TagExplosion)
 	components.ConvexPolygonBBox.Set(explosionEntry, bbox)
 	fmt.Println("Bomb created", explosionEntry.Id(), position)

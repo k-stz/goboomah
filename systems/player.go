@@ -67,8 +67,7 @@ func UpdatePlayer(ecs *ecs.ECS) {
 
 	if ebiten.IsKeyPressed(ebiten.KeyT) {
 		dx := GetWorldTileDiameter(ecs)
-		// TODO use snap position of player
-		pos := SnapToGridPosition(playerShape.Circle.Position(), dx)
+		pos := SnapToGridTileCenter(playerShape.Circle.Position(), dx)
 		checkTiles := 1
 		fmt.Printf("Checking %d tiles above player: ", checkTiles)
 		checks := []string{}

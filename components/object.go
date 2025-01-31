@@ -131,7 +131,8 @@ type CollidableData struct {
 // draw in tilemap cells or for the player. A map of pics,
 // for easy implementation
 type SpriteData struct {
-	Image *ebiten.Image
+	Image  *ebiten.Image
+	Hidden bool
 }
 
 // I can give it a default value in the parenthesis here..
