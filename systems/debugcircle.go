@@ -1,8 +1,6 @@
 package systems
 
 import (
-	"fmt"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/k-stz/goboomer/archtypes"
 	"github.com/k-stz/goboomer/assets"
@@ -37,7 +35,7 @@ func CreateDebugCircle(position resolv.Vector, radius float64, ecs *ecs.ECS) {
 	})
 	spaceEntry := GetSpaceEntry(ecs)
 	collisions.AddCircle(spaceEntry, debugCircleEntry)
-	fmt.Println("DebugCircle created", debugCircleEntry.Id(), position)
+	//fmt.Println("DebugCircle created", debugCircleEntry.Id(), position)
 }
 
 func UpdateDebugCircle(ecs *ecs.ECS) {

@@ -68,23 +68,27 @@ func UpdatePlayer(ecs *ecs.ECS) {
 	if ebiten.IsKeyPressed(ebiten.KeyT) {
 		dx := GetWorldTileDiameter(ecs)
 		pos := SnapToGridTileCenter(playerShape.Circle.Position(), dx)
-		checkTiles := 1
-		fmt.Printf("Checking %d tiles above player: ", checkTiles)
-		checks := []string{}
+		checkTiles := 4
+		results := []int{}
 		for i := range checkTiles {
 			offsetY := -(dx + (float64(i) * dx))
 			checkPos := pos.Add(resolv.NewVector(0, offsetY))
+			//positions = append(positions, checkPos)
 			CreateDebugCircle(checkPos, dx/2, ecs)
-			fmt.Println("checking pos: ", checkPos)
-			shapeTags := CheckTile(checkPos, ecs)
-			tags := ""
-			for _, st := range shapeTags {
-				tags += st.String() + ","
-			}
-			checks = append(checks, tags)
+			tileShapeTags, _ := CheckTile(checkPos, dx/2, ecs)
 
+			tileResult := 0
+			for _, shapeTag := range tileShapeTags {
+				if shapeTag.Has(tags.TagWall) {
+					tileResult = 1
+					break
+				}
+			}
+			results = append(results, tileResult)
 		}
-		fmt.Println(checks)
+		fmt.Printf("Check pos %v = %d\n", pos, results)
+		//fmt.Printf("Check pos: %v = %v\n", checkPos, results)
+
 	}
 }
 

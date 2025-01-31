@@ -32,25 +32,24 @@ func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 	fmt.Println("Bomb created", explosionEntry.Id(), position)
 }
 
-// func TileChecker(from resolv.Vector, to resolv.Vector, ecs *ecs.ECS) {
-// Returns all shapes intersection roughly with the tile
-func CheckTile(checkPosition resolv.Vector, ecs *ecs.ECS) []resolv.Tags {
-	//fmt.Printf("CheckTile at %v\n", checkPosition)
+// Returns the tags of all tiles at the check Position
+// should be called with a position snapped to the center of the tile
+// Returns:
+// tileShapeTags shapes that were found at the checkPosition in the radius
+// isEmpty: indicates whether any tags were found
+func CheckTile(checkPosition resolv.Vector, radius float64, ecs *ecs.ECS) (tileShapeTags []resolv.Tags, isEmpty bool) {
 	spaceEntry, _ := tags.Space.First(ecs.World)
 	space := components.Space.Get(spaceEntry)
 
-	dx := GetWorldTileDiameter(ecs)
 	// tc is a tile checker, which is a circle bounding box object
 	// used to scan over tiles for intersection to if it intersects in a particular
 	// tile with objects of interest
 	// For now dx/2 in diameter to not accidentally touch neighboring
 	//
-	tc := resolv.NewCircle(checkPosition.X, checkPosition.Y, dx/2)
+	tc := resolv.NewCircle(checkPosition.X, checkPosition.Y, radius)
 	space.Add(tc)
 	defer space.Remove(tc) // remove circle scanner
 
-	// TODO check if resolv.LineTest is better
-	var shapeTags []resolv.Tags
 	//intersectionFound :=
 	tc.IntersectionTest(resolv.IntersectionTestSettings{
 		TestAgainst: tc.SelectTouchingCells(1).FilterShapes(),
@@ -58,22 +57,17 @@ func CheckTile(checkPosition resolv.Vector, ecs *ecs.ECS) []resolv.Tags {
 			// lets report what we touched with rather
 			//playerShape.Circle.MoveVec(set.MTV)
 			// set.OtherShape = The other shape involved in the contact.
-			shapeTags = append(shapeTags, *set.OtherShape.Tags())
+			tileShapeTags = append(tileShapeTags, *set.OtherShape.Tags())
 			//fmt.Println("COLLISION tag", set.OtherShape)
 			return true
 		},
 	})
-	// if intersectionFound {
-	// 	fmt.Println("collision found at:", checkPosition)
-	// 	//fmt.Println("shapes:", shapes)
-	// 	for i, s := range shapes {
-	// 		fmt.Printf("%d tag: %v\n", i, s.Tags())
-	// 	}
-	// } else {
-	// 	fmt.Println("nothing")
-	// }
+	isEmpty = true
+	if len(tileShapeTags) > 0 {
+		isEmpty = false
+	}
 
-	return shapeTags
+	return tileShapeTags, isEmpty
 	//space.ForEachShape()
 
 	// test a selectino of shapes against a line
