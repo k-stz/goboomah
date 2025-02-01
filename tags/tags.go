@@ -1,6 +1,8 @@
 package tags
 
 import (
+	"strconv"
+
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 )
@@ -45,8 +47,32 @@ func NewResolvTag(tagName string) resolv.Tags {
 	return tag
 }
 
+// Returns string representation of tag, if tag doesn't exists
+// its numeric uint representation is returned
+// Adapted from resolv's lib "func (t Tags) String() string" implementation
+// to make it less verbose to build debugging on top
 func ToString(tag resolv.Tags) string {
-	// TODO add "comma, ok" idiom check, return
-	// empty string then
-	return tagDirectory[tag]
+	result := ""
+
+	tagIndex := 0
+
+	for i := 0; i < 64; i++ {
+		possibleTag := resolv.Tags(1 << i)
+		if tag.Has(possibleTag) {
+			if tagIndex > 0 {
+				result += "|"
+			}
+
+			value, ok := tagDirectory[possibleTag]
+
+			if !ok {
+				value = strconv.Itoa(int(possibleTag))
+			}
+
+			result += value
+			tagIndex++
+		}
+	}
+
+	return result
 }
