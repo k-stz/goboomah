@@ -32,6 +32,74 @@ func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 	fmt.Println("Bomb created", explosionEntry.Id(), position)
 }
 
+type TileContent struct {
+	CenterPosition      resolv.Vector // the snapped center position of tile
+	CollisionObjectTags resolv.Tags   // tags of objects found in the tile
+	IsEmpty             bool
+}
+
+type Direction int
+
+const (
+	Up Direction = iota + 1
+	Down
+	Left
+	Right
+)
+
+// Returns resolv.Vector pointing in direction by "length"
+// in Windowcoordinates (negative y is up).
+// Example: GetDirectionVector(Up, 40.0) => (0, -40.0)
+func GetDirectionVector(direction Direction, length float64) resolv.Vector {
+	vec := resolv.NewVectorZero()
+	switch direction {
+	case Up:
+		vec.Y = -length
+	case Down:
+		vec.Y = length
+	case Right:
+		vec.X = length
+	case Left:
+		vec.X = -length
+	}
+	return vec
+}
+
+// Input:
+// Checks tileCount number of Tiles (inclusive) "fromPos" in "direction"
+// tileDiameter. On "fromPos" SnapToTileGridCenter is applied for tile alignment
+// Inside the Tiles it is tested if collision objects with the given resolv.Tags are present
+//
+// Returns: For each tile if any tags where found inside and their position
+func CheckTilesInDirection(fromPos resolv.Vector, direction Direction, tileCount int, tileDiameter float64, forTags resolv.Tags, ecs *ecs.ECS) (tileContents []TileContent) {
+	dx := tileDiameter
+	pos := SnapToGridTileCenter(fromPos, dx)
+	checkTiles := tileCount
+	tileContents = []TileContent{}
+	dirVector := GetDirectionVector(direction, dx)
+	for i := range checkTiles {
+		//offsetY := -(dx + (float64(i) * dx))
+		checkPos := pos.Add(dirVector.Scale(float64(i + 1)))
+		CreateDebugCircle(checkPos, dx/2, ecs)
+		tileShapeTags, _ := CheckTile(checkPos, dx/2, ecs)
+
+		tileResult := TileContent{
+			CenterPosition:      checkPos,
+			CollisionObjectTags: 0,
+			IsEmpty:             true,
+		}
+		for _, shapeTag := range tileShapeTags {
+			if shapeTag.Has(forTags) {
+				tileResult.IsEmpty = false
+				tileResult.CollisionObjectTags = shapeTag
+				break
+			}
+		}
+		tileContents = append(tileContents, tileResult)
+	}
+	return tileContents
+}
+
 // Returns the tags of all tiles at the check Position
 // should be called with a position snapped to the center of the tile
 // Returns:

@@ -13,9 +13,6 @@ import (
 // Here handle player input and update velocity/movement
 // laeter collision response will be collected from here
 func UpdatePlayer(ecs *ecs.ECS) {
-	// NEXT TODO: implement within which Arena Cell the player
-	// is. This will be used for placing, spawns and placing
-	// bombs
 
 	//tileSpiralEffect(ecs)
 	playerEntry, _ := tags.Player.First(ecs.World)
@@ -69,6 +66,32 @@ func UpdatePlayer(ecs *ecs.ECS) {
 	if ebiten.IsKeyPressed(ebiten.KeyT) {
 		dx := GetWorldTileDiameter(ecs)
 		pos := SnapToGridTileCenter(playerShape.Circle.Position(), dx)
+		//checkTiles := 4
+		var tileContents []TileContent
+		tileContents = CheckTilesInDirection(pos, Down, 4, dx, tags.TagWall, ecs)
+		for _, tc := range tileContents {
+			fmt.Printf("Down Check pos %v = %v (%s)\n", tc.CenterPosition,
+				tc.IsEmpty, tags.ToString(tc.CollisionObjectTags))
+		}
+		tileContents = CheckTilesInDirection(pos, Up, 4, dx, tags.TagWall, ecs)
+		for _, tc := range tileContents {
+			fmt.Printf("Up Check pos %v = %v (%s)\n", tc.CenterPosition,
+				tc.IsEmpty, tags.ToString(tc.CollisionObjectTags))
+		}
+		tileContents = CheckTilesInDirection(pos, Right, 4, dx, tags.TagWall, ecs)
+		for _, tc := range tileContents {
+			fmt.Printf("Right Check pos %v = %v (%s)\n", tc.CenterPosition,
+				tc.IsEmpty, tags.ToString(tc.CollisionObjectTags))
+		}
+		tileContents = CheckTilesInDirection(pos, Left, 4, dx, tags.TagWall, ecs)
+		for _, tc := range tileContents {
+			fmt.Printf("Left Check pos %v = %v (%s)\n", tc.CenterPosition,
+				tc.IsEmpty, tags.ToString(tc.CollisionObjectTags))
+		}
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyY) {
+		dx := GetWorldTileDiameter(ecs)
+		pos := SnapToGridTileCenter(playerShape.Circle.Position(), dx)
 		checkTiles := 4
 		results := []int{}
 		for i := range checkTiles {
@@ -91,6 +114,7 @@ func UpdatePlayer(ecs *ecs.ECS) {
 		//fmt.Printf("Check pos: %v = %v\n", checkPos, results)
 
 	}
+
 }
 
 func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
