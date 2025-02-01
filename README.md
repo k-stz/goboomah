@@ -17,16 +17,33 @@ You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 # Concepts
 
 ## ECS - Entity component system
-use this for spire mangement, rendering, control
+use this to management components sprite mangement, rendering, control
 
 Sources:
 - "How to build animations with ebiten using the ECS pattern" https://co0p.github.io/posts/ecs-animation/
 
-- "Entity Component System | Game Engine series" by the Cherno https://www.youtube.com/watch?v=Z-CILn2w9K0 Summary: Great problem desciption of what problem ECS solves. Starting with the struggle of inheritence based system, then an improvement of Entity with a Components vector as a field, which has a leg up on inheritence (composition over inheritence) but suffers performnace hits due to no cache hits! Finally to a data-driven approach of ECS: associating a bunch of components by an Entity-ID. Where each components is part of an array, such that it has data locatlity and the associated lookup is problably a tree on those pure components type arrays. 
+- "Entity Component System | Game Engine series" by "the Cherno" https://www.youtube.com/watch?v=Z-CILn2w9K0 Summary: Great problem desciption of what problem ECS solves. Starting with the struggle of inheritence based system, then an improvement using Entity with a Components vector as a field, which has a leg up on inheritence (composition over inheritence) but suffers performnace hits due to no cache hits, as its an array of pointers! 
+    - Finally to a data-driven approach of ECS: associating a bunch of components by an Entity-ID. Where each components is part of an array, such that it has data locatlity and the associated lookup is problably a tree on those pure components type arrays. 
 
 
 ## tilemap
 Use this for the stage representation
+
+## Collision Detection / Response Libary
+- Using SolarLune's Resolv library.
+    
+Objects that require physics-based collision detection and response will be managed using the Resolv library. Each object is assigned a bounding box, circle, or convex polygon and placed in a 2D space. This space is divided into cells, allowing for efficient collision detection. Instead of checking every object against every other object (which would have a worst-case performance of `O(n²)`), the system only checks objects within neighboring cells, significantly improving performance. 
+
+Spatial Partitioning and Complexity: Recognizing that objects usually interact with nearby objects, we can use a common pattern to group them for efficient lookup and manipulation. This technique is known as spatial partitioning (https://gameprogrammingpatterns.com/spatial-partition.html). 
+
+As is commmon in computer science, this optimization involves a **space-time tradeoff**: We trade **CPU cycles (time) for memory (Space)**, by organizing the collision space into a more efficiently searchable memory construct. This can reduces collision detection complexity from a native implementation needing O(n²) to an O(n log n) using quadtree and even O(1) for Spatial hashing in the best case!
+
+> Complexity: Why `O(n log n)`: 
+- if using a quadtree, inserting and retreiving each object takges `O(log n)` 
+- Doing this fo rn objects takes `O(n log n)` total complexity in the worst case
+- However for uniform grids or hashing it can be closer to `O(n)` in practice (n Objects each needing just `O(1)`!)
+
+Different types of game objects can have different collision responses, even if they share the same bounding shape. To achieve this, "tags" (resolv.tags) are used. For example, an object can be set to only detect collisions with objects tagged as "TagWall." When a collision is detected, the object is displaced just enough to prevent penetration, ensuring it only touches the wall instead of passing through it. This displacement is calculated using the Minimal Translation Vector (MTV), a core feature of the library. The MTV allows for smooth interactions, such as a player character "hugging" a wall without getting stuck or tunneling through it.
 
 # Licenses / Credit
 ## Assets
