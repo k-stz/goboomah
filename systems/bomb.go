@@ -18,7 +18,7 @@ func CreateBomb(position resolv.Vector, player *components.PlayerData, ecs *ecs.
 	bombEntry := archtypes.Bomb.Spawn(ecs)
 	components.Bomb.Set(bombEntry, &components.BombData{
 		Power:          player.Power,
-		CountdownTicks: GetTickCount(ecs) + 200,
+		CountdownTicks: GetTickCount(ecs) + 100,
 		Detonate:       false,
 	})
 	// Sprite
@@ -60,9 +60,7 @@ func UpdateBomb(ecs *ecs.ECS) {
 			fmt.Println("Blowing up!", entry.Entity())
 			CreateExplosion(bombPosition, bomb.Power, ecs)
 			ecs.World.Remove(entry.Entity())
-
 		}
-
 	}
 
 }

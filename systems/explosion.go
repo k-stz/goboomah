@@ -13,23 +13,78 @@ import (
 	"github.com/yohamta/donburi/features/transform"
 )
 
-func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
-	explosionEntry := archtypes.Explosion.Spawn(ecs)
-	components.Explosion.Set(explosionEntry, &components.ExplosionData{
-		Power:          reach,
-		CountdownTicks: GetTickCount(ecs) + 100,
-	})
-	// Sprite
-	components.Sprite.Set(explosionEntry, &components.SpriteData{
-		Image: assets.Wall_tile,
-	})
-	// Shape
+// Returns all CenterPositions in TileContents in order till non empty one is
+// found
+// Used for example when tryig to figure out how many tiles an explosion shall
+// cover till it stops at a wall (=non-empty; thus have an non-empty TileContents)
+// Example: When tileContents [val1 val2 empty val4] then it returns
+// [val1.CenterPosition val2.CenterPosition]
+//
+// TODO: Could also be improved to stop at a specific collision tag!
+func TakeUntilNonEmpty(tileContnets []TileContent) []resolv.Vector {
+	var positions []resolv.Vector
+	fmt.Println("TakeUntilEmpty Loop")
+	for _, v := range tileContnets {
+		fmt.Println("positoin", positions)
+		if !v.IsEmpty {
+			return positions
+		}
+		positions = append(positions, v.CenterPosition)
+	}
+	return positions
+}
+
+// Calculates all position were an explosion shall be spawned, using "atPosition"
+// as the origin of the explosion (here the bomb was basically placed)
+// Inputs:
+// atPostion: origin of the postions, should be at the center of a tile
+// reach: the explosion reach of a bomb
+// Returns:
+// Slice containing 4 slices, for each cardinal postions
+// such that we can interpolate different animations frames for the explosions
+// spawned for each offset away from the bomb!
+func GetExplosionPositions(atPosition resolv.Vector, reach int, ecs *ecs.ECS) (explostionDirectionPositions [][]resolv.Vector) {
 	dx := GetWorldTileDiameter(ecs)
-	position = SnapToGridTileCenter(position, dx)
-	bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
-	bbox.Tags().Set(tags.TagExplosion)
-	components.ConvexPolygonBBox.Set(explosionEntry, bbox)
-	fmt.Println("Bomb created", explosionEntry.Id(), position)
+	var spawnPositions [][]resolv.Vector
+	for _, direction := range []Direction{Up, Down, Left, Right} {
+		checks := CheckTilesInDirection(atPosition, direction, reach, dx, tags.TagWall, false, ecs)
+		fmt.Println("dir", direction, "checks", checks)
+		fmt.Println("spawnPos", spawnPositions)
+		// Maybe don't trim it here, as explostion will need know
+		spawnPositions = append(spawnPositions, TakeUntilNonEmpty(checks))
+	}
+
+	// Add center explosion
+	spawnPositions = append(spawnPositions, []resolv.Vector{atPosition})
+	// probably will need to agument the return value with the direction to
+	// choose the right animation frames...? or at least rotate them
+	// by 90-degrees each?
+	return spawnPositions
+}
+
+func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
+	dx := GetWorldTileDiameter(ecs)
+	var spawnPostions [][]resolv.Vector = GetExplosionPositions(position, reach, ecs)
+	fmt.Println("Create explosion spawn pos", spawnPostions)
+	for _, dir := range spawnPostions {
+		for _, pos := range dir {
+			fmt.Println("Explosion pos", pos)
+			explosionEntry := archtypes.Explosion.Spawn(ecs)
+			components.Explosion.Set(explosionEntry, &components.ExplosionData{
+				Power:          reach, // this should be redundant
+				CountdownTicks: GetTickCount(ecs) + 100,
+			})
+			components.Sprite.Set(explosionEntry, &components.SpriteData{
+				// TODO use for loop index here to choose different animation frame
+				Image: assets.Wall_tile,
+			})
+			position = SnapToGridTileCenter(pos, dx)
+			bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
+			bbox.Tags().Set(tags.TagExplosion)
+			components.ConvexPolygonBBox.Set(explosionEntry, bbox)
+		}
+	}
+	// finally spawn center explosion
 }
 
 type TileContent struct {
