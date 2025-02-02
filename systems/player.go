@@ -6,7 +6,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
-	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi/ecs"
 )
 
@@ -68,53 +67,27 @@ func UpdatePlayer(ecs *ecs.ECS) {
 		pos := SnapToGridTileCenter(playerShape.Circle.Position(), dx)
 		//checkTiles := 4
 		var tileContents []TileContent
-		tileContents = CheckTilesInDirection(pos, Down, 4, dx, tags.TagWall, ecs)
+		tileContents = CheckTilesInDirection(pos, Down, 4, dx, tags.TagWall, true, ecs)
 		for _, tc := range tileContents {
 			fmt.Printf("Down Check pos %v = %v (%s)\n", tc.CenterPosition,
 				tc.IsEmpty, tags.ToString(tc.CollisionObjectTags))
 		}
-		tileContents = CheckTilesInDirection(pos, Up, 4, dx, tags.TagWall, ecs)
+		tileContents = CheckTilesInDirection(pos, Up, 4, dx, tags.TagWall, true, ecs)
 		for _, tc := range tileContents {
 			fmt.Printf("Up Check pos %v = %v (%s)\n", tc.CenterPosition,
 				tc.IsEmpty, tags.ToString(tc.CollisionObjectTags))
 		}
-		tileContents = CheckTilesInDirection(pos, Right, 4, dx, tags.TagWall, ecs)
+		tileContents = CheckTilesInDirection(pos, Right, 4, dx, tags.TagWall, true, ecs)
 		for _, tc := range tileContents {
 			fmt.Printf("Right Check pos %v = %v (%s)\n", tc.CenterPosition,
 				tc.IsEmpty, tags.ToString(tc.CollisionObjectTags))
 		}
-		tileContents = CheckTilesInDirection(pos, Left, 4, dx, tags.TagWall, ecs)
+		tileContents = CheckTilesInDirection(pos, Left, 4, dx, tags.TagWall, true, ecs)
 		for _, tc := range tileContents {
 			fmt.Printf("Left Check pos %v = %v (%s)\n", tc.CenterPosition,
 				tc.IsEmpty, tags.ToString(tc.CollisionObjectTags))
 		}
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyY) {
-		dx := GetWorldTileDiameter(ecs)
-		pos := SnapToGridTileCenter(playerShape.Circle.Position(), dx)
-		checkTiles := 4
-		results := []int{}
-		for i := range checkTiles {
-			offsetY := -(dx + (float64(i) * dx))
-			checkPos := pos.Add(resolv.NewVector(0, offsetY))
-			//positions = append(positions, checkPos)
-			CreateDebugCircle(checkPos, dx/2, ecs)
-			tileShapeTags, _ := CheckTile(checkPos, dx/2, ecs)
-
-			tileResult := 0
-			for _, shapeTag := range tileShapeTags {
-				if shapeTag.Has(tags.TagWall) {
-					tileResult = 1
-					break
-				}
-			}
-			results = append(results, tileResult)
-		}
-		fmt.Printf("Check pos %v = %d\n", pos, results)
-		//fmt.Printf("Check pos: %v = %v\n", checkPos, results)
-
-	}
-
 }
 
 func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {

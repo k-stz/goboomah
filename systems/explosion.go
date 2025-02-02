@@ -69,9 +69,11 @@ func GetDirectionVector(direction Direction, length float64) resolv.Vector {
 // Checks tileCount number of Tiles (inclusive) "fromPos" in "direction"
 // tileDiameter. On "fromPos" SnapToTileGridCenter is applied for tile alignment
 // Inside the Tiles it is tested if collision objects with the given resolv.Tags are present
+// debugMode: Whether to create debugCircle to visualize the checks for debugging
 //
 // Returns: For each tile if any tags where found inside and their position
-func CheckTilesInDirection(fromPos resolv.Vector, direction Direction, tileCount int, tileDiameter float64, forTags resolv.Tags, ecs *ecs.ECS) (tileContents []TileContent) {
+func CheckTilesInDirection(fromPos resolv.Vector, direction Direction, tileCount int, tileDiameter float64,
+	forTags resolv.Tags, debugMode bool, ecs *ecs.ECS) (tileContents []TileContent) {
 	dx := tileDiameter
 	pos := SnapToGridTileCenter(fromPos, dx)
 	checkTiles := tileCount
@@ -80,8 +82,7 @@ func CheckTilesInDirection(fromPos resolv.Vector, direction Direction, tileCount
 	for i := range checkTiles {
 		//offsetY := -(dx + (float64(i) * dx))
 		checkPos := pos.Add(dirVector.Scale(float64(i + 1)))
-		CreateDebugCircle(checkPos, dx/2, ecs)
-		tileShapeTags, _ := CheckTile(checkPos, dx/2, ecs)
+		tileShapeTags, _ := CheckTile(checkPos, dx/2, debugMode, ecs)
 
 		tileResult := TileContent{
 			CenterPosition:      checkPos,
@@ -100,14 +101,19 @@ func CheckTilesInDirection(fromPos resolv.Vector, direction Direction, tileCount
 	return tileContents
 }
 
-// Returns the tags of all tiles at the check Position
-// should be called with a position snapped to the center of the tile
+// Input:
+// debugMode: whether to create a debugCircle Object to draw the circle used for checking
+// for debugging
 // Returns:
 // tileShapeTags shapes that were found at the checkPosition in the radius
 // isEmpty: indicates whether any tags were found
-func CheckTile(checkPosition resolv.Vector, radius float64, ecs *ecs.ECS) (tileShapeTags []resolv.Tags, isEmpty bool) {
+func CheckTile(checkPosition resolv.Vector, radius float64, debugMode bool, ecs *ecs.ECS) (tileShapeTags []resolv.Tags, isEmpty bool) {
 	spaceEntry, _ := tags.Space.First(ecs.World)
 	space := components.Space.Get(spaceEntry)
+
+	if debugMode {
+		CreateDebugCircle(checkPosition, radius, ecs)
+	}
 
 	// tc is a tile checker, which is a circle bounding box object
 	// used to scan over tiles for intersection to if it intersects in a particular
