@@ -19,7 +19,7 @@ func UpdateObjects(ecs *ecs.ECS) {
 	playerEntry, _ := tags.Player.First(ecs.World)
 	player := components.Player.Get(playerEntry)
 	playerShape := components.ShapeCircle.Get(playerEntry)
-
+	dx := GetWorldTileDiameter(ecs)
 	count := 0
 	for entry := range components.Tile.Iter(ecs.World) {
 		count++
@@ -37,10 +37,26 @@ func UpdateObjects(ecs *ecs.ECS) {
 	playerShape.Circle.MoveVec(player.Movement)
 
 	playerShape.Circle.IntersectionTest(resolv.IntersectionTestSettings{
-		TestAgainst: playerShape.Circle.SelectTouchingCells(1).FilterShapes(),
+		TestAgainst: playerShape.Circle.SelectTouchingCells(1).
+			// Filter all solids
+			FilterShapes().ByTags(tags.TagWall | tags.TagBomb),
 		OnIntersect: func(set resolv.IntersectionSet) bool {
-			playerShape.Circle.MoveVec(set.MTV)
-			fmt.Println("COLLISION, applying MTV", set.MTV)
+			if set.OtherShape.Tags().Has(tags.TagWall) {
+				playerShape.Circle.MoveVec(set.MTV)
+				fmt.Println("COLLISION with wall, applying MTV", set.MTV)
+			}
+			if set.OtherShape.Tags().Has(tags.TagBomb) {
+				// Only apply MTV when player is mostly outside of the bomb
+				// such that when a player places a bomb he can still move on it
+				magMTV := set.MTV.Magnitude()
+				ratio := magMTV / dx
+				fmt.Println("")
+				if (magMTV / dx) < 0.15 {
+					playerShape.Circle.MoveVec(set.MTV.Scale(1.0))
+					fmt.Println("MOVED")
+				}
+				fmt.Println("Collision Bomb, MTV!", set.MTV, "mag", magMTV, "ratio", ratio)
+			}
 			// also update the tf.LocalTransform
 			//player.Speed.X = 0
 			//player.Speed.Y = 0
