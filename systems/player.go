@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
 	"github.com/yohamta/donburi/ecs"
@@ -22,16 +23,16 @@ func UpdatePlayer(ecs *ecs.ECS) {
 	dx := GetWorldTileDiameter(ecs)
 	playerTilePosition := SnapToGridTileCenter(playerShape.Circle.Position(), dx)
 
-	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
+	if ebiten.IsKeyPressed(ebiten.KeyLeft) || ebiten.IsKeyPressed(ebiten.KeyA) {
 		x = -1.0
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyRight) {
+	if ebiten.IsKeyPressed(ebiten.KeyRight) || ebiten.IsKeyPressed(ebiten.KeyD) {
 		x = 1.0
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyUp) {
+	if ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.IsKeyPressed(ebiten.KeyW) {
 		y = -1.0
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyDown) {
+	if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.IsKeyPressed(ebiten.KeyS) {
 		y = 1.0
 	}
 	player.Direction.X = x
@@ -56,8 +57,12 @@ func UpdatePlayer(ecs *ecs.ECS) {
 		playerShape.Rotation -= rotateSpeed
 	}
 
-	// Bombs
 	if ebiten.IsKeyPressed(ebiten.KeySpace) {
+
+	}
+
+	// Bombs
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		if CanPlaceBombs(playerTilePosition, ecs) {
 			player.Bombs--
 			CreateBomb(playerShape.Circle.Position(), player, ecs)
