@@ -37,7 +37,13 @@ func CreateBomb(position resolv.Vector, player *components.PlayerData, ecs *ecs.
 }
 
 // Attempt to place Bomb at Position by given player
-func CanPlaceBombs(player *components.PlayerData) bool {
+func CanPlaceBombs(checkPosition resolv.Vector, ecs *ecs.ECS) bool {
+	dx := GetWorldTileDiameter(ecs)
+	tileShapeTags, _ := CheckTile(checkPosition, dx/2, false, ecs)
+	if tileShapeTags.Has(tags.TagBomb | tags.TagWall) {
+		return false
+	}
+
 	return true
 	// implement logic later
 	//return player.Bombs > 0

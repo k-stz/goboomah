@@ -144,12 +144,9 @@ func CheckTilesInDirection(fromPos resolv.Vector, direction Direction, tileCount
 			CollisionObjectTags: 0,
 			IsEmpty:             true,
 		}
-		for _, shapeTag := range tileShapeTags {
-			if shapeTag.Has(forTags) {
-				tileResult.IsEmpty = false
-				tileResult.CollisionObjectTags = shapeTag
-				break
-			}
+		if tileShapeTags.Has(forTags) {
+			tileResult.IsEmpty = false
+			tileResult.CollisionObjectTags |= tileShapeTags
 		}
 		tileContents = append(tileContents, tileResult)
 	}
@@ -162,7 +159,7 @@ func CheckTilesInDirection(fromPos resolv.Vector, direction Direction, tileCount
 // Returns:
 // tileShapeTags shapes that were found at the checkPosition in the radius
 // isEmpty: indicates whether any tags were found
-func CheckTile(checkPosition resolv.Vector, radius float64, debugMode bool, ecs *ecs.ECS) (tileShapeTags []resolv.Tags, isEmpty bool) {
+func CheckTile(checkPosition resolv.Vector, radius float64, debugMode bool, ecs *ecs.ECS) (tileShapeTags resolv.Tags, isEmpty bool) {
 	spaceEntry, _ := tags.Space.First(ecs.World)
 	space := components.Space.Get(spaceEntry)
 
@@ -179,7 +176,7 @@ func CheckTile(checkPosition resolv.Vector, radius float64, debugMode bool, ecs 
 
 	//intersectionFound :=
 	tc.IntersectionTest(resolv.IntersectionTestSettings{
-		TestAgainst: tc.SelectTouchingCells(1).FilterShapes().ByTags(tags.TagWall),
+		TestAgainst: tc.SelectTouchingCells(1).FilterShapes(),
 		OnIntersect: func(set resolv.IntersectionSet) bool {
 			// lets report what we touched with rather
 			//playerShape.Circle.MoveVec(set.MTV)
@@ -187,7 +184,7 @@ func CheckTile(checkPosition resolv.Vector, radius float64, debugMode bool, ecs 
 			// iscontainedby is what we need here!
 			insideWall := checkPosition.IsInside(set.OtherShape)
 			if insideWall {
-				tileShapeTags = append(tileShapeTags, *set.OtherShape.Tags())
+				tileShapeTags |= *set.OtherShape.Tags()
 				return false // stop testing for further intersection
 			}
 			//set.OtherShape.(*resolv.ConvexPolygon).IsContainedBy(set.OtherShape)
@@ -196,7 +193,7 @@ func CheckTile(checkPosition resolv.Vector, radius float64, debugMode bool, ecs 
 		},
 	})
 	isEmpty = true
-	if len(tileShapeTags) > 0 {
+	if tileShapeTags == 0 {
 		isEmpty = false
 	}
 

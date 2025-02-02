@@ -19,6 +19,9 @@ func UpdatePlayer(ecs *ecs.ECS) {
 	playerShape := components.ShapeCircle.Get(playerEntry)
 	var x float64
 	var y float64
+	dx := GetWorldTileDiameter(ecs)
+	playerTilePosition := SnapToGridTileCenter(playerShape.Circle.Position(), dx)
+
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		x = -1.0
 	}
@@ -55,7 +58,7 @@ func UpdatePlayer(ecs *ecs.ECS) {
 
 	// Bombs
 	if ebiten.IsKeyPressed(ebiten.KeySpace) {
-		if CanPlaceBombs(player) {
+		if CanPlaceBombs(playerTilePosition, ecs) {
 			player.Bombs--
 			CreateBomb(playerShape.Circle.Position(), player, ecs)
 		} else {
@@ -65,26 +68,24 @@ func UpdatePlayer(ecs *ecs.ECS) {
 
 	// For Debugging
 	if ebiten.IsKeyPressed(ebiten.KeyT) {
-		dx := GetWorldTileDiameter(ecs)
-		pos := SnapToGridTileCenter(playerShape.Circle.Position(), dx)
 		//checkTiles := 4
 		var tileContents []TileContent
-		tileContents = CheckTilesInDirection(pos, Down, 4, dx, tags.TagWall, true, ecs)
+		tileContents = CheckTilesInDirection(playerTilePosition, Down, 4, dx, tags.TagWall, true, ecs)
 		for _, tc := range tileContents {
 			fmt.Printf("Down Check pos %v = %v (%s)\n", tc.CenterPosition,
 				tc.IsEmpty, tags.ToString(tc.CollisionObjectTags))
 		}
-		tileContents = CheckTilesInDirection(pos, Up, 4, dx, tags.TagWall, true, ecs)
+		tileContents = CheckTilesInDirection(playerTilePosition, Up, 4, dx, tags.TagWall, true, ecs)
 		for _, tc := range tileContents {
 			fmt.Printf("Up Check pos %v = %v (%s)\n", tc.CenterPosition,
 				tc.IsEmpty, tags.ToString(tc.CollisionObjectTags))
 		}
-		tileContents = CheckTilesInDirection(pos, Right, 4, dx, tags.TagWall, true, ecs)
+		tileContents = CheckTilesInDirection(playerTilePosition, Right, 4, dx, tags.TagWall, true, ecs)
 		for _, tc := range tileContents {
 			fmt.Printf("Right Check pos %v = %v (%s)\n", tc.CenterPosition,
 				tc.IsEmpty, tags.ToString(tc.CollisionObjectTags))
 		}
-		tileContents = CheckTilesInDirection(pos, Left, 4, dx, tags.TagWall, true, ecs)
+		tileContents = CheckTilesInDirection(playerTilePosition, Left, 4, dx, tags.TagWall, true, ecs)
 		for _, tc := range tileContents {
 			fmt.Printf("Left Check pos %v = %v (%s)\n", tc.CenterPosition,
 				tc.IsEmpty, tags.ToString(tc.CollisionObjectTags))
