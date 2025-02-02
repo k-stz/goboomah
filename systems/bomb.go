@@ -7,9 +7,11 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/k-stz/goboomer/archtypes"
 	"github.com/k-stz/goboomer/assets"
+	"github.com/k-stz/goboomer/collisions"
 	"github.com/k-stz/goboomer/components"
 	"github.com/k-stz/goboomer/tags"
 	"github.com/solarlune/resolv"
+	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
 	"github.com/yohamta/donburi/features/transform"
 )
@@ -33,6 +35,8 @@ func CreateBomb(position resolv.Vector, player *components.PlayerData, ecs *ecs.
 	bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
 	bbox.Tags().Set(tags.TagBomb)
 	components.ConvexPolygonBBox.Set(bombEntry, bbox)
+	// Add Shape to space
+	collisions.AddConvexPolygonBBox(GetSpaceEntry(ecs), bombEntry)
 	fmt.Println("Bomb created", bombEntry.Id(), position)
 }
 
@@ -65,10 +69,17 @@ func UpdateBomb(ecs *ecs.ECS) {
 		if bomb.Detonate {
 			fmt.Println("Blowing up!", entry.Entity())
 			CreateExplosion(bombPosition, bomb.Power, ecs)
-			ecs.World.Remove(entry.Entity())
+			RemoveBomb(entry, ecs)
 		}
 	}
+}
 
+// Remove Bomb from ecs and its object from the Collisoin spacce
+func RemoveBomb(bombEntry *donburi.Entry, ecs *ecs.ECS) {
+	space := GetSpace(ecs)
+	bbox := components.ConvexPolygonBBox.Get(bombEntry)
+	space.Remove(bbox)
+	ecs.World.Remove(bombEntry.Entity())
 }
 
 // "Snaps into place" the position vector to the grid's tile
