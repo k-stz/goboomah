@@ -31,8 +31,10 @@ func UpdatePlayer(ecs *ecs.ECS) {
 	if ebiten.IsKeyPressed(ebiten.KeyDown) {
 		y = 1.0
 	}
-	player.Speed.X = x
-	player.Speed.Y = y
+	player.Direction.X = x
+	player.Direction.Y = y
+	// so we're not quicker in any direction
+	player.Direction = player.Direction.Unit()
 
 	scaleSpeed := 0.01
 	if ebiten.IsKeyPressed(ebiten.KeyG) {

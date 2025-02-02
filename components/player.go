@@ -3,7 +3,6 @@ package components
 import (
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
-	"github.com/yohamta/donburi/features/math"
 )
 
 type PlayerData struct {
@@ -12,7 +11,10 @@ type PlayerData struct {
 	// the collision/physics system will then calculate what
 	// position this results into and will update the
 	// players actual position (stored in another component)
-	Speed math.Vec2
+	Direction resolv.Vector
+	// Current movement Speed of the player, this is by how much
+	// the player will move in a direction
+	Movement resolv.Vector
 	// how many bombs can be carried
 	Bombs int
 	// What Firepower placed bombs have

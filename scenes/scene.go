@@ -43,8 +43,9 @@ func (gs *GameScene) Draw(screen *ebiten.Image) {
 	message += fmt.Sprintf("SnapTileCenter: %v\n",
 		systems.SnapToGridTileCenter(playerShape.Circle.Position(),
 			systems.GetWorldTileDiameter(gs.ecs)))
-	message += fmt.Sprintf("Radius: %f\nBombs: %d\nPower: %d\nTotalBombs: %d\nTileDiameter: %02f\n",
+	message += fmt.Sprintf("Radius: %f\nPlayerSpeed: %f\nBombs: %d\nPower: %d\nTotalBombs: %d\nTileDiameter: %02f\n",
 		playerShape.Circle.Radius(),
+		playerData.Movement,
 		playerData.Bombs,
 		playerData.Power,
 		totalBombs,

@@ -26,15 +26,15 @@ func UpdateObjects(ecs *ecs.ECS) {
 		fmt.Println("Tiles exists, yes?", count, entry.Id())
 	}
 
-	// This doesn't modulate the speed properly
-	movement := resolv.NewVector(player.Speed.X, player.Speed.Y)
-	maxSpd := 1.0
+	movement := resolv.NewVector(player.Direction.X, player.Direction.Y)
+	// Fill these with playerData stats, so you can pick up
+	// speed enhancing items!
+	maxSpd := 4.0
 	friction := 0.5
-	accel := 0.5 + friction
+	accel := 0.3 + friction
 
-	movement = movement.Add(movement.Scale(accel)).SubMagnitude(friction).ClampMagnitude(maxSpd)
-
-	playerShape.Circle.MoveVec(movement.Scale(5))
+	player.Movement = player.Movement.Add(movement.Scale(accel)).SubMagnitude(friction).ClampMagnitude(maxSpd)
+	playerShape.Circle.MoveVec(player.Movement)
 
 	playerShape.Circle.IntersectionTest(resolv.IntersectionTestSettings{
 		TestAgainst: playerShape.Circle.SelectTouchingCells(1).FilterShapes(),
