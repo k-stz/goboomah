@@ -11,6 +11,7 @@ import (
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi/ecs"
 	"github.com/yohamta/donburi/features/transform"
+	"github.com/yohamta/ganim8/v2"
 )
 
 // Returns all CenterPositions in TileContents in order till non empty one is
@@ -77,7 +78,8 @@ func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 			// This is were we will handle the animation
 			components.Sprite.Set(explosionEntry, &components.SpriteData{
 				// TODO use for loop index here to choose different animation frame
-				Image: assets.Explosion.SpriteSheet,
+				Image:     assets.Explosion.SpriteSheet,
+				Animation: assets.Explosion.CenterAnimation[0],
 			})
 			position = SnapToGridTileCenter(pos, dx)
 			bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
@@ -245,6 +247,10 @@ func DrawExplosion(ecs *ecs.ECS, screen *ebiten.Image) {
 		op.GeoM.Rotate(rotation)
 		op.GeoM.Scale(tf.LocalScale.X, tf.LocalScale.Y)
 		op.GeoM.Translate(offsetX, offsetY)
-		screen.DrawImage(explosionSprite.Image, op)
+		//screen.DrawImage(explosionSprite.Image, op)
+		// Get Bomb animation
+		//explosionData := components.Explosion.Get(entry)
+		drawOpts := ganim8.DrawOpts(offsetX, offsetY)
+		explosionSprite.Animation.Draw(screen, drawOpts)
 	}
 }

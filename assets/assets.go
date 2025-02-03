@@ -45,9 +45,9 @@ func NewExplosionAnimation(spritFileName string) *Animation {
 	frameHeight := 48
 	frameWidth := 45
 	g4845 := ganim8.NewGrid(frameHeight, frameWidth, imageWidth, imageHeight)
-
+	centerExplosionAnimation := ganim8.New(spritesheet, g4845.GetFrames("1-7", 1), 100*time.Millisecond)
 	centerAnimation := []*ganim8.Animation{
-		ganim8.New(spritesheet, g4845.Frames("1-7", 1), 100*time.Millisecond),
+		centerExplosionAnimation,
 	}
 	return &Animation{
 		SpriteSheet:     spritesheet,
