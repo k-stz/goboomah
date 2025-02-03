@@ -1,6 +1,8 @@
 # Game
 You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 
+"Go, Boom -Ah!"
+
 ## Goals
 - Use Ebitengine to create the 2d game
 - Implement Gameloop, implement loading any sprites
@@ -91,3 +93,10 @@ What helped was aiming at a focus on a single feature first, like rendering the 
 
 What I love the most about ECS, I think, is that now I can much clearly imagine how to implement any feature I can think of. I love the feeling when your skills and knowledge suddenly catch up with what seemed to be insurmountable before, but it was "just" around the corner all along. I had this experience many times in IT, and I try to instill it in others.
 
+## Golang Libraries: v3 isn't always newer than v2
+Found the Animation library ganim8 and wanted to use it. Found that the example code didn't work for me, because I did a simple "go get github.com/yohamta/ganim8" which got me the v1 version.
+A quick look at the pkg.go.dev registry showed me that v3 is available, but to my confusion this tag is not available on the repository...
+
+It seems the tag was deleted/abandoned by the library and indeed v2 is the more up-to-date library. I acertained that, by comparing the package API by looking over both versions Documentation and saw that at least a single Function "isEnd" was newer on v2. Also v3 was published, according to go.dev.pkg in 2022, while v2 was published in June 2023.
+
+So I promptly updated all my refernced to `/v2`, did a `go mod tidy` and made sure the v3 library isn't referenced anywhere in my go.mod or go.sum.
