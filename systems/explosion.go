@@ -210,6 +210,11 @@ func CheckTile(checkPosition resolv.Vector, radius float64, debugMode bool, ecs 
 func UpdateExplosion(ecs *ecs.ECS) {
 	currentGameTick := GetTickCount(ecs)
 	for entry := range tags.Explosion.Iter(ecs.World) {
+
+		// SPrite update
+		explosionSprite := components.Sprite.Get(entry)
+		explosionSprite.Animation.Update()
+
 		explosion := components.Explosion.Get(entry)
 		if explosion.CountdownTicks <= currentGameTick {
 			fmt.Println("Blowing up!", entry.Entity())
