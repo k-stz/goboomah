@@ -104,6 +104,9 @@ func (gs *GameScene) configure() {
 	fmt.Println("Created Entries IDs:", arenaEntry.Id(), playerEntry.Id(), spaceEntry.Id())
 
 	addSolidTilesSpace(spaceEntry, ecs)
+
+	// Animations
+	//setupAnimations()
 }
 
 func addSolidTilesSpace(spaceEntry *donburi.Entry, ecs *ecs.ECS) {

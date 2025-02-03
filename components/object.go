@@ -127,18 +127,9 @@ type CollidableData struct {
 	IsSolid bool
 }
 
-// Will represent a particular tile/sprite that we will
-// draw in tilemap cells or for the player. A map of pics,
-// for easy implementation
-type SpriteData struct {
-	Image  *ebiten.Image
-	Hidden bool
-}
-
 // I can give it a default value in the parenthesis here..
 var TileGrid = donburi.NewComponentType[TileGridData]()
 var GridPosition = donburi.NewComponentType[GridPositionData]()
-var Sprite = donburi.NewComponentType[SpriteData]()
 var Rectangle = donburi.NewComponentType[RectangleData]()
 var Image = donburi.NewComponentType[ebiten.Image]()
 var Tile = donburi.NewComponentType[TileData]()

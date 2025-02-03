@@ -20,10 +20,6 @@ func CreateDebugCircle(position resolv.Vector, radius float64, ecs *ecs.ECS) {
 		Hidden: true,
 	})
 	// Shape
-	//dx := GetWorldTileDiameter(ecs)
-	//position = SnapToGridPosition(position, dx)
-	// below works, but it should work without the -dx/2
-	//circleObj := resolv.NewCircle(position.X-dx/2, position.Y-dx/2, radius)
 	circleObj := resolv.NewCircle(position.X, position.Y, radius)
 
 	circleObj.Tags().Set(tags.TagDebug)
@@ -47,18 +43,6 @@ func UpdateDebugCircle(ecs *ecs.ECS) {
 			ecs.World.Remove(entry.Entity())
 		}
 	}
-
-	// currentGameTick := GetTickCount(ecs)
-	// for entry := range tags.Explosion.Iter(ecs.World) {
-	// 	explosion := components.Explosion.Get(entry)
-	// 	if explosion.CountdownTicks <= currentGameTick {
-	// 		fmt.Println("Blowing up!", entry.Entity())
-	// 		ecs.World.Remove(entry.Entity())
-	// 	}
-	// 	// Handle collision logic here!
-	// 	// Hurt players, items, walls? (movable walls)
-	// }
-
 }
 
 func DrawDebugCircle(ecs *ecs.ECS, screen *ebiten.Image) {
