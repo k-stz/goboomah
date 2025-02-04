@@ -1,7 +1,7 @@
 package collisions
 
 import (
-	"github.com/k-stz/goboomer/components"
+	"github.com/k-stz/goboomah/components"
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 )

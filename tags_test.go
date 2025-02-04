@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/k-stz/goboomer/tags"
+	"github.com/k-stz/goboomah/tags"
 	"github.com/solarlune/resolv"
 )
 

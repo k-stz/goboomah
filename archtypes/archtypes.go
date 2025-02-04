@@ -1,9 +1,9 @@
 package archtypes
 
 import (
-	"github.com/k-stz/goboomer/components"
-	"github.com/k-stz/goboomer/layers"
-	"github.com/k-stz/goboomer/tags"
+	"github.com/k-stz/goboomah/components"
+	"github.com/k-stz/goboomah/layers"
+	"github.com/k-stz/goboomah/tags"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
 	"github.com/yohamta/donburi/features/transform"

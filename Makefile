@@ -8,10 +8,10 @@ vet: fmt
 	go vet ./...
 
 build: vet
-	go build -o bin/goboomer
+	go build -o bin/goboomah
 
 test:
 	go test
 
 run: build
-	./bin/goboomer
+	./bin/goboomah

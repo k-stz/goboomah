@@ -1,4 +1,4 @@
-module github.com/k-stz/goboomer
+module github.com/k-stz/goboomah
 
 go 1.23.4
 

@@ -5,8 +5,8 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
-	"github.com/k-stz/goboomer/components"
-	"github.com/k-stz/goboomer/tags"
+	"github.com/k-stz/goboomah/components"
+	"github.com/k-stz/goboomah/tags"
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"

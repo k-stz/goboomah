@@ -7,12 +7,12 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/k-stz/goboomer/collisions"
-	"github.com/k-stz/goboomer/components"
-	"github.com/k-stz/goboomer/factory"
-	"github.com/k-stz/goboomer/layers"
-	"github.com/k-stz/goboomer/systems"
-	"github.com/k-stz/goboomer/tags"
+	"github.com/k-stz/goboomah/collisions"
+	"github.com/k-stz/goboomah/components"
+	"github.com/k-stz/goboomah/factory"
+	"github.com/k-stz/goboomah/layers"
+	"github.com/k-stz/goboomah/systems"
+	"github.com/k-stz/goboomah/tags"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
 )

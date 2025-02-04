@@ -1,9 +1,9 @@
 package factory
 
 import (
-	"github.com/k-stz/goboomer/archtypes"
-	"github.com/k-stz/goboomer/components"
-	"github.com/k-stz/goboomer/tags"
+	"github.com/k-stz/goboomah/archtypes"
+	"github.com/k-stz/goboomah/components"
+	"github.com/k-stz/goboomah/tags"
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"

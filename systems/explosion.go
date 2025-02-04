@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/k-stz/goboomer/archtypes"
-	"github.com/k-stz/goboomer/assets"
-	"github.com/k-stz/goboomer/components"
-	"github.com/k-stz/goboomer/tags"
+	"github.com/k-stz/goboomah/archtypes"
+	"github.com/k-stz/goboomah/assets"
+	"github.com/k-stz/goboomah/components"
+	"github.com/k-stz/goboomah/tags"
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi/ecs"
 	"github.com/yohamta/donburi/features/transform"
@@ -255,7 +255,10 @@ func DrawExplosion(ecs *ecs.ECS, screen *ebiten.Image) {
 		//screen.DrawImage(explosionSprite.Image, op)
 		// Get Bomb animation
 		//explosionData := components.Explosion.Get(entry)
-		drawOpts := ganim8.DrawOpts(offsetX, offsetY)
+		dx := GetWorldTileDiameter(ecs)
+		aniPos := SnapToGridTileTopLeft(pos, dx)
+		tileWidth, tileHeight := 48.0, 45.0
+		drawOpts := ganim8.DrawOpts(aniPos.X, aniPos.Y, 0.0, dx/tileWidth, dx/tileHeight)
 		explosionSprite.Animation.Draw(screen, drawOpts)
 	}
 }

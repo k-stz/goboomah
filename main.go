@@ -10,8 +10,8 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/k-stz/goboomer/assets"
-	"github.com/k-stz/goboomer/scenes"
+	"github.com/k-stz/goboomah/assets"
+	"github.com/k-stz/goboomah/scenes"
 )
 
 type Scene interface {
@@ -192,7 +192,7 @@ func main() {
 	//game.stage = gameold.stage
 
 	ebiten.SetWindowSize(640, 480)
-	ebiten.SetWindowTitle("GoBoomer")
+	ebiten.SetWindowTitle("GoBoomah")
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 
 	if err := ebiten.RunGame(game); err != nil {

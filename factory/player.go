@@ -3,12 +3,12 @@ package factory
 import (
 	"fmt"
 
-	"github.com/k-stz/goboomer/archtypes"
-	"github.com/k-stz/goboomer/assets"
-	"github.com/k-stz/goboomer/collisions"
-	"github.com/k-stz/goboomer/components"
-	"github.com/k-stz/goboomer/systems"
-	"github.com/k-stz/goboomer/tags"
+	"github.com/k-stz/goboomah/archtypes"
+	"github.com/k-stz/goboomah/assets"
+	"github.com/k-stz/goboomah/collisions"
+	"github.com/k-stz/goboomah/components"
+	"github.com/k-stz/goboomah/systems"
+	"github.com/k-stz/goboomah/tags"
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
