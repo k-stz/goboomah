@@ -26,9 +26,10 @@ var (
 )
 
 type Animation struct {
-	SpriteSheet     *ebiten.Image
-	Grid            *ganim8.Grid
-	CenterAnimation []*ganim8.Animation
+	SpriteSheet *ebiten.Image
+	Grid        *ganim8.Grid
+	// so you can use Animation[walkRight], Animation[centerExplosion] etc
+	Map map[string]*ganim8.Animation
 }
 
 // Load spritesheet in assets/animation folder. You just have
@@ -45,15 +46,21 @@ func NewExplosionAnimation(spritFileName string) *Animation {
 	frameHeight := 48
 	frameWidth := 45
 	g4845 := ganim8.NewGrid(frameHeight, frameWidth, imageWidth, imageHeight)
-	centerExplosionAnimation := ganim8.New(spritesheet, g4845.GetFrames("1-7", 1), 100*time.Millisecond)
-	centerAnimation := []*ganim8.Animation{
-		centerExplosionAnimation,
+	// you can specify different time duration for each frame like this:
+	// []time.Duration { 100 * time.Millisecond, 100 * time.Millisecond }
+	m150 := 150 * time.Millisecond
+	m100 := 100 * time.Millisecond
+	centerExplosionAnimation := ganim8.New(spritesheet, g4845.GetFrames("1-7", 1),
+		[]time.Duration{m100, m100, m150, m150, m150, m100, m100})
+	animation := &Animation{
+		SpriteSheet: spritesheet,
+		Grid:        g4845,
+		Map: map[string]*ganim8.Animation{
+			"center": centerExplosionAnimation,
+		},
 	}
-	return &Animation{
-		SpriteSheet:     spritesheet,
-		Grid:            g4845,
-		CenterAnimation: centerAnimation,
-	}
+	//	animation.Map["center"] = centerExplosionAnimation
+	return animation
 }
 
 func MustLoadAssets() {

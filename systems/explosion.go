@@ -73,14 +73,14 @@ func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 			explosionEntry := archtypes.Explosion.Spawn(ecs)
 			components.Explosion.Set(explosionEntry, &components.ExplosionData{
 				Power:          reach, // this should be redundant
-				CountdownTicks: GetTickCount(ecs) + 100,
+				CountdownTicks: GetTickCount(ecs) + 50,
 			})
 			// This is were we will handle the animation
 			components.Sprite.Set(explosionEntry, &components.SpriteData{
 				// TODO use for loop index here to choose different animation frame
 				Image: assets.Explosion.SpriteSheet,
 				// this shares the explosion, it is better to pass a copy here
-				Animation: assets.Explosion.CenterAnimation[0].Clone(),
+				Animation: assets.Explosion.Map["center"].Clone(),
 			})
 			position = SnapToGridTileCenter(pos, dx)
 			bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
