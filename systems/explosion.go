@@ -78,9 +78,9 @@ func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 			// This is were we will handle the animation
 			components.Sprite.Set(explosionEntry, &components.SpriteData{
 				// TODO use for loop index here to choose different animation frame
-				Image: assets.Explosion.SpriteSheet,
+				Image: assets.ExplosionAnimation.SpriteSheet,
 				// this shares the explosion, it is better to pass a copy here
-				Animation: assets.Explosion.Map["center"].Clone(),
+				Animation: assets.ExplosionAnimation.Map["end"].Clone(),
 			})
 			position = SnapToGridTileCenter(pos, dx)
 			bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
@@ -258,8 +258,9 @@ func DrawExplosion(ecs *ecs.ECS, screen *ebiten.Image) {
 		//explosionData := components.Explosion.Get(entry)
 		dx := GetWorldTileDiameter(ecs)
 		aniPos := SnapToGridTileTopLeft(pos, dx)
-		tileWidth, tileHeight := 48.0, 45.0
+		tileWidth, tileHeight := 48.0, 44.0
 		drawOpts := ganim8.DrawOpts(aniPos.X, aniPos.Y, 0.0, dx/tileWidth, dx/tileHeight)
+
 		explosionSprite.Animation.Draw(screen, drawOpts)
 	}
 }
