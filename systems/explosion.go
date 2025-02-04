@@ -78,8 +78,9 @@ func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 			// This is were we will handle the animation
 			components.Sprite.Set(explosionEntry, &components.SpriteData{
 				// TODO use for loop index here to choose different animation frame
-				Image:     assets.Explosion.SpriteSheet,
-				Animation: assets.Explosion.CenterAnimation[0],
+				Image: assets.Explosion.SpriteSheet,
+				// this shares the explosion, it is better to pass a copy here
+				Animation: assets.Explosion.CenterAnimation[0].Clone(),
 			})
 			position = SnapToGridTileCenter(pos, dx)
 			bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
