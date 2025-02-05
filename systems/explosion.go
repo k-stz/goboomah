@@ -2,6 +2,7 @@ package systems
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/k-stz/goboomah/archtypes"
@@ -22,23 +23,23 @@ import (
 // [val1.CenterPosition val2.CenterPosition]
 //
 // TODO: Could also be improved to stop at a specific collision tag!
-func TakeUntilNonEmpty(tileContnets []TileContent) []resolv.Vector {
-	var positions []resolv.Vector
+func TakeUntilNonEmpty(tileContents []TileContent) []TileContent {
+	var filteredTCs []TileContent
 	fmt.Println("TakeUntilEmpty Loop")
-	for _, v := range tileContnets {
-		fmt.Println("positoin", positions)
+	for _, v := range tileContents {
+		fmt.Println("positions", v.CenterPosition)
 		if !v.IsEmpty {
-			return positions
+			return filteredTCs
 		}
-		positions = append(positions, v.CenterPosition)
+		filteredTCs = append(filteredTCs, v)
 	}
-	return positions
+	return filteredTCs
 }
 
 type ExplosionOrientation struct {
-	Position              resolv.Vector
-	Rotation              float64
-	ExplosionAnimationKey string // "center", "middle" or "end"
+	Position     resolv.Vector
+	Rotation     float64
+	AnimationKey string // "center", "middle" or "end"
 }
 
 func RotationFromExplosionDirection(direction Direction) (radians float64) {
@@ -65,72 +66,77 @@ func RotationFromExplosionDirection(direction Direction) (radians float64) {
 // Slice containing 4 slices, for each cardinal postions
 // such that we can interpolate different animations frames for the explosions
 // spawned for each offset away from the bomb!
-func GetExplosionPositions(atPosition resolv.Vector, reach int, ecs *ecs.ECS) (explosionOrientations [][]resolv.Vector) {
+func GetExplosionPositions(atPosition resolv.Vector, reach int, ecs *ecs.ECS) (explosionOrientations []ExplosionOrientation) {
 	dx := GetWorldTileDiameter(ecs)
 	var spawnPositions [][]resolv.Vector
-	var explosionSpawn []ExplosionOrientation
+	var explosionSpawns []ExplosionOrientation
 	for _, direction := range []Direction{Up, Down, Left, Right} {
 		checks := CheckTilesInDirection(atPosition, direction, reach, dx, tags.TagWall, false, ecs)
 		fmt.Println("dir", direction, "checks", checks)
 		fmt.Println("spawnPos", spawnPositions)
 		// Maybe don't trim it here, as explostion will need know
-		spawnPositions = append(spawnPositions, TakeUntilNonEmpty(checks))
+		//spawnPositions = append(spawnPositions, TakeUntilNonEmpty(checks))
+		fmt.Println("check len before: ", len(checks), "reach", reach)
+
+		checks = TakeUntilNonEmpty(checks)
+		fmt.Println("check len: ", len(checks))
 		// At this point we know were in a direction how many explosion need to be
 		// spawned, now we can calculate their orientation
 		for i, tc := range checks {
 			animationKey := "middle"
-			if i == reach {
+			if i == reach-1 {
 				animationKey = "end"
 			}
 			eo := ExplosionOrientation{
-				Position:              tc.CenterPosition,
-				Rotation:              1.5708, // 90 degree
-				ExplosionAnimationKey: animationKey,
+				Position:     tc.CenterPosition,
+				Rotation:     RotationFromExplosionDirection(direction), // 90 degree
+				AnimationKey: animationKey,
 			}
-			explosionSpawn = append(explosionSpawn, eo)
+			explosionSpawns = append(explosionSpawns, eo)
 		}
 	}
 
 	// Add center explosion
 	spawnPositions = append(spawnPositions, []resolv.Vector{atPosition})
-	explosionSpawn = append(explosionSpawn, ExplosionOrientation{
-		Position:              atPosition,
-		Rotation:              0.0,
-		ExplosionAnimationKey: "center",
+	explosionSpawns = append(explosionSpawns, ExplosionOrientation{
+		Position:     atPosition,
+		Rotation:     0.0,
+		AnimationKey: "center",
 	})
 	//fmt.Println("#########", spawnPositions)
-	//fmt.Println(explosionSpawn)
+	//fmt.Println(explosionSpawns)
 
 	// probably will need to agument the return value with the direction to
 	// choose the right animation frames...? or at least rotate them
 	// by 90-degrees each?
-	return spawnPositions
+	return explosionSpawns
 }
 
 func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 	dx := GetWorldTileDiameter(ecs)
-	var spawnPostions [][]resolv.Vector = GetExplosionPositions(position, reach, ecs)
-	fmt.Println("Create explosion spawn pos", spawnPostions)
-	for _, dir := range spawnPostions {
-		for _, pos := range dir {
-			fmt.Println("Explosion pos", pos)
-			explosionEntry := archtypes.Explosion.Spawn(ecs)
-			components.Explosion.Set(explosionEntry, &components.ExplosionData{
-				Power:          reach, // this should be redundant
-				CountdownTicks: GetTickCount(ecs) + 50,
-			})
-			// This is were we will handle the animation
-			components.Sprite.Set(explosionEntry, &components.SpriteData{
-				// TODO use for loop index here to choose different animation frame
-				Image: assets.ExplosionAnimation.SpriteSheet,
-				// this shares the explosion, it is better to pass a copy here
-				Animation: assets.ExplosionAnimation.Map["center"].Clone(),
-			})
-			position = SnapToGridTileCenter(pos, dx)
-			bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
-			bbox.Tags().Set(tags.TagExplosion)
-			components.ConvexPolygonBBox.Set(explosionEntry, bbox)
-		}
+	var spawns []ExplosionOrientation = GetExplosionPositions(position, reach, ecs)
+	fmt.Println("Create explosion spawn pos", position)
+	for _, spawn := range spawns {
+		pos := spawn.Position
+		fmt.Println("Explosion pos", pos)
+		explosionEntry := archtypes.Explosion.Spawn(ecs)
+		components.Explosion.Set(explosionEntry, &components.ExplosionData{
+			Power:          reach,                   // this should be redundant
+			CountdownTicks: GetTickCount(ecs) + 500, // 50 is ideal
+		})
+		// This is were we will handle the animation
+		components.Sprite.Set(explosionEntry, &components.SpriteData{
+			// TODO use for loop index here to choose different animation frame
+			Image: assets.ExplosionAnimation.SpriteSheet,
+			// this shares the explosion, it is better to pass a copy here
+			//Animation: assets.ExplosionAnimation.Map[spawn.AnimationKey].Clone(),
+			Animation: assets.ExplosionAnimation.Map["center"].Clone(),
+		})
+		position = SnapToGridTileCenter(pos, dx)
+		bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
+		bbox.Rotate(spawn.Rotation)
+		bbox.Tags().Set(tags.TagExplosion)
+		components.ConvexPolygonBBox.Set(explosionEntry, bbox)
 	}
 	// finally spawn center explosion
 }
@@ -252,7 +258,10 @@ func CheckTile(checkPosition resolv.Vector, radius float64, debugMode bool, ecs 
 	//resolv.LineTest(lts)
 }
 
+var ExplosionAngle float64 = 0.0
+
 func UpdateExplosion(ecs *ecs.ECS) {
+	ExplosionAngle += 1 * math.Pi / 180
 	currentGameTick := GetTickCount(ecs)
 	for entry := range tags.Explosion.Iter(ecs.World) {
 
@@ -262,7 +271,7 @@ func UpdateExplosion(ecs *ecs.ECS) {
 
 		explosion := components.Explosion.Get(entry)
 		if explosion.CountdownTicks <= currentGameTick {
-			fmt.Println("Blowing up!", entry.Entity())
+			//fmt.Println("Blowing up!", entry.Entity())
 			ecs.World.Remove(entry.Entity())
 		}
 		// Handle collision logic here!
@@ -301,10 +310,21 @@ func DrawExplosion(ecs *ecs.ECS, screen *ebiten.Image) {
 		// Get Bomb animation
 		//explosionData := components.Explosion.Get(entry)
 		dx := GetWorldTileDiameter(ecs)
-		aniPos := SnapToGridTileTopLeft(pos, dx)
-		tileWidth, tileHeight := 48.0, 44.0
-		drawOpts := ganim8.DrawOpts(aniPos.X, aniPos.Y, rotation, dx/tileWidth, dx/tileHeight)
+		//aniPos := SnapToGridTileTopLeft(pos, dx)
+		aniPos := SnapToGridTileCenter(pos, dx)
 
+		tileWidth, tileHeight := 48.0, 44.0
+		//drawOpts := ganim8.DrawOpts(aniPos.X, aniPos.Y, 0.0, dx/tileWidth, dx/tileHeight, 0.0, 0.0)
+		fmt.Println("Rotation: ", rotation)
+		// THis works for 180.0 flip... very strange
+		// pi := math.Pi
+		//drawOpts := ganim8.DrawOpts(aniPos.X, aniPos.Y, pi/2, dx/tileWidth, dx/tileHeight, 0.0, 1.0)
+
+		// this works
+		drawOpts := ganim8.DrawOpts(aniPos.X, aniPos.Y, ExplosionAngle, dx/tileWidth, dx/tileHeight, 0.5, 0.5)
+
+		//explosionSprite.Animation.Sprite().FlipV()
+		//drawOpts.Rotate = 1
 		explosionSprite.Animation.Draw(screen, drawOpts)
 	}
 }
