@@ -58,7 +58,16 @@ func UpdateBomb(ecs *ecs.ECS) {
 	currentGameTick := GetTickCount(ecs)
 	for entry := range tags.Bomb.Iter(ecs.World) {
 		bomb := components.Bomb.Get(entry)
-		bombPosition := components.ConvexPolygonBBox.Get(entry).Position()
+		bbox := components.ConvexPolygonBBox.Get(entry)
+		bombPosition := bbox.Position()
+		bbox.IntersectionTest(resolv.IntersectionTestSettings{
+			TestAgainst: bbox.SelectTouchingCells(1).FilterShapes().ByTags(tags.TagExplosion),
+			OnIntersect: func(set resolv.IntersectionSet) bool {
+				bomb.Detonate = true
+				return true
+			},
+		})
+
 		if bomb.CountdownTicks <= currentGameTick {
 			// We set the bomb to exploding that's how we
 			// can later add other logic to make a bomb explode sooner
@@ -71,6 +80,8 @@ func UpdateBomb(ecs *ecs.ECS) {
 			CreateExplosion(bombPosition, bomb.Power, ecs)
 			RemoveBomb(entry, ecs)
 		}
+		// Add collision logic, when bomb in explosion
+		// set bomb.Denotate to true
 	}
 }
 
