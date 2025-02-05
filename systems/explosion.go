@@ -11,7 +11,6 @@ import (
 	"github.com/k-stz/goboomah/tags"
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi/ecs"
-	"github.com/yohamta/donburi/features/transform"
 	"github.com/yohamta/ganim8/v2"
 )
 
@@ -121,15 +120,15 @@ func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 		fmt.Println("Explosion pos", pos)
 		explosionEntry := archtypes.Explosion.Spawn(ecs)
 		components.Explosion.Set(explosionEntry, &components.ExplosionData{
-			Power:          reach,                   // this should be redundant
-			CountdownTicks: GetTickCount(ecs) + 100, // 50 is ideal
+			CountdownTicks: GetTickCount(ecs) + 50, // 50 is ideal
 		})
-		// Animation / Sprite
+		// Animation, Sprite
 		components.Sprite.Set(explosionEntry, &components.SpriteData{
-			// TODO use for loop index here to choose different animation frame
 			Image: assets.ExplosionAnimation.SpriteSheet,
-			// this shares the explosion, it is better to pass a copy here
-			//Animation: assets.ExplosionAnimation.Map[spawn.AnimationKey].Clone(),
+			// Need to create a Clone of the Animationassets, else
+			// all explosion will use the same animation, on the same cycle
+			// and the update loop will update all at the same time in a
+			// exponential, unwanted, effect
 			Animation: assets.ExplosionAnimation.Map[spawn.AnimationKey].Clone(),
 		})
 		position = SnapToGridTileCenter(pos, dx)
@@ -138,7 +137,6 @@ func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 		bbox.Tags().Set(tags.TagExplosion)
 		components.ConvexPolygonBBox.Set(explosionEntry, bbox)
 	}
-	// finally spawn center explosion
 }
 
 type TileContent struct {
@@ -180,16 +178,16 @@ func GetDirectionVector(direction Direction, length float64) resolv.Vector {
 // Inside the Tiles it is tested if collision objects with the given resolv.Tags are present
 // debugMode: Whether to create debugCircle to visualize the checks for debugging
 //
-// Returns: For each tile if any tags where found inside and their position
+// Returns: For each that is checked a TileContent object is returned
 func CheckTilesInDirection(fromPos resolv.Vector, direction Direction, tileCount int, tileDiameter float64,
 	forTags resolv.Tags, debugMode bool, ecs *ecs.ECS) (tileContents []TileContent) {
+	// An alternative implementaiton might use resolv.LineTest
 	dx := tileDiameter
 	pos := SnapToGridTileCenter(fromPos, dx)
 	checkTiles := tileCount
 	tileContents = []TileContent{}
 	dirVector := GetDirectionVector(direction, dx)
 	for i := range checkTiles {
-		//offsetY := -(dx + (float64(i) * dx))
 		checkPos := pos.Add(dirVector.Scale(float64(i + 1)))
 		tileShapeTags, _ := CheckTile(checkPos, dx/2, debugMode, ecs)
 
@@ -228,12 +226,11 @@ func CheckTile(checkPosition resolv.Vector, radius float64, debugMode bool, ecs 
 	space.Add(tc)
 	defer space.Remove(tc) // remove circle scanner
 
-	//intersectionFound :=
 	tc.IntersectionTest(resolv.IntersectionTestSettings{
 		TestAgainst: tc.SelectTouchingCells(1).FilterShapes(),
 		OnIntersect: func(set resolv.IntersectionSet) bool {
 			// lets report what we touched with rather
-			//playerShape.Circle.MoveVec(set.MTV)
+			// playerShape.Circle.MoveVec(set.MTV)
 			// set.OtherShape = The other shape involved in the contact.
 			// iscontainedby is what we need here!
 			insideWall := checkPosition.IsInside(set.OtherShape)
@@ -252,10 +249,6 @@ func CheckTile(checkPosition resolv.Vector, radius float64, debugMode bool, ecs 
 	}
 
 	return tileShapeTags, isEmpty
-	//space.ForEachShape()
-
-	// test a selectino of shapes against a line
-	//resolv.LineTest(lts)
 }
 
 var ExplosionAngle float64 = 0.0
@@ -265,7 +258,7 @@ func UpdateExplosion(ecs *ecs.ECS) {
 	currentGameTick := GetTickCount(ecs)
 	for entry := range tags.Explosion.Iter(ecs.World) {
 
-		// SPrite update
+		// Sprite update
 		explosionSprite := components.Sprite.Get(entry)
 		explosionSprite.Animation.Update()
 
@@ -275,6 +268,7 @@ func UpdateExplosion(ecs *ecs.ECS) {
 			ecs.World.Remove(entry.Entity())
 		}
 		// Handle collision logic here!
+		
 		// Hurt players, items, walls? (movable walls)
 	}
 
@@ -282,52 +276,21 @@ func UpdateExplosion(ecs *ecs.ECS) {
 
 func DrawExplosion(ecs *ecs.ECS, screen *ebiten.Image) {
 	for entry := range tags.Explosion.Iter(ecs.World) {
-		//o := dresolv.GetObject(e)
 		explosionSprite := components.Sprite.Get(entry)
-
-		halfW := float64(explosionSprite.Image.Bounds().Dx() / 2)
-		halfH := float64(explosionSprite.Image.Bounds().Dy() / 2)
 
 		bbox := components.ConvexPolygonBBox.Get(entry)
 		pos := bbox.Position()
 		rotation := bbox.Rotation()
 
-		var offsetY float64 = pos.Y //- halfH + halfW
-		var offsetX float64 = pos.X
-
-		op := &ebiten.DrawImageOptions{}
-		// translate to origin, so scaling and rotation work
-		// intuitively
-		// Remove arena depending on scale
-		arenaEntry, _ := tags.Arena.First(ecs.World)
-		tf := transform.Transform.Get(arenaEntry)
-
-		op.GeoM.Translate(-halfW, -halfH)
-		op.GeoM.Rotate(rotation)
-		op.GeoM.Scale(tf.LocalScale.X, tf.LocalScale.Y)
-		op.GeoM.Translate(offsetX, offsetY)
-		//screen.DrawImage(explosionSprite.Image, op)
-		// Get Bomb animation
-		//explosionData := components.Explosion.Get(entry)
 		dx := GetWorldTileDiameter(ecs)
-		//aniPos := SnapToGridTileTopLeft(pos, dx)
 		aniPos := SnapToGridTileCenter(pos, dx)
-
 		tileWidth, tileHeight := 48.0, 44.0
-		//drawOpts := ganim8.DrawOpts(aniPos.X, aniPos.Y, 0.0, dx/tileWidth, dx/tileHeight, 0.0, 0.0)
-		fmt.Println("Rotation: ", rotation)
-		// THis works for 180.0 flip... very strange
-		// pi := math.Pi
-		//drawOpts := ganim8.DrawOpts(aniPos.X, aniPos.Y, pi/2, dx/tileWidth, dx/tileHeight, 0.0, 1.0)
 
 		// The last to paramters are the offset and appear to be only relevant
 		// for the origin of the rotation. And 0.5,0.5 in particular allows
 		// for rotation from the center of a frame, whereas (0,0) is a rotation around
 		// the top left corner
 		drawOpts := ganim8.DrawOpts(aniPos.X, aniPos.Y, rotation, dx/tileWidth, dx/tileHeight, 0.5, 0.5)
-
-		//explosionSprite.Animation.Sprite().FlipV()
-		//drawOpts.Rotate = 1
 		explosionSprite.Animation.Draw(screen, drawOpts)
 	}
 }
