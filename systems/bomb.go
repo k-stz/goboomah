@@ -20,8 +20,9 @@ func CreateBomb(position resolv.Vector, player *components.PlayerData, ecs *ecs.
 	bombEntry := archtypes.Bomb.Spawn(ecs)
 	components.Bomb.Set(bombEntry, &components.BombData{
 		Power:          player.Power,
-		CountdownTicks: GetTickCount(ecs) + 75,
-		Detonate:       false,
+		CountdownTicks: GetTickCount(ecs) + 100,
+		Explode:        false,
+		Despawn:        false,
 	})
 	// Sprite
 	components.Sprite.Set(bombEntry, &components.SpriteData{
@@ -63,20 +64,23 @@ func UpdateBomb(ecs *ecs.ECS) {
 		bbox.IntersectionTest(resolv.IntersectionTestSettings{
 			TestAgainst: bbox.SelectTouchingCells(1).FilterShapes().ByTags(tags.TagExplosion),
 			OnIntersect: func(set resolv.IntersectionSet) bool {
-				bomb.Detonate = true
+				bomb.Explode = true
 				return true
 			},
 		})
 
-		if bomb.CountdownTicks <= currentGameTick {
+		if !bomb.Explode && bomb.CountdownTicks <= currentGameTick {
 			// We set the bomb to exploding that's how we
 			// can later add other logic to make a bomb explode sooner
 			// blow up bomb
-			bomb.Detonate = true
-
+			bomb.Explode = true
 		}
-		if bomb.Detonate {
-			fmt.Println("Blowing up!", entry.Entity())
+		if !bomb.Despawn && bomb.Explode {
+			bomb.ExplosionDelayTicks = GetTickCount(ecs) + 20
+			bomb.Despawn = true
+			//fmt.Println("Blowing up!", entry.Entity())
+		}
+		if bomb.Despawn && bomb.ExplosionDelayTicks <= currentGameTick {
 			CreateExplosion(bombPosition, bomb.Power, ecs)
 			RemoveBomb(entry, ecs)
 		}
