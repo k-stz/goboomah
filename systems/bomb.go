@@ -20,7 +20,7 @@ func CreateBomb(position resolv.Vector, player *components.PlayerData, ecs *ecs.
 	bombEntry := archtypes.Bomb.Spawn(ecs)
 	components.Bomb.Set(bombEntry, &components.BombData{
 		Power:          player.Power,
-		CountdownTicks: GetTickCount(ecs) + 10,
+		CountdownTicks: GetTickCount(ecs) + 75,
 		Detonate:       false,
 	})
 	// Sprite

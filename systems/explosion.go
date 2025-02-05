@@ -7,9 +7,11 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/k-stz/goboomah/archtypes"
 	"github.com/k-stz/goboomah/assets"
+	"github.com/k-stz/goboomah/collisions"
 	"github.com/k-stz/goboomah/components"
 	"github.com/k-stz/goboomah/tags"
 	"github.com/solarlune/resolv"
+	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
 	"github.com/yohamta/ganim8/v2"
 )
@@ -131,11 +133,14 @@ func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 			// exponential, unwanted, effect
 			Animation: assets.ExplosionAnimation.Map[spawn.AnimationKey].Clone(),
 		})
+		// Collision
 		position = SnapToGridTileCenter(pos, dx)
 		bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
 		bbox.Rotate(spawn.Rotation)
 		bbox.Tags().Set(tags.TagExplosion)
 		components.ConvexPolygonBBox.Set(explosionEntry, bbox)
+
+		collisions.AddConvexPolygonBBox(GetSpaceEntry(ecs), explosionEntry)
 	}
 }
 
@@ -261,17 +266,35 @@ func UpdateExplosion(ecs *ecs.ECS) {
 		// Sprite update
 		explosionSprite := components.Sprite.Get(entry)
 		explosionSprite.Animation.Update()
-
+		// Collision Logic with Explosion
+		bbox := components.ConvexPolygonBBox.Get(entry)
+		bbox.IntersectionTest(resolv.IntersectionTestSettings{
+			TestAgainst: bbox.SelectTouchingCells(1).FilterShapes().ByTags(tags.TagPlayer),
+			OnIntersect: func(set resolv.IntersectionSet) bool {
+				//insideWall := checkPosition.IsInside(set.OtherShape)
+				// if insideWall {
+				// 	tileShapeTags |= *set.OtherShape.Tags()
+				// 	return false // stop testing for further intersection
+				// }
+				fmt.Println("Player in explosion!!!! Ouch!")
+				//set.OtherShape.(*resolv.ConvexPolygon).IsContainedBy(set.OtherShape)
+				//fmt.Println("COLLISION tag", set.OtherShape)
+				return true
+			},
+		})
+		// Hurt players, items, walls? (movable walls)
+		// cleanup explosion
 		explosion := components.Explosion.Get(entry)
 		if explosion.CountdownTicks <= currentGameTick {
 			//fmt.Println("Blowing up!", entry.Entity())
-			ecs.World.Remove(entry.Entity())
+			RemoveExplosion(entry, ecs)
 		}
-		// Handle collision logic here!
-		
-		// Hurt players, items, walls? (movable walls)
 	}
 
+}
+
+func RemoveExplosion(explosionEntry *donburi.Entry, ecs *ecs.ECS) {
+	RemoveBomb(explosionEntry, ecs) // currently they're identitcal
 }
 
 func DrawExplosion(ecs *ecs.ECS, screen *ebiten.Image) {
