@@ -122,15 +122,15 @@ func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 		explosionEntry := archtypes.Explosion.Spawn(ecs)
 		components.Explosion.Set(explosionEntry, &components.ExplosionData{
 			Power:          reach,                   // this should be redundant
-			CountdownTicks: GetTickCount(ecs) + 500, // 50 is ideal
+			CountdownTicks: GetTickCount(ecs) + 100, // 50 is ideal
 		})
-		// This is were we will handle the animation
+		// Animation / Sprite
 		components.Sprite.Set(explosionEntry, &components.SpriteData{
 			// TODO use for loop index here to choose different animation frame
 			Image: assets.ExplosionAnimation.SpriteSheet,
 			// this shares the explosion, it is better to pass a copy here
 			//Animation: assets.ExplosionAnimation.Map[spawn.AnimationKey].Clone(),
-			Animation: assets.ExplosionAnimation.Map["center"].Clone(),
+			Animation: assets.ExplosionAnimation.Map[spawn.AnimationKey].Clone(),
 		})
 		position = SnapToGridTileCenter(pos, dx)
 		bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
@@ -320,8 +320,11 @@ func DrawExplosion(ecs *ecs.ECS, screen *ebiten.Image) {
 		// pi := math.Pi
 		//drawOpts := ganim8.DrawOpts(aniPos.X, aniPos.Y, pi/2, dx/tileWidth, dx/tileHeight, 0.0, 1.0)
 
-		// this works
-		drawOpts := ganim8.DrawOpts(aniPos.X, aniPos.Y, ExplosionAngle, dx/tileWidth, dx/tileHeight, 0.5, 0.5)
+		// The last to paramters are the offset and appear to be only relevant
+		// for the origin of the rotation. And 0.5,0.5 in particular allows
+		// for rotation from the center of a frame, whereas (0,0) is a rotation around
+		// the top left corner
+		drawOpts := ganim8.DrawOpts(aniPos.X, aniPos.Y, rotation, dx/tileWidth, dx/tileHeight, 0.5, 0.5)
 
 		//explosionSprite.Animation.Sprite().FlipV()
 		//drawOpts.Rotate = 1
