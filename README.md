@@ -1,7 +1,9 @@
 # Game
 You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 
+![Chain explosion](/assets/gameplay.webp)
 "Go, Boom -Ah!"
+
 
 ## Goals
 - Use Ebitengine to create the 2d game

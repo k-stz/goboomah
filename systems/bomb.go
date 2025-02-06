@@ -76,7 +76,7 @@ func UpdateBomb(ecs *ecs.ECS) {
 			bomb.Explode = true
 		}
 		if !bomb.Despawn && bomb.Explode {
-			bomb.ExplosionDelayTicks = GetTickCount(ecs) + 20
+			bomb.ExplosionDelayTicks = GetTickCount(ecs) + 15
 			bomb.Despawn = true
 			//fmt.Println("Blowing up!", entry.Entity())
 		}
