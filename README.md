@@ -2,7 +2,8 @@
 You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 
 ![Chain explosion](/assets/gameplay.webp)
-"Go, Boom -Ah!"
+
+"Chain explosion example. Go, Boom -Ah!"
 
 
 ## Goals
