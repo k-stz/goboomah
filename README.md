@@ -103,3 +103,70 @@ A quick look at the pkg.go.dev registry showed me that v3 is available, but to m
 It seems the tag was deleted/abandoned by the library and indeed v2 is the more up-to-date library. I acertained that, by comparing the package API by looking over both versions Documentation and saw that at least a single Function "isEnd" was newer on v2. Also v3 was published, according to go.dev.pkg in 2022, while v2 was published in June 2023.
 
 So I promptly updated all my refernced to `/v2`, did a `go mod tidy` and made sure the v3 library isn't referenced anywhere in my go.mod or go.sum.
+
+## Collision Detection Bug/Unexpected Behavior in resolv library 
+In the resolv library, the IntersectionPointsLine function fails to detect intersections for overlapping (collinear) lines, which causes `IntersectionTest` to fail for overlapping `ConvexPolygons`.
+
+
+### Issue Breakdown
+The issue arises in the nested loop inside convexConvexTest, where the function iterates over the edges of both polygons (convexA and convexB). Specifically, the call to IntersectionPointsLine:
+`line.IntersectionPointsLine(otherLine)` [here](https://github.com/SolarLune/resolv/blob/8b4e8c15ba3b6428f976ddb2d56bbe04b719a8fe/shape.go#L450)
+returns false when both lines are collinear and overlapping, meaning no intersection is detected when it should be.
+
+The function first computes the determinant of a 2×2 matrix:
+```go
+	det := (line.End.X-line.Start.X)*(other.End.Y-other.Start.Y) - (other.End.X-other.Start.X)*(line.End.Y-line.Start.Y)
+```
+This determinant determines whether two lines are parallel or coincident (i.e., overlapping).
+
+- If `det == 0`:
+    - The lines are parallel (no intersection).
+        The lines may also be coincident (overlapping), in which case they "intersect at every point" along their shared segment.
+- If `det ≠ 0`:
+    - The lines are not parallel and may intersect at a single point.
+
+However, the current implementation incorrectly returns no intersection when `det == 0`, **treating both parallel and overlapping cases the same**.
+
+### Problematic Code Snippet
+
+Inside the function:
+```go
+if det != 0 {
+    // Compute lambda, gamma, and intersection point
+}
+return Vector{}, false  // Overlapping lines incorrectly return no intersection
+```
+See the original implementation [here](https://github.com/SolarLune/resolv/blob/8b4e8c15ba3b6428f976ddb2d56bbe04b719a8fe/convexPolygon.go#L719)
+
+## Potential Fixes
+
+To handle this correctly, we could:
+- Check explicitly if the lines are overlapping and return a structure indicating the overlap
+- Introduce a separate function for detecting overlapping lines and update the documentation to clarify behavior.
+- Clarify in the documentation whether overlapping lines should be considered "intersecting."
+
+Mathematically, overlapping lines do intersect at infinitely many points, so if the current behavior is intentional, it should be explicitly documented.
+
+### Why This Matters
+
+I encountered this issue while debugging a case where two different ConvexPolygons were overlapping exactly, yet no intersection was detected. Such that the `resolv.Intersectiontest()` call never checked against them. This was unexpected.
+
+### Workaround:
+A possible workaround is iterating over all shapes and handling overlapping cases separately, using the more lowlevel `filteredShapes.ForEach` call:
+```go
+filterShapes := bbox.SelectTouchingCells(1).FilterShapes().ByTags(tags.TagExplosion)
+		filterShapes.ForEach(
+			func(shape resolv.IShape) bool {
+				if bbox.Position().Equals(shape.Position()) {
+					// special case overlapping bbox logic goes here
+					bomb.Explode = true
+				}
+                // this Intersection won't return the overlapping case above, so we test the rest here
+				intersections := bbox.Intersection(shape)
+				if intersections.IsEmpty() {
+					return true // test next shape
+				}
+                // add finer intersection logic here
+				bomb.Explode = true
+				return false // abort iteration
+```
