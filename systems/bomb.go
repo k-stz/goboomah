@@ -38,7 +38,6 @@ func CreateBomb(position resolv.Vector, player *components.PlayerData, ecs *ecs.
 	components.ConvexPolygonBBox.Set(bombEntry, bbox)
 	// Add Shape to space
 	collisions.AddConvexPolygonBBox(GetSpaceEntry(ecs), bombEntry)
-	fmt.Println("Bomb created", bombEntry.Id(), position)
 }
 
 // Attempt to place Bomb at Position by given player
@@ -60,15 +59,31 @@ func UpdateBomb(ecs *ecs.ECS) {
 	for entry := range tags.Bomb.Iter(ecs.World) {
 		bomb := components.Bomb.Get(entry)
 		bbox := components.ConvexPolygonBBox.Get(entry)
-		bombPosition := bbox.Position()
-		bbox.IntersectionTest(resolv.IntersectionTestSettings{
-			TestAgainst: bbox.SelectTouchingCells(1).FilterShapes().ByTags(tags.TagExplosion),
-			OnIntersect: func(set resolv.IntersectionSet) bool {
-				bomb.Explode = true
-				return true
-			},
-		})
 
+		// Bug: Exactly overlapping convexpolygons dont register so
+		// the  "OnIntersect" function so NEVER triggerd on them
+		// Instead we need to implement the logic with ForEach
+		filterShapes := bbox.SelectTouchingCells(1).FilterShapes().ByTags(tags.TagExplosion)
+		filterShapes.ForEach(
+			func(shape resolv.IShape) bool {
+				if bbox.Position().Equals(shape.Position()) {
+					// special case overlapping bbox
+					bomb.Explode = true
+				}
+				intersections := bbox.Intersection(shape)
+				if intersections.IsEmpty() {
+					return true // test next shape
+				}
+				// add finer intersection logic here
+				bomb.Explode = true
+				// return true means to continue the ForEach,
+				// but we don't want this on collision as the bomb
+				// is "set off" at this point already
+				return false // abort iteration
+			},
+		)
+
+		bombPosition := bbox.Position()
 		if !bomb.Explode && bomb.CountdownTicks <= currentGameTick {
 			// We set the bomb to exploding that's how we
 			// can later add other logic to make a bomb explode sooner

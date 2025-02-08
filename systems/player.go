@@ -57,8 +57,13 @@ func UpdatePlayer(ecs *ecs.ECS) {
 		playerShape.Rotation -= rotateSpeed
 	}
 
-	if ebiten.IsKeyPressed(ebiten.KeySpace) {
+	// For explosion collision debugging
+	if inpututil.IsKeyJustPressed(ebiten.KeyB) {
 
+		pos := playerShape.Circle.Position()
+		CreateExplosion(pos, 3, ecs)
+
+		// CreateExplosion(playerTilePosition, 0, ecs)
 	}
 
 	// Bombs

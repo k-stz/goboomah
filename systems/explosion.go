@@ -26,9 +26,8 @@ import (
 // TODO: Could also be improved to stop at a specific collision tag!
 func TakeUntilNonEmpty(tileContents []TileContent) []TileContent {
 	var filteredTCs []TileContent
-	fmt.Println("TakeUntilEmpty Loop")
 	for _, v := range tileContents {
-		fmt.Println("positions", v.CenterPosition)
+		//fmt.Println("positions", v.CenterPosition)
 		if !v.IsEmpty {
 			return filteredTCs
 		}
@@ -69,18 +68,13 @@ func RotationFromExplosionDirection(direction Direction) (radians float64) {
 // spawned for each offset away from the bomb!
 func GetExplosionPositions(atPosition resolv.Vector, reach int, ecs *ecs.ECS) (explosionOrientations []ExplosionOrientation) {
 	dx := GetWorldTileDiameter(ecs)
-	var spawnPositions [][]resolv.Vector
 	var explosionSpawns []ExplosionOrientation
 	for _, direction := range []Direction{Up, Down, Left, Right} {
 		checks := CheckTilesInDirection(atPosition, direction, reach, dx, tags.TagWall, false, ecs)
-		fmt.Println("dir", direction, "checks", checks)
-		fmt.Println("spawnPos", spawnPositions)
+		//fmt.Println("dir", direction, "checks", checks)
 		// Maybe don't trim it here, as explostion will need know
-		//spawnPositions = append(spawnPositions, TakeUntilNonEmpty(checks))
-		fmt.Println("check len before: ", len(checks), "reach", reach)
 
 		checks = TakeUntilNonEmpty(checks)
-		fmt.Println("check len: ", len(checks))
 		// At this point we know were in a direction how many explosion need to be
 		// spawned, now we can calculate their orientation
 		for i, tc := range checks {
@@ -98,7 +92,6 @@ func GetExplosionPositions(atPosition resolv.Vector, reach int, ecs *ecs.ECS) (e
 	}
 
 	// Add center explosion
-	spawnPositions = append(spawnPositions, []resolv.Vector{atPosition})
 	explosionSpawns = append(explosionSpawns, ExplosionOrientation{
 		Position:     atPosition,
 		Rotation:     0.0,
@@ -116,10 +109,9 @@ func GetExplosionPositions(atPosition resolv.Vector, reach int, ecs *ecs.ECS) (e
 func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 	dx := GetWorldTileDiameter(ecs)
 	var spawns []ExplosionOrientation = GetExplosionPositions(position, reach, ecs)
-	fmt.Println("Create explosion spawn pos", position)
+	//fmt.Println("Create explosion spawn pos", position)
 	for _, spawn := range spawns {
 		pos := spawn.Position
-		fmt.Println("Explosion pos", pos)
 		explosionEntry := archtypes.Explosion.Spawn(ecs)
 		components.Explosion.Set(explosionEntry, &components.ExplosionData{
 			CountdownTicks: GetTickCount(ecs) + 50, // 50 is ideal
@@ -135,9 +127,11 @@ func CreateExplosion(position resolv.Vector, reach int, ecs *ecs.ECS) {
 		})
 		// Collision
 		position = SnapToGridTileCenter(pos, dx)
-		bbox := resolv.NewRectangle(position.X, position.Y, dx, dx)
+		ratio := dx * 0.95 // so explosion don't touch neighboring tiles
+		bbox := resolv.NewRectangle(position.X, position.Y, ratio, ratio)
 		bbox.Rotate(spawn.Rotation)
 		bbox.Tags().Set(tags.TagExplosion)
+		//fmt.Println("explosion pts", bbox.ID(), bbox.Points, "tag", bbox.Tags())
 		components.ConvexPolygonBBox.Set(explosionEntry, bbox)
 
 		collisions.AddConvexPolygonBBox(GetSpaceEntry(ecs), explosionEntry)
@@ -282,6 +276,23 @@ func UpdateExplosion(ecs *ecs.ECS) {
 				return true
 			},
 		})
+		//fmt.Println("explosions bbox", bbox.ID(), "pos", bbox.Center())
+
+		// bbox.IntersectionTest(resolv.IntersectionTestSettings{
+		// 	// Test collision explosion with itself...
+		// 	TestAgainst: bbox.SelectTouchingCells(1).FilterShapes().ByTags(tags.TagExplosion),
+		// 	OnIntersect: func(set resolv.IntersectionSet) bool {
+		// 		//insideWall := checkPosition.IsInside(set.OtherShape)
+		// 		// if insideWall {
+		// 		// 	tileShapeTags |= *set.OtherShape.Tags()
+		// 		// 	return false // stop testing for further intersection
+		// 		// }
+		// 		fmt.Println(bbox.ID(), "EXPLOSION COLLLISIOON!", set.Intersections)
+		// 		//set.OtherShape.(*resolv.ConvexPolygon).IsContainedBy(set.OtherShape)
+		// 		//fmt.Println("COLLISION tag", set.OtherShape)
+		// 		return true
+		// 	},
+		// })
 		// Hurt players, items, walls? (movable walls)
 		// cleanup explosion
 		explosion := components.Explosion.Get(entry)

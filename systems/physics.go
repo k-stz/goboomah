@@ -49,13 +49,11 @@ func UpdateObjects(ecs *ecs.ECS) {
 				// Only apply MTV when player is mostly outside of the bomb
 				// such that when a player places a bomb he can still move on it
 				magMTV := set.MTV.Magnitude()
-				ratio := magMTV / dx
-				fmt.Println("")
+				// ratio := magMTV / dx
 				if (magMTV / dx) < 0.15 {
 					playerShape.Circle.MoveVec(set.MTV.Scale(1.0))
-					fmt.Println("MOVED")
 				}
-				fmt.Println("Collision Bomb, MTV!", set.MTV, "mag", magMTV, "ratio", ratio)
+				//fmt.Println("Collision Bomb, MTV!", set.MTV, "mag", magMTV, "ratio", ratio)
 			}
 			// also update the tf.LocalTransform
 			//player.Speed.X = 0
