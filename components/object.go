@@ -104,17 +104,9 @@ func PrintGrid(tg tileGrid) {
 
 // Use SpriteData instead?
 type TileData struct {
-	Id TileID
+	// the offset in the tilemap the tile belongs to
+	GridX, GridY int
 }
-
-// Put this in to a system instead on track the tiles
-// type TileObject struct {
-// 	Grid             tileGrid
-// 	Tilesize         float64
-// 	OffsetX, OffsetY float64
-// 	ScaleXY          float64 // by how much to scale all tiles when rendering
-// 	imageMap         map[tileID]*ebiten.Image
-// }
 
 // Represents a position on a grid, will be used
 // to position things in the Arena

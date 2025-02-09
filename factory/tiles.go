@@ -29,14 +29,18 @@ func CreateSolidTiles(ecs *ecs.ECS, arenaEntry *donburi.Entry) *donburi.Entry {
 				continue
 			}
 			entry := archtypes.Tile.Spawn(ecs)
+			// tile grid data
+			tileData := components.Tile.Get(entry)
+			tileData.GridX, tileData.GridY = x, y
+			// Sprite
 			components.Sprite.Get(entry).Image = tileMap[tileID]
+			// Collision
 			offsetX := (float64(x) * dx) + tf.LocalPosition.X
 			offsetY := float64(y)*dx + tf.LocalPosition.Y
 			bbox := resolv.NewRectangle(offsetX+dx/2, offsetY+dx/2, dx, dx)
 			switch tileID {
 			// 1 == is solid tiles
 			case 1:
-
 				bbox.Tags().Set(tags.TagWall)
 				// breakable wall
 			case 2:
