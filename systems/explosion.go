@@ -36,10 +36,31 @@ func TakeUntilNonEmpty(tileContents []TileContent) []TileContent {
 	return filteredTCs
 }
 
+// Returns all CenterPositions in TileContents in order till one
+// with the given tag appears, which it then also returns but stops
+func TakeUntilTagInclusive(tileContents []TileContent, tags resolv.Tags) []TileContent {
+	var filteredTCs []TileContent
+	for _, v := range tileContents {
+		//fmt.Println("positions", v.CenterPosition)
+		if !v.IsEmpty {
+			if v.CollisionObjectTags.Has(tags) {
+				filteredTCs = append(filteredTCs, v)
+			}
+			return filteredTCs
+		}
+		filteredTCs = append(filteredTCs, v)
+	}
+	return filteredTCs
+}
+
 type ExplosionOrientation struct {
 	Position     resolv.Vector
 	Rotation     float64
 	AnimationKey string // "center", "middle" or "end"
+	// used to spawn explosion bbox in breakable walls,
+	// so as not to show them over a wall tile, but still break wall
+	// with collision logic
+	Hidden bool
 }
 
 func RotationFromExplosionDirection(direction Direction) (radians float64) {
@@ -70,11 +91,12 @@ func GetExplosionPositions(atPosition resolv.Vector, reach int, ecs *ecs.ECS) (e
 	dx := GetWorldTileDiameter(ecs)
 	var explosionSpawns []ExplosionOrientation
 	for _, direction := range []Direction{Up, Down, Left, Right} {
-		checks := CheckTilesInDirection(atPosition, direction, reach, dx, tags.TagWall, false, ecs)
+		checks := CheckTilesInDirection(atPosition, direction, reach, dx, tags.TagWall|tags.TagBreakable, false, ecs)
 		//fmt.Println("dir", direction, "checks", checks)
 		// Maybe don't trim it here, as explostion will need know
 
-		checks = TakeUntilNonEmpty(checks)
+		//checks = TakeUntilNonEmpty(checks)
+		checks = TakeUntilTagInclusive(checks, tags.TagBreakable)
 		// At this point we know were in a direction how many explosion need to be
 		// spawned, now we can calculate their orientation
 		for i, tc := range checks {
@@ -82,10 +104,15 @@ func GetExplosionPositions(atPosition resolv.Vector, reach int, ecs *ecs.ECS) (e
 			if i == reach-1 {
 				animationKey = "end"
 			}
+			insideBreakableWall := false
+			if tc.CollisionObjectTags.Has(tags.TagBreakable) {
+				insideBreakableWall = true
+			}
 			eo := ExplosionOrientation{
 				Position:     tc.CenterPosition,
 				Rotation:     RotationFromExplosionDirection(direction), // 90 degree
 				AnimationKey: animationKey,
+				Hidden:       insideBreakableWall,
 			}
 			explosionSpawns = append(explosionSpawns, eo)
 		}
@@ -96,6 +123,7 @@ func GetExplosionPositions(atPosition resolv.Vector, reach int, ecs *ecs.ECS) (e
 		Position:     atPosition,
 		Rotation:     0.0,
 		AnimationKey: "center",
+		Hidden:       false,
 	})
 	//fmt.Println("#########", spawnPositions)
 	//fmt.Println(explosionSpawns)
