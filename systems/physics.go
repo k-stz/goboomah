@@ -76,6 +76,7 @@ func DrawPhysics(ecs *ecs.ECS, screen *ebiten.Image) {
 
 		var drawColorCircle color.Color = color.White
 		var drawDebugCircle color.RGBA = color.RGBA{255, 32, 128, 255}
+		var breakableWall color.RGBA = color.RGBA{0, 50, 180, 255}
 
 		// tags := shape.Tags()
 
@@ -90,7 +91,9 @@ func DrawPhysics(ecs *ecs.ECS, screen *ebiten.Image) {
 			}
 			vector.StrokeCircle(screen, float32(o.Position().X), float32(o.Position().Y), float32(o.Radius()), 2, color, false)
 		case *resolv.ConvexPolygon:
-
+			if shape.Tags().Has(tags.TagBreakable) {
+				drawColor = breakableWall
+			}
 			for _, l := range o.Lines() {
 				vector.StrokeLine(screen, float32(l.Start.X), float32(l.Start.Y), float32(l.End.X), float32(l.End.Y), 2, drawColor, false)
 			}

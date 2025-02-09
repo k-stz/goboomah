@@ -64,9 +64,9 @@ func Level1() *TileGridData {
 // doesn't look like you write it in here
 func LevelLa() *TileGridData {
 	tg := tileGrid{
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 2, 0, 0, 0, 0, 0, 0},
 		{0, 1, 1, 1, 1, 0, 0, 0, 1, 0},
-		{0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+		{0, 2, 0, 2, 1, 0, 0, 0, 2, 2},
 		{0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
 		{0, 0, 1, 1, 1, 0, 0, 0, 0, 0},
@@ -123,6 +123,7 @@ type GridPositionData struct {
 }
 
 // indicates whether something something is walkable (tree vs bush)
+// not used
 type CollidableData struct {
 	IsSolid bool
 }

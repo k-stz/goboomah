@@ -31,6 +31,7 @@ var (
 
 var (
 	TagWall      = NewResolvTag("Wall")
+	TagBreakable = NewResolvTag("Breakable")
 	TagBomb      = NewResolvTag("Bomb")
 	TagExplosion = NewResolvTag("Explosion")
 	TagPlayer    = NewResolvTag("Player")

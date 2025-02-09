@@ -49,8 +49,6 @@ func CanPlaceBombs(checkPosition resolv.Vector, ecs *ecs.ECS) bool {
 	}
 
 	return true
-	// implement logic later
-	//return player.Bombs > 0
 }
 
 // Update bomb ticks

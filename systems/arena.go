@@ -1,10 +1,7 @@
 package systems
 
 import (
-	"image/color"
-
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/k-stz/goboomah/components"
 	"github.com/k-stz/goboomah/tags"
 	"github.com/solarlune/resolv"
@@ -108,6 +105,7 @@ func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 	tileDiameter := tg.TileDiameter
 	var offsetX float64
 	var offsetY float64
+	backgroundTile := tileMap[0]
 	for x, row := range tg.Grid {
 		for y, tileID := range row {
 			// yes, looking up the image in a hash will kill locality
@@ -120,20 +118,18 @@ func DrawArena(ecs *ecs.ECS, screen *ebiten.Image) {
 			op.GeoM.Scale(tf.LocalScale.X, tf.LocalScale.Y)
 			//fmt.Println("tile x, y,", offsetX, offsetY)
 			op.GeoM.Translate(offsetX, offsetY)
+			// We draw the background tile first so that the tiles that have alpha
+			// transparency show the background tile in their background
+			screen.DrawImage(backgroundTile, op)
 			screen.DrawImage(tileImage, op)
 		}
 	}
 
-	tileDiameter32 := float32(tileDiameter)
-	for entry := range tags.Tile.Iter(ecs.World) {
-		// tf := transform.Transform.Get(entry)
-		bbox := components.ConvexPolygonBBox.Get(entry)
-		x := float32(bbox.Position().X - bbox.Bounds().Width()/2)
-		y := float32(bbox.Position().Y - bbox.Bounds().Width()/2)
-		//
-		vector.DrawFilledRect(screen, x, y, tileDiameter32, tileDiameter32, color.RGBA{0xff, 0, 0, uint8(entry.Id())}, false)
-		//x := tf.LocalPosition.X
-		// y := tf.LocalPosition.Y
-		// fmt.Println("x,y", x, y)
-	}
+	// tileDiameter32 := float32(tileDiameter)
+	// for entry := range tags.Tile.Iter(ecs.World) {
+	// 	bbox := components.ConvexPolygonBBox.Get(entry)
+	// 	x := float32(bbox.Position().X - bbox.Bounds().Width()/2)
+	// 	y := float32(bbox.Position().Y - bbox.Bounds().Width()/2)
+	// 	vector.DrawFilledRect(screen, x, y, tileDiameter32, tileDiameter32, color.RGBA{0xff, 0, 0, uint8(entry.Id())}, false)
+	// }
 }

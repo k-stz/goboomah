@@ -25,16 +25,24 @@ func CreateSolidTiles(ecs *ecs.ECS, arenaEntry *donburi.Entry) *donburi.Entry {
 	tg.TileDiameter = dx
 	for x, row := range tg.Grid {
 		for y, tileID := range row {
-			// 1 == is solid tiles
-			if tileID == 1 {
-				entry := archtypes.Tile.Spawn(ecs)
-				components.Sprite.Get(entry).Image = tileMap[tileID]
-				offsetX := (float64(x) * dx) + tf.LocalPosition.X
-				offsetY := float64(y)*dx + tf.LocalPosition.Y
-				bbox := resolv.NewRectangle(offsetX+dx/2, offsetY+dx/2, dx, dx)
-				bbox.Tags().Set(tags.TagWall)
-				components.ConvexPolygonBBox.Set(entry, bbox)
+			if tileID == 0 {
+				continue
 			}
+			entry := archtypes.Tile.Spawn(ecs)
+			components.Sprite.Get(entry).Image = tileMap[tileID]
+			offsetX := (float64(x) * dx) + tf.LocalPosition.X
+			offsetY := float64(y)*dx + tf.LocalPosition.Y
+			bbox := resolv.NewRectangle(offsetX+dx/2, offsetY+dx/2, dx, dx)
+			switch tileID {
+			// 1 == is solid tiles
+			case 1:
+
+				bbox.Tags().Set(tags.TagWall)
+				// breakable wall
+			case 2:
+				bbox.Tags().Set(tags.TagWall | tags.TagBreakable)
+			}
+			components.ConvexPolygonBBox.Set(entry, bbox)
 		}
 	}
 	//dresolv.SetObject(platform, object)

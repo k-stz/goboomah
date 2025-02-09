@@ -25,6 +25,7 @@ func CreateArena(ecs *ecs.ECS) *donburi.Entry {
 	level1TileMap := components.TileMapData{
 		0: assets.Meadow_tile,
 		1: assets.Wall_tile,
+		2: assets.Bush_tile,
 	}
 	components.TileMap.SetValue(arenaEntry, level1TileMap)
 

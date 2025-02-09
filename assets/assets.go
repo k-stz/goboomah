@@ -18,8 +18,10 @@ var (
 	//go:embed *
 	assetsFS embed.FS
 
-	Meadow_tile        *ebiten.Image
-	Wall_tile          *ebiten.Image
+	Meadow_tile *ebiten.Image
+	Wall_tile   *ebiten.Image
+	Bush_tile   *ebiten.Image
+
 	Player             *ebiten.Image
 	Bomb_tile          *ebiten.Image
 	ExplosionAnimation *Animation
@@ -81,6 +83,7 @@ func NewExplosionAnimation(spritFileName string) *Animation {
 func MustLoadAssets() {
 	Meadow_tile = mustLoadImage("tiles/meadow.png")
 	Wall_tile = mustLoadImage("tiles/wall.png")
+	Bush_tile = mustLoadImage("tiles/bush.png")
 	Player = mustLoadImage("large/gopher.png")
 	Bomb_tile = mustLoadImage("tiles/bomb.png")
 	ExplosionAnimation = NewExplosionAnimation("explosion.png")

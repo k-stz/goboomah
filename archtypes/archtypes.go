@@ -54,6 +54,7 @@ var (
 		components.ShapeCircle,
 	)
 
+	// Used as solid wall or breakable wall
 	Tile = newArchetype(
 		tags.Tile,
 		//components.GridPosition,
