@@ -24,14 +24,14 @@ func NewRectangle(x, y, w, h float64) *RectangleData {
 
 // iota Enum better?
 type TileID int
-type tileGrid [][]TileID
+type Grid [][]TileID
 
 type TileGridData struct {
-	Grid         tileGrid
+	Grid         Grid
 	TileDiameter float64 // of each Tile in Grid
 }
 
-func NewTileGridData(tileGrid tileGrid, tileDiameter float64) *TileGridData {
+func NewTileGridData(tileGrid Grid, tileDiameter float64) *TileGridData {
 	tg := &TileGridData{
 		Grid:         tileGrid,
 		TileDiameter: tileDiameter,
@@ -49,7 +49,7 @@ func NewTileMap() TileMapData {
 }
 
 func Level1() *TileGridData {
-	tg := tileGrid{
+	tg := Grid{
 		{0, 0, 0, 0, 0},
 		{0, 1, 0, 1, 0},
 		{0, 0, 0, 0, 0},
@@ -63,7 +63,7 @@ func Level1() *TileGridData {
 // Fix: Level layout not intuitive..
 // doesn't look like you write it in here
 func LevelLa() *TileGridData {
-	tg := tileGrid{
+	tg := Grid{
 		{0, 0, 0, 2, 0, 0, 0, 0, 0, 0},
 		{0, 1, 1, 1, 1, 0, 0, 0, 1, 0},
 		{0, 2, 0, 2, 1, 0, 0, 0, 2, 2},
@@ -80,13 +80,13 @@ func LevelLa() *TileGridData {
 }
 
 func LevelTile1() *TileGridData {
-	tg := tileGrid{
+	tg := Grid{
 		{1},
 	}
 	return NewTileGridData(tg, 16.0)
 }
 
-func PrintGrid(tg tileGrid) {
+func PrintGrid(tg Grid) {
 	for _, row := range tg {
 		for _, v := range row {
 			fmt.Printf("%d ", v)

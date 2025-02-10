@@ -34,7 +34,7 @@ func CreateSolidTiles(ecs *ecs.ECS, arenaEntry *donburi.Entry) *donburi.Entry {
 			tileData.GridX, tileData.GridY = x, y
 			// Sprite
 			components.Sprite.Get(entry).Image = tileMap[tileID]
-			// Collision
+			// Collisions
 			offsetX := (float64(x) * dx) + tf.LocalPosition.X
 			offsetY := float64(y)*dx + tf.LocalPosition.Y
 			bbox := resolv.NewRectangle(offsetX+dx/2, offsetY+dx/2, dx, dx)

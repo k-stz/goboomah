@@ -40,6 +40,11 @@ func GetSpace(ecs *ecs.ECS) *resolv.Space {
 	return components.Space.Get(spaceEntry)
 }
 
+func GetArenaTileGrid(ecs *ecs.ECS) *components.Grid {
+	arenaEntry, _ := tags.Arena.First(ecs.World)
+	return &components.TileGrid.Get(arenaEntry).Grid
+}
+
 func GetWorldTileDiameter(ecs *ecs.ECS) (tileDiameter float64) {
 	// TODO for level extract Arena from GameScene object
 	arenaEntry, _ := tags.Arena.First(ecs.World)
@@ -69,12 +74,39 @@ func IncementTickCount(ecs *ecs.ECS) {
 }
 
 // The Arena is the 2d-grid where the player walks inside
-// For now we don't have any logic to update in here
+// In here we update components that are represented by the
+// 2d grid like breakable walls
 func UpdateArena(ecs *ecs.ECS) {
 	IncementTickCount(ecs)
 
 	// Need some global timer to trigger the effect for a short time?
 	//tileSpiralEffect(ecs)
+	// handle breakable tiles/walls here
+	//tileGrid := *GetArenaTileGrid(ecs)
+	for entry := range tags.Tile.Iter(ecs.World) {
+		//tile := components.Tile.Get(entry)
+		bbox := components.ConvexPolygonBBox.Get(entry)
+		if !bbox.Tags().Has(tags.TagBreakable) {
+			continue
+		}
+		bbox.IntersectionTest(resolv.IntersectionTestSettings{
+			TestAgainst: bbox.SelectTouchingCells(1).
+				FilterShapes().ByTags(tags.TagExplosion),
+			OnIntersect: func(set resolv.IntersectionSet) bool {
+				// Explosion intersecting wall => dissolve wall
+				// Set to Background Sprite
+				//tileGrid[tile.GridX][tile.GridY] = 0
+				// TODO directly access tilegrid pointer
+				return false // don't check other intersections
+			},
+		})
+	}
+	// for entry := range tags.Tile.Iter(ecs.World) {
+	// 	bbox := components.ConvexPolygonBBox.Get(entry)
+	// 	x := float32(bbox.Position().X - bbox.Bounds().Width()/2)
+	// 	y := float32(bbox.Position().Y - bbox.Bounds().Width()/2)
+	// 	vector.DrawFilledRect(screen, x, y, tileDiameter32, tileDiameter32, color.RGBA{0xff, 0, 0, uint8(entry.Id())}, false)
+	// }
 
 }
 

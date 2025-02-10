@@ -58,6 +58,7 @@ var (
 	Tile = newArchetype(
 		tags.Tile,
 		//components.GridPosition,
+		components.Tile,
 		components.Sprite,
 		components.ConvexPolygonBBox,
 		components.Collidable,
