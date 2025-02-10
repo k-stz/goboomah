@@ -1,7 +1,6 @@
 package systems
 
 import (
-	"fmt"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -38,7 +37,7 @@ func UpdateObjects(ecs *ecs.ECS) {
 		OnIntersect: func(set resolv.IntersectionSet) bool {
 			if set.OtherShape.Tags().Has(tags.TagWall) {
 				playerShape.Circle.MoveVec(set.MTV)
-				fmt.Println("COLLISION with wall, applying MTV", set.MTV)
+				//fmt.Println("COLLISION with wall, applying MTV", set.MTV)
 			}
 			if set.OtherShape.Tags().Has(tags.TagBomb) {
 				// Only apply MTV when player is mostly outside of the bomb
