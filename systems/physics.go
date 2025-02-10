@@ -20,11 +20,6 @@ func UpdateObjects(ecs *ecs.ECS) {
 	player := components.Player.Get(playerEntry)
 	playerShape := components.ShapeCircle.Get(playerEntry)
 	dx := GetWorldTileDiameter(ecs)
-	count := 0
-	for entry := range components.Tile.Iter(ecs.World) {
-		count++
-		fmt.Println("Tiles exists, yes?", count, entry.Id())
-	}
 
 	movement := resolv.NewVector(player.Direction.X, player.Direction.Y)
 	// Fill these with playerData stats, so you can pick up
