@@ -77,6 +77,20 @@ func IncementTickCount(ecs *ecs.ECS) {
 	*components.Tick.Get(arenaEntry)++
 }
 
+// Remove wallEntry from Arena grid and from the
+// collision space
+// TODO: maybe dissolve walls slower
+func BreakWall(wallEntry *donburi.Entry, ecs *ecs.ECS) {
+	tile := components.Tile.Get(wallEntry)
+	bbox := components.ConvexPolygonBBox.Get(wallEntry)
+	x, y := tile.GridX, tile.GridY
+	grid := GetArenaTileGrid(ecs)
+	// remove from grid
+	grid[x][y] = 0
+	// remove Collision
+	GetSpace(ecs).Remove(bbox)
+}
+
 // The Arena is the 2d-grid where the player walks inside
 // In here we update components that are represented by the
 // 2d grid like breakable walls
@@ -88,23 +102,21 @@ func UpdateArena(ecs *ecs.ECS) {
 	// handle breakable tiles/walls here
 	//tileGrid := *GetArenaTileGrid(ecs)
 	for entry := range tags.Tile.Iter(ecs.World) {
-		//tile := components.Tile.Get(entry)
-		//x, y := tile.GridX, tile.GridY
 		bbox := components.ConvexPolygonBBox.Get(entry)
 		if !bbox.Tags().Has(tags.TagBreakable) {
 			continue
 		}
-		bbox.IntersectionTest(resolv.IntersectionTestSettings{
-			TestAgainst: bbox.SelectTouchingCells(1).
-				FilterShapes().ByTags(tags.TagExplosion),
-			OnIntersect: func(set resolv.IntersectionSet) bool {
-				// Explosion intersecting wall => dissolve wall
-				// Set to Background Sprite
-				//tileGrid[tile.GridX][tile.GridY] = 0
-				// TODO directly access tilegrid pointer
-				return false // don't check other intersections
+		bbox.SelectTouchingCells(1).FilterShapes().
+			ByTags(tags.TagExplosion).ForEach(
+			func(shape resolv.IShape) bool {
+				if bbox.Position().Equals(shape.Position()) {
+					// breakable wall in explosion => dissolve
+					BreakWall(entry, ecs)
+					return false
+				}
+				return true
 			},
-		})
+		)
 	}
 	// for entry := range tags.Tile.Iter(ecs.World) {
 	// 	bbox := components.ConvexPolygonBBox.Get(entry)
