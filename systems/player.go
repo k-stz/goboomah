@@ -76,6 +76,26 @@ func UpdatePlayer(ecs *ecs.ECS) {
 		}
 	}
 
+	// TileGrid
+	if inpututil.IsKeyJustPressed(ebiten.KeyM) {
+		grid := GetArenaTileGrid(ecs)
+		components.PrintGrid(grid)
+		// for _, row := range *grid {
+		// 	for _, v := range row {
+		// 		fmt.Printf("%d ", v)
+		// 	}
+		// 	fmt.Println()
+		// }
+		//g := *grid
+		//e := (*grid)[0][0]
+		e := grid[0][0]
+		fmt.Println("Before", e)
+		e = (e + 1) % 2
+		grid[0][0] = e
+		fmt.Println("After", e)
+
+	}
+
 	// For Debugging
 	if ebiten.IsKeyPressed(ebiten.KeyT) {
 		//checkTiles := 4

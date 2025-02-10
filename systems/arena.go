@@ -40,9 +40,13 @@ func GetSpace(ecs *ecs.ECS) *resolv.Space {
 	return components.Space.Get(spaceEntry)
 }
 
-func GetArenaTileGrid(ecs *ecs.ECS) *components.Grid {
+func GetArenaTileGrid(ecs *ecs.ECS) components.Grid {
 	arenaEntry, _ := tags.Arena.First(ecs.World)
-	return &components.TileGrid.Get(arenaEntry).Grid
+	// Grid is a slice, and slices internally use a pointer, to the
+	// backing array. Thus we can pass it around directly
+	// andthe values will contain the same address, thus chaning
+	// the same underlying tilemap
+	return components.TileGrid.Get(arenaEntry).Grid
 }
 
 func GetWorldTileDiameter(ecs *ecs.ECS) (tileDiameter float64) {
@@ -85,6 +89,7 @@ func UpdateArena(ecs *ecs.ECS) {
 	//tileGrid := *GetArenaTileGrid(ecs)
 	for entry := range tags.Tile.Iter(ecs.World) {
 		//tile := components.Tile.Get(entry)
+		//x, y := tile.GridX, tile.GridY
 		bbox := components.ConvexPolygonBBox.Get(entry)
 		if !bbox.Tags().Has(tags.TagBreakable) {
 			continue
