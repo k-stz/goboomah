@@ -7,17 +7,20 @@ You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 
 
 ## Goals
-- Use Ebitengine to create the 2d game
-- Implement Gameloop, implement loading any sprites
-- Add Player: Movable sprite
-- Add layered sprites (background, foreground)
-- 2d-Grid levels
-- Add player and allow to move only along the grid collision detection
-- add bombs and blast radius
-- Add enemies with very simple AI
-- Add Level Editor: based on textfile to load level
-- Input via joystick
-- Allow to render game in browser (WASM?)
+- [x] Use Ebitengine to create the 2d game
+- [x] Implement Gameloop, implement loading any sprites (using `ganim8`)
+- [x] implement game via ECS (using `donburi` by yohamta)
+- [x] Add Player: Movable sprite, 
+- [x] Add layered sprites (background, foreground)
+- [x] 2d-Grid levels
+- [x] Add collision logic (using `resolv` library by SolarLune)
+- [x] add core gamplay mechanics: bombs, blast radius and explosion logic with chained explosions
+- [ ] add Makefile default target for windows/wsl `GOOS=windows` suffices
+- [ ] add default player sprite, so it runs without dependencies 
+- [ ] Add enemies with very simple AI
+- [ ] Add Level Editor: based on textfile to load level
+- [ ] Input via joystick or Touchscreen (for Phones)
+- [ ] Allow to render game in browser (WASM)
 
 # Concepts
 
