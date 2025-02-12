@@ -39,6 +39,26 @@ jobs:
         with:
           go-version: '^1.23'
       - run: mkdir -p web
+      # Create index.html dynamically (needs to be provided, else we get 404
+      # for the github page)
+      - run: |
+          echo '<!DOCTYPE html>
+          <html>
+          <head>
+              <meta charset="utf-8">
+              <title>GoBoomah</title>
+          </head>
+          <body>
+              <h1>GoBoomah WebAssembly (WASM) App</h1>
+              <script src="wasm_exec.js"></script>
+              <script>
+                  const go = new Go();
+                  WebAssembly.instantiateStreaming(fetch("game.wasm"), go.importObject).then((result) => {
+                      go.run(result.instance);
+                  });
+              </script>
+          </body>
+          </html>' > web/index.html
       - run: cp -v $(go env GOROOT)/misc/wasm/wasm_exec.js web/
       - uses: actions/configure-pages@v2
       - uses: actions/upload-pages-artifact@v3
