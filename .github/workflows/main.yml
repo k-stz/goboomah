@@ -12,16 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: go build -o build/game.wasm
+      - run: go build -o web/game.wasm
         env:
           GOOS: js
           GOARCH: wasm
-      - run: ls -la build      
+      - run: ls -la web      
       # used to pass build artifacts between jobs build and deploy    
       - uses: actions/upload-artifact@master
         with:
           name: page
-          path: build
+          path: web
           if-no-files-found: error
 
 # How to run ebitengine games on wasm:
@@ -40,8 +40,9 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: '^1.23'
-      - run: cp -v $(go env GOROOT)/misc/wasm/wasm_exec.js web/
       - run: ls -lha web/
+      - run: cp -v $(go env GOROOT)/misc/wasm/wasm_exec.js web/
+      - run: ls -lha web/ 
       - uses: actions/configure-pages@v2
       - uses: actions/upload-pages-artifact@v3
         with:
