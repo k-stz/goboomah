@@ -5,6 +5,8 @@ You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 
 "Chain explosion example. Go, Boom -Ah!"
 
+## Play the Game Online! 🎮 
+[Play GoBoomah!](k-stz.github.io/goboomah/) 🚀🔥
 
 ## Goals
 - [x] Use Ebitengine to create the 2d game
@@ -15,12 +17,14 @@ You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 - [x] 2d-Grid levels
 - [x] Add collision logic (using `resolv` library by SolarLune)
 - [x] add core gamplay mechanics: bombs, blast radius and explosion logic with chained explosions
+- [x] add "resolv" physics engine (great examples). Used for collision detection, testing and resolution
+- [x] derive solid tiles from the Arena tilemap and add to "resolv" collision space
+- [x] add default player sprite, so it runs without dependencies 
+- [x] Deploy game in browser in WASM
 - [ ] add Makefile default target for windows/wsl `GOOS=windows` suffices
-- [ ] add default player sprite, so it runs without dependencies 
 - [ ] Add enemies with very simple AI
 - [ ] Add Level Editor: based on textfile to load level
 - [ ] Input via joystick or Touchscreen (for Phones)
-- [ ] Allow to render game in browser (WASM)
 
 # Concepts
 
@@ -30,17 +34,17 @@ use this to management components sprite mangement, rendering, control
 Sources:
 - "How to build animations with ebiten using the ECS pattern" https://co0p.github.io/posts/ecs-animation/
 
-- "Entity Component System | Game Engine series" by "the Cherno" https://www.youtube.com/watch?v=Z-CILn2w9K0 Summary: Great problem desciption of what problem ECS solves. Starting with the struggle of inheritence based system, then an improvement using Entity with a Components vector as a field, which has a leg up on inheritence (composition over inheritence) but suffers performnace hits due to no cache hits, as its an array of pointers! 
+- "Entity Component System | Game Engine series" by "the Cherno" https://www.youtube.com/watch?v=Z-CILn2w9K0 Summary: Great problem desciption of what problem ECS solves. Starting with the struggle of inheritence based system, then an improvement using Entity with a Components vector as a field, which has a leg up on inheritence (composition over inheritence) but suffers performancewise due to cache misses, as it's an array of pointers! 
     - Finally to a data-driven approach of ECS: associating a bunch of components by an Entity-ID. Where each components is part of an array, such that it has data locatlity and the associated lookup is problably a tree on those pure components type arrays. 
 
 
 ## tilemap
-Use this for the stage representation
+Used for the game stage representation
 
 ## Collision Detection / Response Libary
 - Using SolarLune's Resolv library.
     
-Objects that require physics-based collision detection and response will be managed using the Resolv library. Each object is assigned a bounding box, circle, or convex polygon and placed in a 2D space. This space is divided into cells, allowing for efficient collision detection. Instead of checking every object against every other object (which would have a worst-case performance of `O(n²)`), the system only checks objects within neighboring cells, significantly improving performance. 
+Objects that require physics-based collision detection and response will be managed using the `resolv` library. Each object is assigned a bounding box, circle, or convex polygon and placed in a 2D space. This space is divided into cells, allowing for efficient collision detection. Instead of checking every object against every other object (which would have a worst-case performance of `O(n²)`), the system only checks objects within neighboring cells, significantly improving performance. 
 
 Spatial Partitioning and Complexity: Recognizing that objects usually interact with nearby objects, we can use a common pattern to group them for efficient lookup and manipulation. This technique is known as spatial partitioning (https://gameprogrammingpatterns.com/spatial-partition.html). 
 
@@ -65,12 +69,8 @@ License CC0 for those in the public domain.
 ## Libararies
 - ebitengine: " A dead simple 2D game engine for Go" by Hajime Hoshi, Apache-2.0 license 
 - donburi: "ECS library for Go/Ebitengine", MIT License, (c) 2022 Yota Hamada
+- ganim8: "Sprite animation library for Ebitengine inspired by anim8", MIT License, also by Yota Hamada
 - resolv: "A Simple 2D Golang collision detection and resolution library" by "SolarLune", MIT License Copyright (c) 2018-2021 SolarLune
-
-# TODOs
-- [ ] add "resolv" physics engine (great examples)
-- [ ] derive solid tiles from the Arena tilemap and add to "resolv" space
-- [ ] Add animation, see here: https://github.com/egonelbre/gophers
 
 # Dev Journal
 

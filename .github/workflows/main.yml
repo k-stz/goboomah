@@ -1,8 +1,9 @@
 name: Deploy Web
 on:
   push:
-    branches:
-      - main
+    tags:
+      # Only run pipeline on tagged commits
+      - '**'
 permissions:
   contents: read
   pages: write
