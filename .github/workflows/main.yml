@@ -12,16 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: go build -o web/game.wasm
+      - run: go build -o build/game.wasm
         env:
           GOOS: js
           GOARCH: wasm
-      - run: ls -la web      
+      - run: ls -la build      
       # used to pass build artifacts between jobs build and deploy    
       - uses: actions/upload-artifact@master
         with:
           name: page
-          path: build
           if-no-files-found: error
 
   deploy:
