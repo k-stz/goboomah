@@ -26,6 +26,14 @@ You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 - [ ] Add Level Editor: based on textfile to load level
 - [ ] Input via joystick or Touchscreen (for Phones)
 
+# WASM Deployment
+WASM deployment to github pages is triggered on tagged commits.
+Web contains the html static boilerplate code while the github action pipeline will build the wasm binary and make it available there and finally published via the github pages site `k-stz.github.io/goboomah`!
+
+Source: 
+- https://ebitengine.org/en/documents/webassembly.html
+
+
 # Concepts
 
 ## ECS - Entity component system
