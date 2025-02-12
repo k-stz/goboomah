@@ -84,7 +84,7 @@ func MustLoadAssets() {
 	Meadow_tile = mustLoadImage("tiles/meadow.png")
 	Wall_tile = mustLoadImage("tiles/wall.png")
 	Bush_tile = mustLoadImage("tiles/bush.png")
-	Player = mustLoadImage("large/gopher.png")
+	Player = mustLoadImage("pics/gopher.png")
 	Bomb_tile = mustLoadImage("tiles/bomb.png")
 	ExplosionAnimation = NewExplosionAnimation("explosion.png")
 }

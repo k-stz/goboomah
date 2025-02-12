@@ -60,6 +60,7 @@ Different types of game objects can have different collision responses, even if 
 License CC0 for those in the public domain.
 - Explosion effect is from Statik64 and is CC0 (public domain)
 - Gopher Pictures: The Go Gopher by Renee French is licensed under the Creative Commons Attribution 4.0 License.
+- Gotham Gopher picture: is from https://github.com/egonelbre/gophers/tree/master?tab=readme-ov-file @egonelbre and is under the CC0 license.
 
 ## Libararies
 - ebitengine: " A dead simple 2D game engine for Go" by Hajime Hoshi, Apache-2.0 license 

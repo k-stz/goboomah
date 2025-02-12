@@ -145,7 +145,7 @@ func (g *Game) DrawStage(screen *ebiten.Image) {
 	}
 }
 
-var PlayerSprite = mustLoadImage("assets/large/player.png")
+var PlayerSprite = mustLoadImage("assets/pics/player.png")
 var gopher = mustLoadImage("assets/large/gopher.png")
 var meadow_tile *ebiten.Image = mustLoadImage("assets/tiles/meadow.png")
 var bush_tile *ebiten.Image = mustLoadImage("assets/tiles/bush.png")
