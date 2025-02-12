@@ -6,7 +6,7 @@ You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 "Chain explosion example. Go, Boom -Ah!"
 
 ## Play the Game Online! 🎮 
-[Play GoBoomah!](k-stz.github.io/goboomah/) 🚀🔥
+[Play GoBoomah!](https://k-stz.github.io/goboomah/) 🚀🔥
 
 ## Goals
 - [x] Use Ebitengine to create the 2d game
