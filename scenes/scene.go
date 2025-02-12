@@ -17,32 +17,40 @@ import (
 	"github.com/yohamta/donburi/ecs"
 )
 
+// GameScene encapsulates the ECS, systems, and scene rendering.
 type GameScene struct {
-	ecs                      *ecs.ECS
-	once                     sync.Once
-	ScreenWidth, ScreenHeigh int
+	ecs                       *ecs.ECS
+	once                      sync.Once
+	ScreenWidth, ScreenHeight int
 }
 
+// Update calls the ECS update. The configuration is executed only once.
 func (gs *GameScene) Update() {
 	gs.once.Do(gs.configure)
 	gs.ecs.Update()
 }
 
+// Draw renders the scene and overlays debug information.
 func (gs *GameScene) Draw(screen *ebiten.Image) {
+	// Clear the screen with a dark background.
 	screen.Fill(color.RGBA{20, 20, 40, 255})
 	gs.ecs.Draw(screen)
-	// Render player debugging information
-	playerEntry, _ := tags.Player.First(gs.ecs.World)
+
+	// Retrieve the player entity for debug information.
+	playerEntry, ok := tags.Player.First(gs.ecs.World)
+	if !ok {
+		ebitenutil.DebugPrintAt(screen, "Player not found", 0, 40)
+		return
+	}
+
 	playerShape := components.ShapeCircle.Get(playerEntry)
 	playerData := components.Player.Get(playerEntry)
 
 	totalBombs := 0
 	message := fmt.Sprintf("TPS: %0.2f\n", ebiten.ActualTPS())
-
 	message += fmt.Sprintf("Pos: %s\n", playerShape.Circle.Position())
 	message += fmt.Sprintf("SnapTileCenter: %v\n",
-		systems.SnapToGridTileCenter(playerShape.Circle.Position(),
-			systems.GetWorldTileDiameter(gs.ecs)))
+		systems.SnapToGridTileCenter(playerShape.Circle.Position(), systems.GetWorldTileDiameter(gs.ecs)))
 	message += fmt.Sprintf("Radius: %f\nPlayerSpeed: %f\nBombs: %d\nPower: %d\nTotalBombs: %d\nTileDiameter: %02f\n",
 		playerShape.Circle.Radius(),
 		playerData.Movement,
@@ -53,67 +61,52 @@ func (gs *GameScene) Draw(screen *ebiten.Image) {
 	ebitenutil.DebugPrintAt(screen, message, 0, 40)
 }
 
-// the the ECS gets initialized
+// configure initializes the ECS, registers systems and renderers, and creates initial entities.
 func (gs *GameScene) configure() {
-	// add width, heigh to gamescene
-	ecs := ecs.NewECS(donburi.NewWorld())
+	// Create a new ECS world and instance.
+	world := donburi.NewWorld()
+	ecsInstance := ecs.NewECS(world)
 
-	//ecs.AddSystem(systems.UpdateLevelMap)
+	// Register game update systems.
+	// ecsInstance.AddSystem(systems.UpdateLevelMap) // Uncomment if needed.
+	ecsInstance.AddSystem(systems.UpdateObjects)
+	ecsInstance.AddSystem(systems.UpdateArena)
+	ecsInstance.AddSystem(systems.UpdateBomb)
+	ecsInstance.AddSystem(systems.UpdateExplosion)
+	ecsInstance.AddSystem(systems.UpdatePlayer)
+	ecsInstance.AddSystem(systems.UpdateDebugCircle)
 
-	ecs.AddSystem(systems.UpdateObjects)
-	ecs.AddSystem(systems.UpdateArena)
-	ecs.AddSystem(systems.UpdateBomb)
-	ecs.AddSystem(systems.UpdateExplosion)
-	ecs.AddSystem(systems.UpdatePlayer)
-	ecs.AddSystem(systems.UpdateDebugCircle)
+	// Register renderers for the default layer.
+	ecsInstance.AddRenderer(layers.Default, systems.DrawArena)
+	ecsInstance.AddRenderer(layers.Default, systems.DrawBomb)
+	ecsInstance.AddRenderer(layers.Default, systems.DrawExplosion)
+	ecsInstance.AddRenderer(layers.Default, systems.DrawPlayer)
+	ecsInstance.AddRenderer(layers.Default, systems.DrawPhysics)
+	ecsInstance.AddRenderer(layers.Default, systems.DrawDebugCircle)
+	// ecsInstance.AddRenderer(layers.Default, systems.DrawArenaTiles) // Optional.
 
-	ecs.AddRenderer(layers.Default, systems.DrawArena)
-	ecs.AddRenderer(layers.Default, systems.DrawBomb)
-	ecs.AddRenderer(layers.Default, systems.DrawExplosion)
+	// Assign the configured ECS to the GameScene.
+	gs.ecs = ecsInstance
 
-	ecs.AddRenderer(layers.Default, systems.DrawPlayer)
-	ecs.AddRenderer(layers.Default, systems.DrawPhysics)
-	ecs.AddRenderer(layers.Default, systems.DrawDebugCircle)
+	// Create the world's collision grid space based on the screen dimensions.
+	spaceEntry := factory.CreateSpace(gs.ecs, gs.ScreenWidth, gs.ScreenHeight)
 
-	//ecs.AddRenderer(layers.Default, systems.DrawArenaTiles)
-	// Now we create the LevelMap
-
-	// creates a new entity
-	// component data will be initialized by default value of the struct
-	//myWallEntitty := ecs.World.Create(MyWall)
-	//entry := ecs.World.Entry(myWallEntitty)
-
-	gs.ecs = ecs
-
-	//MyWall.SetValue(entry, WallComponent{x: 100, y: 100, w: 100.0, h: 100.0})
-	//ecs.AddRenderer(Default, DrawWall)
-
-	// Define the world's Space. Here, a Space is essentially a grid
-	// (the game's width and height, or 640x360), made up of 16x16
-	// cells. Each cell can have 0 or more Objects within it,
-	// and collisions can be found by checking the Space to see if
-	// the Cells at specific positions contain (or would contain)
-	// Objects. This is a broad, simplified approach to collision
-	// detection.
-	spaceEntry := factory.CreateSpace(gs.ecs, gs.ScreenWidth, gs.ScreenHeigh)
-
-	// Create objects
+	// Create core game objects.
 	arenaEntry := factory.CreateArena(gs.ecs)
 	factory.CreateSolidTiles(gs.ecs, arenaEntry)
 	playerEntry := factory.CreatePlayer(gs.ecs)
 	fmt.Println("Created Entries IDs:", arenaEntry.Id(), playerEntry.Id(), spaceEntry.Id())
 
-	addSolidTilesSpace(spaceEntry, ecs)
+	// Add collision bounds for solid tiles into the space.
+	addSolidTilesSpace(spaceEntry, gs.ecs)
 
-	// Animations
-	//setupAnimations()
+	// Optionally, set up animations here.
+	// setupAnimations()
 }
 
-func addSolidTilesSpace(spaceEntry *donburi.Entry, ecs *ecs.ECS) {
-	// just save them in the arenaentry instead?
-	// they should be recalculated with the areana?
-	// We might want to implement a Camera later for larger stages...
-	for entry := range tags.Tile.Iter(ecs.World) {
+// addSolidTilesSpace iterates over all tile entities and adds their bounding boxes to the collision space.
+func addSolidTilesSpace(spaceEntry *donburi.Entry, ecsInstance *ecs.ECS) {
+	for entry := range tags.Tile.Iter(ecsInstance.World) {
 		collisions.AddConvexPolygonBBox(spaceEntry, entry)
 	}
 }
