@@ -19,6 +19,7 @@ var (
 	assetsFS embed.FS
 
 	Meadow_tile *ebiten.Image
+	Blob_npc    *ebiten.Image
 	Wall_tile   *ebiten.Image
 	Bush_tile   *ebiten.Image
 
@@ -86,6 +87,7 @@ func MustLoadAssets() {
 	Bush_tile = mustLoadImage("tiles/bush.png")
 	Player = mustLoadImage("pics/gopher.png")
 	Bomb_tile = mustLoadImage("tiles/bomb.png")
+	Blob_npc = mustLoadImage("pics/blob.png")
 	ExplosionAnimation = NewExplosionAnimation("explosion.png")
 }
 
