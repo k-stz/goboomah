@@ -26,6 +26,8 @@ func CreateArena(ecs *ecs.ECS) *donburi.Entry {
 		0: assets.Meadow_tile,
 		1: assets.Wall_tile,
 		2: assets.Bush_tile,
+		// enemy tileIDs
+		9: assets.Meadow_tile, // enemies are always on background tiles
 	}
 	components.TileMap.SetValue(arenaEntry, level1TileMap)
 

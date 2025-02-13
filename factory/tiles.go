@@ -10,7 +10,7 @@ import (
 	"github.com/yohamta/donburi/features/transform"
 )
 
-// create solid tiels from given arena entry
+// create solid tiles from given arena entry
 func CreateSolidTiles(ecs *ecs.ECS, arenaEntry *donburi.Entry) *donburi.Entry {
 	tg := components.TileGrid.Get(arenaEntry)
 	//diameter := tilegrid.TileDiameter
@@ -25,7 +25,7 @@ func CreateSolidTiles(ecs *ecs.ECS, arenaEntry *donburi.Entry) *donburi.Entry {
 	tg.TileDiameter = dx
 	for x, row := range tg.Grid {
 		for y, tileID := range row {
-			if tileID == 0 {
+			if tileID == 0 || tileID > 5 {
 				continue
 			}
 			entry := archtypes.Tile.Spawn(ecs)

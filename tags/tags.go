@@ -32,6 +32,9 @@ var (
 
 var (
 	TagWall      = NewResolvTag("Wall")
+	// enemies shall hurt on touch, while players shall walk
+	// through eachother, so different collision tags used
+	TagEnemy     = NewResolvTag("TagEnemy")
 	TagBreakable = NewResolvTag("Breakable")
 	TagBomb      = NewResolvTag("Bomb")
 	TagExplosion = NewResolvTag("Explosion")

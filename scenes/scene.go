@@ -65,13 +65,14 @@ func (gs *GameScene) configure() {
 	ecs.AddSystem(systems.UpdateBomb)
 	ecs.AddSystem(systems.UpdateExplosion)
 	ecs.AddSystem(systems.UpdatePlayer)
+	ecs.AddSystem(systems.UpdateEnemy)
 	ecs.AddSystem(systems.UpdateDebugCircle)
 
 	ecs.AddRenderer(layers.Default, systems.DrawArena)
 	ecs.AddRenderer(layers.Default, systems.DrawBomb)
 	ecs.AddRenderer(layers.Default, systems.DrawExplosion)
-
 	ecs.AddRenderer(layers.Default, systems.DrawPlayer)
+	ecs.AddRenderer(layers.Default, systems.DrawEnemy)
 	ecs.AddRenderer(layers.Default, systems.DrawPhysics)
 	ecs.AddRenderer(layers.Default, systems.DrawDebugCircle)
 
@@ -99,7 +100,10 @@ func (gs *GameScene) configure() {
 
 	// Create objects
 	arenaEntry := factory.CreateArena(gs.ecs)
+	// TODO: It might be a better idea to combine the logic of
+	// createsolidtile and createenemy
 	factory.CreateSolidTiles(gs.ecs, arenaEntry)
+	factory.CreateEnemies(gs.ecs, arenaEntry)
 	playerEntry := factory.CreatePlayer(gs.ecs)
 	fmt.Println("Created Entries IDs:", arenaEntry.Id(), playerEntry.Id(), spaceEntry.Id())
 
