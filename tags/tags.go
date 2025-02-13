@@ -9,6 +9,7 @@ import (
 
 var (
 	Player      = donburi.NewTag().SetName("Player")
+	Enemy       = donburi.NewTag().SetName("Enemey")
 	Bomb        = donburi.NewTag().SetName("Bomb")
 	Explosion   = donburi.NewTag().SetName("Bomb")
 	Arena       = donburi.NewTag().SetName("Arena")

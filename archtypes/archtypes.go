@@ -22,9 +22,20 @@ var (
 		tags.Player,
 		// will store speed vector for input in collision system
 		components.Player,
-		components.Sprite,      // maps TileIDs to ebiten.Images
-		transform.Transform,    // Contains transform data
-		components.CircleBBox,  // used for collision detection, OLD
+		components.Sprite, // maps TileIDs to ebiten.Images
+		//transform.Transform,    // Contains transform data
+		//components.CircleBBox,  // used for collision detection, OLD
+		components.ShapeCircle, // Collision logic
+		// why don't I need to add the AddCirecle... yet?
+	)
+
+	Enemy = newArchetype(
+		tags.Enemy,
+		// will store speed vector for input in collision system
+		//components.Player,
+		components.Sprite, // maps TileIDs to ebiten.Images
+		//transform.Transform, // Contains transform data
+		//components.CircleBBox,  // used for collision detection, OLD
 		components.ShapeCircle, // Collision logic
 		// why don't I need to add the AddCirecle... yet?
 	)
