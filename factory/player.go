@@ -28,7 +28,7 @@ func CreatePlayer(ecs *ecs.ECS) *donburi.Entry {
 	x, y := 50.0, 170.0
 
 	// BoundingCircle
-	circleObj := resolv.NewCircle(x+w/2, y+h-w/2, w)
+	circleObj := resolv.NewCircle(x+w/2, y+h+w/2, w)
 	circleObj.Tags().Set(tags.TagPlayer)
 	scale := 0.10
 	components.ShapeCircle.Set(playerEntry, &components.ShapeCircleData{

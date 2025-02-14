@@ -70,6 +70,8 @@ func DrawPhysics(ecs *ecs.ECS, screen *ebiten.Image) {
 
 		var drawColorCircle color.Color = color.White
 		var drawDebugCircle color.RGBA = color.RGBA{255, 32, 128, 255}
+		var drawDebugCircleEnemy color.RGBA = color.RGBA{32, 32, 255, 255}
+
 		var breakableWall color.RGBA = color.RGBA{0, 50, 180, 255}
 
 		// tags := shape.Tags()
@@ -77,11 +79,14 @@ func DrawPhysics(ecs *ecs.ECS, screen *ebiten.Image) {
 		drawColor := color.RGBA{32, 255, 128, 255}
 
 		switch o := shape.(type) {
-		// currently Circle is just the player
+		// Players and enemies have use a bounding Circle
 		case *resolv.Circle:
 			color := drawColorCircle
 			if o.Tags().Has(tags.TagDebug) {
 				color = drawDebugCircle
+			}
+			if o.Tags().Has(tags.TagEnemy | tags.TagDebug) {
+				color = drawDebugCircleEnemy
 			}
 			vector.StrokeCircle(screen, float32(o.Position().X), float32(o.Position().Y), float32(o.Radius()), 2, color, false)
 		case *resolv.ConvexPolygon:

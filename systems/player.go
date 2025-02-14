@@ -132,7 +132,7 @@ func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
 		halfH := float64(playerSprite.Image.Bounds().Dy() / 2)
 
 		circleShape := components.ShapeCircle.Get(entry)
-		pos := circleShape.Circle.Position()
+		pos := circleShape.Circle.Bounds().Center()
 		rad := circleShape.Circle.Radius()
 		rotation := circleShape.Rotation
 		diameter := max(halfW, halfH)

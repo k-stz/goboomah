@@ -1,8 +1,6 @@
 package systems
 
 import (
-	"fmt"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/k-stz/goboomah/components"
 	"github.com/k-stz/goboomah/tags"
@@ -44,12 +42,15 @@ func DrawEnemy(ecs *ecs.ECS, screen *ebiten.Image) {
 		halfH := float64(enemySprite.Image.Bounds().Dy() / 2)
 
 		circleShape := components.ShapeCircle.Get(entry)
+
+		// pos should be the center of the circle
 		pos := circleShape.Circle.Position()
-		rad := circleShape.Circle.Radius()
+		//rad := circleShape.Circle.Radius
+		scale := circleShape.Scale
 		rotation := circleShape.Rotation
-		diameter := max(halfW, halfH)
+		//diameter := max(halfW, halfH)
 		// diameter * x = radius
-		scale := rad / diameter
+		//scale := rad / diameter
 
 		var offsetX float64 = pos.X
 		var offsetY float64 = pos.Y //- halfH + halfW
@@ -59,10 +60,10 @@ func DrawEnemy(ecs *ecs.ECS, screen *ebiten.Image) {
 		// intuitively
 		op.GeoM.Translate(-halfW, -halfH)
 		op.GeoM.Scale(scale, scale)
-		op.GeoM.Scale(1.0, 1.0) // undo for debugging
+		//op.GeoM.Scale(1.0, 1.0) // undo for debugging
 		op.GeoM.Rotate(rotation)
 		op.GeoM.Translate(offsetX, offsetY)
-		fmt.Println("draw enemmy at", offsetX, offsetY)
+		//fmt.Println("draw enemmy at", offsetX, offsetY)
 		screen.DrawImage(enemySprite.Image, op)
 	}
 }
