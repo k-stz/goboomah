@@ -22,14 +22,6 @@ var (
 
 // Resolv tags
 
-// var (
-// 	TagWall      = resolv.NewTag("Wall")
-// 	TagBomb      = resolv.NewTag("Bomb")
-// 	TagExplosion = resolv.NewTag("Explosion")
-// 	TagPlayer    = resolv.NewTag("Player")
-// 	TagDebug     = resolv.NewTag("Debug")
-// )
-
 var (
 	TagWall = NewResolvTag("Wall")
 	// enemies shall hurt on touch, while players shall walk

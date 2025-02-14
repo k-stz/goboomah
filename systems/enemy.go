@@ -10,7 +10,7 @@ import (
 // Here handle player input and update velocity/movement
 // laeter collision response will be collected from here
 func UpdateEnemy(ecs *ecs.ECS) {
-
+	
 	// //tileSpiralEffect(ecs)
 	// enemyEntry, _ := tags.Enemy.First(ecs.World)
 	// enemyShape := components.ShapeCircle.Get(enemyEntry)

@@ -49,9 +49,6 @@ func UpdateObjects(ecs *ecs.ECS) {
 				}
 				//fmt.Println("Collision Bomb, MTV!", set.MTV, "mag", magMTV, "ratio", ratio)
 			}
-			// also update the tf.LocalTransform
-			//player.Speed.X = 0
-			//player.Speed.Y = 0
 			return true
 		},
 	})
@@ -59,6 +56,32 @@ func UpdateObjects(ecs *ecs.ECS) {
 	// Update scale
 	circle := playerShape.Circle
 	circle.SetRadius(playerShape.Scale * playerShape.Radius)
+
+	// Enemy Collision Detection / Response
+	for entry := range tags.Enemy.Iter(ecs.World) {
+		enemyShape := components.ShapeCircle.Get(entry)
+		// copy player movement
+		enemyShape.Circle.MoveVec(player.Movement)
+		enemyShape.Circle.IntersectionTest(resolv.IntersectionTestSettings{
+			TestAgainst: enemyShape.Circle.SelectTouchingCells(1).
+				FilterShapes().ByTags(tags.TagWall | tags.TagBomb),
+			OnIntersect: func(set resolv.IntersectionSet) bool {
+				if set.OtherShape.Tags().Has(tags.TagWall) {
+					enemyShape.Circle.MoveVec(set.MTV)
+				}
+				// Bomb collision logic
+				if set.OtherShape.Tags().Has(tags.TagBomb) {
+					magMTV := set.MTV.Magnitude()
+					if (magMTV / dx) < 0.15 {
+						enemyShape.Circle.MoveVec(set.MTV.Scale(1.0))
+					}
+				}
+				return true
+			},
+		})
+
+	}
+
 }
 
 // This renders the Collision Detection Bounding Boxes and Circles
