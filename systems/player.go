@@ -7,6 +7,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/k-stz/goboomah/components"
 	"github.com/k-stz/goboomah/tags"
+	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
 )
 
@@ -151,4 +152,11 @@ func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
 		op.GeoM.Translate(offsetX, offsetY)
 		screen.DrawImage(playerSprite.Image, op)
 	}
+}
+
+// TODO use in UpdatePlayer
+func processPlayerExplosion(enemyEntry *donburi.Entry, ecs *ecs.ECS) {
+	currentTicks := GetTickCount(ecs)
+	fmt.Println("processPlayerExplosion! Ticks:", currentTicks)
+
 }

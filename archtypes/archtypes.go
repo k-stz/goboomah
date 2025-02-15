@@ -19,7 +19,10 @@ var (
 	)
 
 	Player = newArchetype(
+		tags.CircleCollision,
 		tags.Player,
+		// So player can react to explosions
+		components.Explodable,
 		// will store speed vector for input in collision system
 		components.Player,
 		components.Sprite, // maps TileIDs to ebiten.Images
@@ -30,7 +33,9 @@ var (
 	)
 
 	Enemy = newArchetype(
+		tags.CircleCollision,
 		tags.Enemy,
+		components.Explodable,
 		// will store speed vector for input in collision system
 		//components.Player,
 		components.Sprite, // maps TileIDs to ebiten.Images

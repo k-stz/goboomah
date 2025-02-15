@@ -1,7 +1,6 @@
 package systems
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -298,7 +297,6 @@ func UpdateExplosion(ecs *ecs.ECS) {
 				// 	tileShapeTags |= *set.OtherShape.Tags()
 				// 	return false // stop testing for further intersection
 				// }
-				fmt.Println("Player in explosion!!!! Ouch!")
 				//set.OtherShape.(*resolv.ConvexPolygon).IsContainedBy(set.OtherShape)
 				//fmt.Println("COLLISION tag", set.OtherShape)
 				return true

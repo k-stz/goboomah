@@ -8,14 +8,15 @@ import (
 )
 
 var (
-	Player      = donburi.NewTag().SetName("Player")
-	Enemy       = donburi.NewTag().SetName("Enemey")
-	Bomb        = donburi.NewTag().SetName("Bomb")
-	Explosion   = donburi.NewTag().SetName("Bomb")
-	Arena       = donburi.NewTag().SetName("Arena")
-	Tile        = donburi.NewTag().SetName("Tile")
-	Space       = donburi.NewTag().SetName("Space")
-	DebugCircle = donburi.NewTag().SetName("DebugCircle")
+	CircleCollision = donburi.NewTag().SetName("CircleCollsion")
+	Player          = donburi.NewTag().SetName("Player")
+	Enemy           = donburi.NewTag().SetName("Enemey")
+	Bomb            = donburi.NewTag().SetName("Bomb")
+	Explosion       = donburi.NewTag().SetName("Bomb")
+	Arena           = donburi.NewTag().SetName("Arena")
+	Tile            = donburi.NewTag().SetName("Tile")
+	Space           = donburi.NewTag().SetName("Space")
+	DebugCircle     = donburi.NewTag().SetName("DebugCircle")
 
 	//Wall             = donburi.NewTag().SetName("Wall")
 )
