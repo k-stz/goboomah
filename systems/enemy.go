@@ -37,6 +37,9 @@ func UpdateEnemy(ecs *ecs.ECS) {
 
 // CosineOscillator calculates a cosine wave value that oscillates between two values
 // ticks: current game tick count
+// Used for creating a cycled squish animation for the blob enemy
+// using one oscilation to control the x-axis scaling and
+// and another one for the y-axis in the opposite direction
 // period: duration in seconds for a full cycle
 // from: the minimum oscillation value
 // to: the maximum oscillation value
@@ -74,8 +77,8 @@ func DrawEnemy(ecs *ecs.ECS, screen *ebiten.Image) {
 		// translate to origin, so scaling and rotation work
 		// intuitively
 		ticks := GetTickCount(ecs)
-		scaleX := Oscillator(math.Cos, int(ticks), 3.0, 1.0, 0.8)
-		scaleY := Oscillator(math.Sin, int(ticks), 3.0, 0.8, 1.0)
+		scaleX := Oscillator(math.Cos, int(ticks), 4.0, 1.5, 0.6)
+		scaleY := Oscillator(math.Sin, int(ticks), 4.0, 0.6, 1.5)
 
 		op.GeoM.Translate(-halfW, -halfH)
 		op.GeoM.Scale(scaleX, scaleY)

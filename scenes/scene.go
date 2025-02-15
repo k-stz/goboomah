@@ -104,7 +104,7 @@ func (gs *GameScene) configure() {
 	// createsolidtile and createenemy
 	factory.CreateSolidTiles(gs.ecs, arenaEntry)
 	factory.CreateEnemies(gs.ecs, arenaEntry)
-	playerEntry := factory.CreatePlayer(gs.ecs)
+	playerEntry := factory.CreatePlayer(gs.ecs, arenaEntry)
 	fmt.Println("Created Entries IDs:", arenaEntry.Id(), playerEntry.Id(), spaceEntry.Id())
 
 	addSolidTilesSpace(spaceEntry, ecs)

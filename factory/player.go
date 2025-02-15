@@ -12,9 +12,10 @@ import (
 	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
+	"github.com/yohamta/donburi/features/transform"
 )
 
-func CreatePlayer(ecs *ecs.ECS) *donburi.Entry {
+func CreatePlayer(ecs *ecs.ECS, arenaEntry *donburi.Entry) *donburi.Entry {
 	playerEntry := archtypes.Player.Spawn(ecs)
 	// Set Player Data
 	components.Player.Set(playerEntry, components.NewPlayer(10, 3))
@@ -25,10 +26,14 @@ func CreatePlayer(ecs *ecs.ECS) *donburi.Entry {
 	w := float64(playerSprite.Image.Bounds().Dx())
 	h := float64(playerSprite.Image.Bounds().Dy())
 
-	x, y := 50.0, 170.0
+	tf := transform.Transform.Get(arenaEntry)
+	dx := systems.GetWorldTileDiameter(ecs)
+	x := tf.LocalPosition.X + (dx * 2.0)
+	y := tf.LocalPosition.Y + (dx * 2.0)
 
 	// BoundingCircle
 	circleObj := resolv.NewCircle(x+w/2, y+h+w/2, w)
+	circleObj = resolv.NewCircle(x, y, w/2)
 	circleObj.Tags().Set(tags.TagPlayer)
 	scale := 0.10
 	components.ShapeCircle.Set(playerEntry, &components.ShapeCircleData{
@@ -39,7 +44,7 @@ func CreatePlayer(ecs *ecs.ECS) *donburi.Entry {
 	})
 	spaceEntry := systems.GetSpaceEntry(ecs)
 	collisions.AddCircle(spaceEntry, playerEntry)
-	fmt.Println("added player collision obj:", circleObj)
+	fmt.Println("added player collision obj:", circleObj.Position())
 
 	//dresolv.SetObject(platform, object)
 	return playerEntry

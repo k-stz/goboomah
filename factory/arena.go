@@ -16,7 +16,8 @@ func CreateArena(ecs *ecs.ECS) *donburi.Entry {
 	//level1 := components.Level1()
 	arenaEntry := archtypes.Arena.Spawn(ecs)
 	// TODO create tile objects based on TileGrid!
-	level := *components.LevelLa()
+	// level := *components.LevelLa()
+	level := *components.Level2()
 	//level := *components.LevelTile1()
 	dx := level.TileDiameter
 	components.TileGrid.SetValue(arenaEntry, level)
