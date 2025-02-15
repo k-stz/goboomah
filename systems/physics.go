@@ -1,6 +1,7 @@
 package systems
 
 import (
+	"fmt"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -8,10 +9,24 @@ import (
 	"github.com/k-stz/goboomah/components"
 	"github.com/k-stz/goboomah/tags"
 	"github.com/solarlune/resolv"
+	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
 )
 
 var rect = resolv.NewRectangle(200, 100, 32, 32)
+
+// set explodable components to true for durationTicks
+// where 60 ticks is roughly a second
+func SetExploding(entry *donburi.Entry, ecs *ecs.ECS, durationTicks components.TickCount) {
+	currentTicks := GetTickCount(ecs)
+	explosionState := components.Explodable.Get(entry)
+	// Check if we are already exploding, so as not
+	// to reset the explosion DelayTicks
+	if !explosionState.Exploding {
+		explosionState.ExplodingTick = currentTicks + durationTicks
+		explosionState.Exploding = true
+	}
+}
 
 // Here we handle all the collisions detection and response
 func UpdateObjects(ecs *ecs.ECS) {
@@ -30,57 +45,58 @@ func UpdateObjects(ecs *ecs.ECS) {
 	player.Movement = player.Movement.Add(movement.Scale(accel)).SubMagnitude(friction).ClampMagnitude(maxSpd)
 	playerShape.Circle.MoveVec(player.Movement)
 
-	playerShape.Circle.IntersectionTest(resolv.IntersectionTestSettings{
-		TestAgainst: playerShape.Circle.SelectTouchingCells(1).
-			// Filter all solids
-			FilterShapes().ByTags(tags.TagWall | tags.TagBomb),
-		OnIntersect: func(set resolv.IntersectionSet) bool {
-			if set.OtherShape.Tags().Has(tags.TagWall) {
-				playerShape.Circle.MoveVec(set.MTV)
-				//fmt.Println("COLLISION with wall, applying MTV", set.MTV)
-			}
-			if set.OtherShape.Tags().Has(tags.TagBomb) {
-				// Only apply MTV when player is mostly outside of the bomb
-				// such that when a player places a bomb he can still move on it
-				magMTV := set.MTV.Magnitude()
-				// ratio := magMTV / dx
-				if (magMTV / dx) < 0.15 {
-					playerShape.Circle.MoveVec(set.MTV.Scale(1.0))
+	collisionTags := tags.TagWall | tags.TagBomb | tags.TagEnemy | tags.TagPlayer | tags.TagExplosion
+	// Entry can be any archtype that has the tag.CircleCollision
+	// which currently is the Player and Enemy
+	for entry := range tags.CircleCollision.Iter(ecs.World) {
+		circleShape := components.ShapeCircle.Get(entry)
+		circleShape.Circle.IntersectionTest(resolv.IntersectionTestSettings{
+			TestAgainst: circleShape.Circle.SelectTouchingCells(1).
+				// Filter all solids
+				FilterShapes().ByTags(collisionTags),
+			OnIntersect: func(set resolv.IntersectionSet) bool {
+				if set.OtherShape.Tags().Has(tags.TagWall) {
+					circleShape.Circle.MoveVec(set.MTV)
 				}
-				//fmt.Println("Collision Bomb, MTV!", set.MTV, "mag", magMTV, "ratio", ratio)
-			}
-			return true
-		},
-	})
+				if set.OtherShape.Tags().Has(tags.TagBomb) {
+					// Only apply MTV when player is mostly outside of the bomb
+					// such that when a player places a bomb he can still move on it
+					magMTV := set.MTV.Magnitude()
+					// ratio := magMTV / dx
+					if (magMTV / dx) < 0.15 {
+						circleShape.Circle.MoveVec(set.MTV.Scale(1.0))
+					}
+				}
+				// Player special logic here
+				if circleShape.Circle.Tags().Has(tags.TagPlayer) {
+					if set.OtherShape.Tags().Has(tags.TagEnemy) {
+						fmt.Println("Collided with enemy! Ouch")
+					}
+					if set.OtherShape.Tags().Has(tags.TagExplosion) {
+						SetExploding(entry, ecs, 60)
+					}
+					// explosions etcs
+				}
+				if circleShape.Circle.Tags().Has(tags.TagEnemy) {
+					if set.OtherShape.Tags().Has(tags.TagExplosion) {
+						SetExploding(entry, ecs, 60)
+						processEnemyExplosion(entry, ecs)
+					}
+					// special enemy logic here
+					// gives football/push effect: player
+					// can push the enemy around
+					//circleShape.Circle.MoveVec(player.Movement)
+				}
+				return true
+			},
+		})
+	}
+
 
 	// Update scale
 	circle := playerShape.Circle
 	circle.SetRadius(playerShape.Scale * playerShape.Radius)
 
-	// Enemy Collision Detection / Response
-	for entry := range tags.Enemy.Iter(ecs.World) {
-		enemyShape := components.ShapeCircle.Get(entry)
-		// copy player movement
-		enemyShape.Circle.MoveVec(player.Movement)
-		enemyShape.Circle.IntersectionTest(resolv.IntersectionTestSettings{
-			TestAgainst: enemyShape.Circle.SelectTouchingCells(1).
-				FilterShapes().ByTags(tags.TagWall | tags.TagBomb),
-			OnIntersect: func(set resolv.IntersectionSet) bool {
-				if set.OtherShape.Tags().Has(tags.TagWall) {
-					enemyShape.Circle.MoveVec(set.MTV)
-				}
-				// Bomb collision logic
-				if set.OtherShape.Tags().Has(tags.TagBomb) {
-					magMTV := set.MTV.Magnitude()
-					if (magMTV / dx) < 0.15 {
-						enemyShape.Circle.MoveVec(set.MTV.Scale(1.0))
-					}
-				}
-				return true
-			},
-		})
-
-	}
 
 }
 
