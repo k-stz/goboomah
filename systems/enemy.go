@@ -2,7 +2,6 @@ package systems
 
 import (
 	"fmt"
-	"image/color"
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -26,7 +25,6 @@ func processEnemyExplosion(enemyEntry *donburi.Entry, ecs *ecs.ECS) {
 	currentTicks := GetTickCount(ecs)
 	state := components.Explodable.Get(enemyEntry)
 	circleShape := components.ShapeCircle.Get(enemyEntry)
-	enemySprite := components.Sprite.Get(enemyEntry)
 	// Enemy exploding state: set
 	if !state.Despawn && state.Exploding && state.ExplodingTick <= currentTicks {
 		state.Exploding = false
@@ -38,7 +36,6 @@ func processEnemyExplosion(enemyEntry *donburi.Entry, ecs *ecs.ECS) {
 	if state.Exploding && state.ExplodingTick > currentTicks {
 		// Play damage animation
 		circleShape.Rotation -= 0.1
-		enemySprite.Image.ColorModel().Convert(color.RGBA{255, 0, 0, 255})
 		fmt.Println("Enemy: Im exploding!")
 		fmt.Println("I'm exploding", currentTicks, "despawn=", state.Despawn)
 	}

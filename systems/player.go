@@ -98,7 +98,7 @@ func UpdatePlayer(ecs *ecs.ECS) {
 	}
 
 	// For Debugging
-	if ebiten.IsKeyPressed(ebiten.KeyT) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyT) {
 		//checkTiles := 4
 		var tileContents []TileContent
 		tileContents = CheckTilesInDirection(playerTilePosition, Down, 4, dx, tags.TagWall, true, ecs)

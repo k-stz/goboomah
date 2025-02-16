@@ -80,7 +80,6 @@ func UpdateObjects(ecs *ecs.ECS) {
 				if circleShape.Circle.Tags().Has(tags.TagEnemy) {
 					if set.OtherShape.Tags().Has(tags.TagExplosion) {
 						SetExploding(entry, ecs, 60)
-						processEnemyExplosion(entry, ecs)
 					}
 					// special enemy logic here
 					// gives football/push effect: player
@@ -92,11 +91,9 @@ func UpdateObjects(ecs *ecs.ECS) {
 		})
 	}
 
-
 	// Update scale
 	circle := playerShape.Circle
 	circle.SetRadius(playerShape.Scale * playerShape.Radius)
-
 
 }
 
