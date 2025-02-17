@@ -13,8 +13,6 @@ import (
 	"github.com/yohamta/donburi/ecs"
 )
 
-var rect = resolv.NewRectangle(200, 100, 32, 32)
-
 // set explodable components to true for durationTicks
 // where 60 ticks is roughly a second
 func SetExploding(entry *donburi.Entry, ecs *ecs.ECS, durationTicks components.TickCount) {
@@ -85,7 +83,7 @@ func UpdateObjects(ecs *ecs.ECS) {
 					// special enemy logic here
 					// gives football/push effect: player
 					// can push the enemy around
-					//circleShape.Circle.MoveVec(player.Movement)
+					// circleShape.Circle.MoveVec(player.Movement)
 				}
 				return true
 			},

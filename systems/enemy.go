@@ -3,12 +3,15 @@ package systems
 import (
 	"fmt"
 	"math"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/k-stz/goboomah/components"
 	"github.com/k-stz/goboomah/tags"
+	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
+	"golang.org/x/exp/rand"
 )
 
 // Remove Bomb from ecs and its object from the Collisoin spacce
@@ -62,10 +65,50 @@ func processEnemyExplosion(enemyEntry *donburi.Entry, ecs *ecs.ECS) {
 
 }
 
+func randomCardinalDirection() resolv.Vector {
+	directions := []resolv.Vector{
+		{X: 0, Y: -1}, // North
+		{X: 1, Y: 0},  // East
+		{X: 0, Y: 1},  // South
+		{X: -1, Y: 0}, // West
+	}
+
+	rand.Seed(uint64(time.Now().UnixNano()))
+	return directions[rand.Intn(len(directions))]
+}
+
+func processEnemyState(enemyEntry *donburi.Entry, ecs *ecs.ECS) {
+	currentTicks := GetTickCount(ecs)
+	//explodeState := components.Explodable.Get(enemyEntry)
+	circleShape := components.ShapeCircle.Get(enemyEntry)
+	aiState := components.AI.Get(enemyEntry)
+
+	switch aiState.State {
+	case components.Idle:
+		// transition to walking state for some time
+		chosenDirection := randomCardinalDirection()
+		aiState.Direction = chosenDirection
+		// put this in physics system
+		circleShape.Circle.MoveVec(aiState.Direction)
+		fmt.Println("direction chose:", chosenDirection)
+		// transition state
+		aiState.State = components.Walking
+		aiState.StateDuration = currentTicks + 10
+	case components.Walking:
+		if aiState.StateDuration < currentTicks {
+			aiState.State = components.Idle
+		}
+		//fmt.Println("In Walking state", aiState.StateDuration, "currentTicks", currentTicks)
+
+		// walk for some ticks
+	}
+}
+
 // Here handle player input and update velocity/movement
 // laeter collision response will be collected from here
 func UpdateEnemy(ecs *ecs.ECS) {
 	for enemyEntry := range tags.Enemy.Iter(ecs.World) {
+		processEnemyState(enemyEntry, ecs)
 		processEnemyExplosion(enemyEntry, ecs)
 	}
 	// //tileSpiralEffect(ecs)

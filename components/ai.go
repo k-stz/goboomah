@@ -5,6 +5,15 @@ import (
 	"github.com/yohamta/donburi"
 )
 
+type State int
+
+const (
+	Idle State = iota
+	Walking
+	Chasing
+	Dodging
+)
+
 type AIState struct {
 	// represents in which direction and with what magnitude
 	// the AI wants to move
@@ -14,14 +23,17 @@ type AIState struct {
 	Direction resolv.Vector
 	// Current movement Speed of the AI Monster, this is by how much
 	// the Monster will move in a direction
-	Movement resolv.Vector
-	Hp       int
+	Movement      resolv.Vector
+	Hp            int
+	State         State
+	StateDuration TickCount
 }
 
 // Create AI with given hp (healthpoits).
 func NewAI(hp int) *AIState {
 	return &AIState{
-		Hp: hp,
+		Hp:    hp,
+		State: Idle,
 	}
 }
 
