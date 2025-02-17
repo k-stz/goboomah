@@ -47,6 +47,8 @@ func processEnemyExplosion(enemyEntry *donburi.Entry, ecs *ecs.ECS) {
 		circleShape.Rotation -= 0.1
 		fmt.Println("Enemy: Im exploding!")
 		fmt.Println("I'm exploding", currentTicks, "despawn=", state.Despawn)
+	} else {
+		circleShape.Rotation = 0
 	}
 	//Enemy dying state
 	if state.Despawn {

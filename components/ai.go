@@ -7,7 +7,7 @@ import (
 
 type AIState struct {
 	// represents in which direction and with what magnitude
-	// the AI wants to move 
+	// the AI wants to move
 	// the collision/physics system will then calculate what
 	// position this results into and will update the
 	// Monsters actual position (stored in another component)
