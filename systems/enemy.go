@@ -85,23 +85,31 @@ func processEnemyState(enemyEntry *donburi.Entry, ecs *ecs.ECS) {
 
 	switch aiState.State {
 	case components.Idle:
-		// transition to walking state for some time
 		chosenDirection := randomCardinalDirection()
 		aiState.Direction = chosenDirection
-		// put this in physics system
-		circleShape.Circle.MoveVec(aiState.Direction)
-		fmt.Println("direction chose:", chosenDirection)
-		// transition state
+		// transition to walking state for some time
 		aiState.State = components.Walking
-		aiState.StateDuration = currentTicks + 10
+		aiState.Duration = currentTicks + 20
 	case components.Walking:
-		if aiState.StateDuration < currentTicks {
+		if aiState.Duration < currentTicks {
+			// Transition to Idle State for some time
 			aiState.State = components.Idle
+			aiState.Duration = currentTicks + 100
 		}
-		//fmt.Println("In Walking state", aiState.StateDuration, "currentTicks", currentTicks)
-
-		// walk for some ticks
 	}
+	// Apply movement to enemy
+
+	movement := resolv.NewVector(aiState.Direction.X, aiState.Direction.Y)
+
+	baseSpeed := 0.1
+	aiState.Movement = aiState.Movement.Scale(baseSpeed)
+	maxSpd := 1.0
+	friction := 0.5
+	accel := 0.01 * friction
+	aiState.Movement = aiState.Movement.Add(movement.Scale(accel)).SubMagnitude(friction).ClampMagnitude(maxSpd)
+	aiState.Movement = aiState.Movement.Add(movement)
+	circleShape.Circle.MoveVec(aiState.Movement)
+
 }
 
 // Here handle player input and update velocity/movement

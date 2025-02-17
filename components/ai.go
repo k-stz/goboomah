@@ -23,10 +23,11 @@ type AIState struct {
 	Direction resolv.Vector
 	// Current movement Speed of the AI Monster, this is by how much
 	// the Monster will move in a direction
-	Movement      resolv.Vector
-	Hp            int
-	State         State
-	StateDuration TickCount
+	Movement resolv.Vector
+	Hp       int
+	State    State
+	// used to track for how long to stay in the next state
+	Duration TickCount
 }
 
 // Create AI with given hp (healthpoits).
