@@ -31,9 +31,8 @@ func CreateEnemies(ecs *ecs.ECS, arenaEntry *donburi.Entry) *donburi.Entry {
 				continue
 			}
 			entry := archtypes.Enemy.Spawn(ecs)
-			// tile grid data
-			// tileData := components.Tile.Get(entry)
-			// tileData.GridX, tileData.GridY = x, y
+			// stats
+			components.AI.Set(entry, components.NewAI(2))
 			// Sprite
 			var enemySprite *ebiten.Image
 			switch tileID {

@@ -36,6 +36,9 @@ var (
 		tags.CircleCollision,
 		tags.Enemy,
 		components.Explodable,
+		// AI tracks logic applied to object like health and movement
+		// that is not governed by player
+		components.AI,
 		// will store speed vector for input in collision system
 		//components.Player,
 		components.Sprite, // maps TileIDs to ebiten.Images

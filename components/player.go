@@ -19,12 +19,14 @@ type PlayerData struct {
 	Bombs int
 	// What Firepower placed bombs have
 	Power int
+	Lives int
 }
 
-func NewPlayer(bombs, power int) *PlayerData {
+func NewPlayer(bombs, power int, lives int) *PlayerData {
 	return &PlayerData{
 		Bombs: bombs,
 		Power: power,
+		Lives: lives,
 	}
 }
 

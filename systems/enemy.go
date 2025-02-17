@@ -25,12 +25,21 @@ func processEnemyExplosion(enemyEntry *donburi.Entry, ecs *ecs.ECS) {
 	currentTicks := GetTickCount(ecs)
 	state := components.Explodable.Get(enemyEntry)
 	circleShape := components.ShapeCircle.Get(enemyEntry)
+	aiState := components.AI.Get(enemyEntry)
+	if !state.ProcessedExplosion && state.Exploding {
+		//enemyStat.Lives--
+		state.ProcessedExplosion = true
+		aiState.Hp--
+	}
 	// Enemy exploding state: set
 	if !state.Despawn && state.Exploding && state.ExplodingTick <= currentTicks {
 		state.Exploding = false
-		fmt.Println("I'm despawning", currentTicks, "despawn=", state.Despawn)
 		state.DespawnTick = currentTicks + (60 * 2)
-		state.Despawn = true
+		fmt.Println("Enemy Hp", aiState.Hp)
+		if aiState.Hp <= 0 {
+			fmt.Println("I'm despawning", currentTicks, "despawn=", state.Despawn)
+			state.Despawn = true
+		}
 	}
 	// Enemy hurt state
 	if state.Exploding && state.ExplodingTick > currentTicks {

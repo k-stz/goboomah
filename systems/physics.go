@@ -23,6 +23,7 @@ func SetExploding(entry *donburi.Entry, ecs *ecs.ECS, durationTicks components.T
 	// Check if we are already exploding, so as not
 	// to reset the explosion DelayTicks
 	if !explosionState.Exploding {
+		explosionState.ProcessedExplosion = false
 		explosionState.ExplodingTick = currentTicks + durationTicks
 		explosionState.Exploding = true
 	}
