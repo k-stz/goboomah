@@ -60,6 +60,9 @@ func processEnemyExplosion(enemyEntry *donburi.Entry, ecs *ecs.ECS) {
 	//Enemy dead state, despawn for good
 	if state.Despawn && state.DespawnTick <= currentTicks {
 		fmt.Println("removing enemy", currentTicks)
+		// blob enemy blows up on death!
+		// probably track for which enemy to do this
+		CreateExplosion(circleShape.Circle.Position(), 2, ecs)
 		RemoveEnemy(enemyEntry, ecs)
 	}
 
