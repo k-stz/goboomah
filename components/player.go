@@ -20,6 +20,16 @@ type PlayerData struct {
 	// What Firepower placed bombs have
 	Power int
 	Lives int
+	// When player loses a live respawn here
+	RespawnPoint resolv.Vector
+	// Whether Player is being damated, this is processed in an
+	// FSM to see if the player needs to take damage or if
+	// their are invincibility frames still
+	Damaged bool
+	// used for FSM implementation tracking Player damaged
+	State State
+	// How long to stay in a given state
+	Duration TickCount
 }
 
 func NewPlayer(bombs, power int, lives int) *PlayerData {

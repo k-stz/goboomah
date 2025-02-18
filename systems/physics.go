@@ -42,6 +42,9 @@ func UpdateObjects(ecs *ecs.ECS) {
 	accel := 0.3 + friction
 
 	player.Movement = player.Movement.Add(movement.Scale(accel)).SubMagnitude(friction).ClampMagnitude(maxSpd)
+	if player.State == components.Death {
+		player.Movement = player.Movement.Set(0, 0)
+	}
 	playerShape.Circle.MoveVec(player.Movement)
 
 	collisionTags := tags.TagWall | tags.TagBomb | tags.TagEnemy | tags.TagPlayer | tags.TagExplosion
@@ -68,11 +71,9 @@ func UpdateObjects(ecs *ecs.ECS) {
 				}
 				// Player special logic here
 				if circleShape.Circle.Tags().Has(tags.TagPlayer) {
-					if set.OtherShape.Tags().Has(tags.TagEnemy) {
-						fmt.Println("Collided with enemy! Ouch")
-					}
-					if set.OtherShape.Tags().Has(tags.TagExplosion) {
-						SetExploding(entry, ecs, 60)
+					if set.OtherShape.Tags().Has(tags.TagEnemy | tags.TagExplosion) {
+						fmt.Println("Player took damage! Ouch")
+						player.Damaged = true
 					}
 					// explosions etcs
 				}

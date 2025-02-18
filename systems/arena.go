@@ -1,6 +1,8 @@
 package systems
 
 import (
+	"fmt"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/k-stz/goboomah/components"
 	"github.com/k-stz/goboomah/tags"
@@ -91,12 +93,23 @@ func BreakWall(wallEntry *donburi.Entry, ecs *ecs.ECS) {
 	GetSpace(ecs).Remove(bbox)
 }
 
+func GetPlayer(ecs *ecs.ECS) *components.PlayerData {
+	playerEntry, _ := tags.Player.First(ecs.World)
+	player := components.Player.Get(playerEntry)
+	return player
+}
+
 // The Arena is the 2d-grid where the player walks inside
 // In here we update components that are represented by the
 // 2d grid like breakable walls
 func UpdateArena(ecs *ecs.ECS) {
 	IncementTickCount(ecs)
 
+	if GetPlayer(ecs).Lives <= 0 {
+		fmt.Println("Game Over")
+		// TODO implement Game Over State / Screen
+		// Transition to Game Over State
+	}
 	// Need some global timer to trigger the effect for a short time?
 	//tileSpiralEffect(ecs)
 	// handle breakable tiles/walls here

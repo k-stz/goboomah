@@ -2,11 +2,13 @@ package systems
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/k-stz/goboomah/components"
 	"github.com/k-stz/goboomah/tags"
+	"github.com/solarlune/resolv"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
 )
@@ -19,6 +21,10 @@ func UpdatePlayer(ecs *ecs.ECS) {
 	playerEntry, _ := tags.Player.First(ecs.World)
 	player := components.Player.Get(playerEntry)
 	playerShape := components.ShapeCircle.Get(playerEntry)
+
+	// Currently just used for damage calculation and gameover condition
+	processPlayerState(playerEntry, ecs)
+
 	var x float64
 	var y float64
 	dx := GetWorldTileDiameter(ecs)
@@ -125,6 +131,7 @@ func UpdatePlayer(ecs *ecs.ECS) {
 }
 
 func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
+	ticks := GetTickCount(ecs)
 	for entry := range tags.Player.Iter(ecs.World) {
 		//o := dresolv.GetObject(e)
 		playerSprite := components.Sprite.Get(entry)
@@ -150,13 +157,53 @@ func DrawPlayer(ecs *ecs.ECS, screen *ebiten.Image) {
 		op.GeoM.Scale(scale, scale)
 		op.GeoM.Rotate(rotation)
 		op.GeoM.Translate(offsetX, offsetY)
+		// Draw invincibility Frames
+		player := GetPlayer(ecs)
+		if player.State == components.Invincible {
+			color := float32(Oscillator(math.Cos, int(ticks), 1.0, 0.1, 4.0))
+			op.ColorScale.Scale(color, color, color, 255)
+		}
 		screen.DrawImage(playerSprite.Image, op)
 	}
 }
 
-// TODO use in UpdatePlayer
-func processPlayerExplosion(enemyEntry *donburi.Entry, ecs *ecs.ECS) {
+func processPlayerState(entry *donburi.Entry, ecs *ecs.ECS) {
 	currentTicks := GetTickCount(ecs)
-	fmt.Println("processPlayerExplosion! Ticks:", currentTicks)
 
+	player := components.Player.Get(entry)
+	circleShape := components.ShapeCircle.Get(entry)
+
+	switch player.State {
+	case components.Idle:
+		fmt.Println("Idle", currentTicks)
+		if player.Damaged {
+			player.Lives--
+			// death animation 1 seconds
+			player.Duration = currentTicks + (1 * 60)
+			player.State = components.Death
+		}
+	case components.Death:
+		fmt.Println("DEATH", currentTicks)
+		if player.Duration < currentTicks {
+			// stop in player in his tracks
+			circleShape.Circle.MoveVec(resolv.NewVector(0, 0))
+			player.Direction = resolv.NewVector(0, 0)
+			// invincibility ticks for 3 secondds
+			player.Duration = currentTicks + (2 * 60)
+			player.State = components.Invincible
+			player.Damaged = false
+			// Respawn!
+			circleShape.Circle.SetPositionVec(player.RespawnPoint)
+		}
+		// Death Animation
+		circleShape.Rotation += 0.2
+	case components.Invincible:
+		circleShape.Rotation = 0.0
+		fmt.Println("Invincible", currentTicks)
+		if player.Duration < currentTicks {
+			// Transition to Idle State after some time
+			player.State = components.Idle
+			player.Damaged = false
+		}
+	}
 }

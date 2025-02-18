@@ -124,26 +124,6 @@ func UpdateEnemy(ecs *ecs.ECS) {
 		processEnemyState(enemyEntry, ecs)
 		processEnemyExplosion(enemyEntry, ecs)
 	}
-	// //tileSpiralEffect(ecs)
-	// enemyEntry, _ := tags.Enemy.First(ecs.World)
-	// enemyShape := components.ShapeCircle.Get(enemyEntry)
-
-	// scaleSpeed := 0.01
-	// if ebiten.IsKeyPressed(ebiten.KeyG) {
-	// 	enemyShape.Scale += scaleSpeed
-
-	// }
-	// if ebiten.IsKeyPressed(ebiten.KeyF) {
-	// 	enemyShape.Scale -= scaleSpeed
-	// }
-	// rotateSpeed := 0.1
-	// if ebiten.IsKeyPressed(ebiten.KeyR) {
-	// 	enemyShape.Rotation += rotateSpeed
-
-	// }
-	// if ebiten.IsKeyPressed(ebiten.KeyE) {
-	// 	enemyShape.Rotation -= rotateSpeed
-	// }
 }
 
 // CosineOscillator calculates a cosine wave value that oscillates between two values

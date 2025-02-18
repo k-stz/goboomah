@@ -12,6 +12,8 @@ const (
 	Walking
 	Chasing
 	Dodging
+	Invincible
+	Death
 )
 
 type AIState struct {
