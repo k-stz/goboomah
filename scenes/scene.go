@@ -25,19 +25,29 @@ type GameScene struct {
 
 func (gs *GameScene) Update() {
 	gs.once.Do(gs.configure)
-	gs.ecs.Update()
+	if systems.GetPlayer(gs.ecs).Lives > 0 {
+		// No more ecs updates
+		gs.ecs.Update()
+	}
 }
 
 func (gs *GameScene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{20, 20, 40, 255})
-	gs.ecs.Draw(screen)
+	if systems.GetPlayer(gs.ecs).Lives > 0 {
+		gs.ecs.Draw(screen)
+	} else {
+		// Draw Game Over here
+		ebitenutil.DebugPrint(screen, "GAME OVER")
+		return
+	}
 	// Render player debugging information
 	playerEntry, _ := tags.Player.First(gs.ecs.World)
 	playerShape := components.ShapeCircle.Get(playerEntry)
 	playerData := components.Player.Get(playerEntry)
 
 	totalBombs := 0
-	message := fmt.Sprintf("TPS: %0.2f\n", ebiten.ActualTPS())
+	ticks := systems.GetTickCount(gs.ecs)
+	message := fmt.Sprintf("Count: %d\nTPS: %0.2f\n", ticks, ebiten.ActualTPS())
 
 	message += fmt.Sprintf("Pos: %s\n", playerShape.Circle.Position())
 	message += fmt.Sprintf("SnapTileCenter: %v\n",
@@ -51,7 +61,7 @@ func (gs *GameScene) Draw(screen *ebiten.Image) {
 		playerData.Power,
 		totalBombs,
 		systems.GetWorldTileDiameter(gs.ecs))
-	ebitenutil.DebugPrintAt(screen, message, 0, 40)
+	ebitenutil.DebugPrint(screen, message)
 }
 
 // the the ECS gets initialized

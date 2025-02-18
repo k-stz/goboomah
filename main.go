@@ -9,7 +9,6 @@ import (
 	_ "image/png"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/k-stz/goboomah/assets"
 	"github.com/k-stz/goboomah/scenes"
 )
@@ -72,18 +71,6 @@ func (g *Game) Update() error {
 // called on every Draw(..) rendering
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.scene.Draw(screen)
-	count--
-	move++
-	//screen.Fill(color.RGBA{0xff, 0, 0, 0xff})
-
-	message := fmt.Sprintf("Hello, World\ncount: %d\n", count)
-	ebitenutil.DebugPrint(screen, message)
-	//screen.DrawImage(gopher, nil)
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Scale(0.10, 0.10)
-	op.GeoM.Translate(350, move)
-	screen.DrawImage(PlayerSprite, op)
-	g.DrawStage(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screnHeight int) {
@@ -113,36 +100,6 @@ func mustLoadImage(name string) *ebiten.Image {
 	}
 
 	return ebiten.NewImageFromImage(img)
-}
-
-var move float64 = 0
-
-func (g *Game) DrawStage(screen *ebiten.Image) {
-	scale := g.stage.scaleXY
-	tilesize := g.stage.tilesize * scale
-	offsetOp := &ebiten.DrawImageOptions{}
-	offsetOp.GeoM.Translate(g.stage.offsetX, g.stage.offsetY)
-	stageOffset := offsetOp.GeoM
-	// op.GeoM.Scale(4, 4)
-	op := &ebiten.DrawImageOptions{}
-	for x, row := range g.stage.Grid {
-		for y, val := range row {
-			op.GeoM.Scale(scale, scale)
-			op.GeoM.Translate(float64(y)*tilesize, float64(x)*tilesize)
-			// op.GeoM.Translate(100.0, 100.0)
-			op.GeoM.Concat(stageOffset)
-
-			switch val {
-			case 0:
-				screen.DrawImage(meadow_tile, op)
-			case 1:
-				screen.DrawImage(wall_tile, op)
-			}
-			// TODO: can't I set the translation directly
-			// instead of Reset()ing it each time?
-			op.GeoM.Reset()
-		}
-	}
 }
 
 var PlayerSprite = mustLoadImage("assets/pics/player.png")

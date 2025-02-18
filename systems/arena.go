@@ -1,8 +1,6 @@
 package systems
 
 import (
-	"fmt"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/k-stz/goboomah/components"
 	"github.com/k-stz/goboomah/tags"
@@ -105,11 +103,11 @@ func GetPlayer(ecs *ecs.ECS) *components.PlayerData {
 func UpdateArena(ecs *ecs.ECS) {
 	IncementTickCount(ecs)
 
-	if GetPlayer(ecs).Lives <= 0 {
-		fmt.Println("Game Over")
-		// TODO implement Game Over State / Screen
-		// Transition to Game Over State
-	}
+	// if GetPlayer(ecs).Lives <= 0 {
+	// 	fmt.Println("Game Over")
+	// 	// TODO implement Game Over State / Screen
+	// 	// Transition to Game Over State
+	// }
 	// Need some global timer to trigger the effect for a short time?
 	//tileSpiralEffect(ecs)
 	// handle breakable tiles/walls here

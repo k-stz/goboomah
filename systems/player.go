@@ -175,7 +175,6 @@ func processPlayerState(entry *donburi.Entry, ecs *ecs.ECS) {
 
 	switch player.State {
 	case components.Idle:
-		fmt.Println("Idle", currentTicks)
 		if player.Damaged {
 			player.Lives--
 			// death animation 1 seconds
@@ -183,7 +182,6 @@ func processPlayerState(entry *donburi.Entry, ecs *ecs.ECS) {
 			player.State = components.Death
 		}
 	case components.Death:
-		fmt.Println("DEATH", currentTicks)
 		if player.Duration < currentTicks {
 			// stop in player in his tracks
 			circleShape.Circle.MoveVec(resolv.NewVector(0, 0))
@@ -199,7 +197,6 @@ func processPlayerState(entry *donburi.Entry, ecs *ecs.ECS) {
 		circleShape.Rotation += 0.2
 	case components.Invincible:
 		circleShape.Rotation = 0.0
-		fmt.Println("Invincible", currentTicks)
 		if player.Duration < currentTicks {
 			// Transition to Idle State after some time
 			player.State = components.Idle
