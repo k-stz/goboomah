@@ -68,6 +68,8 @@ func processEnemyExplosion(enemyEntry *donburi.Entry, ecs *ecs.ECS) {
 
 }
 
+// Returns a vector pointing a a cardinal direction at random
+// (1,0), (0,1), (-1,0), (0,-1)
 func randomCardinalDirection() resolv.Vector {
 	directions := []resolv.Vector{
 		{X: 0, Y: -1}, // North

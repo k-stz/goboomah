@@ -10,6 +10,10 @@ vet: fmt
 build: vet
 	go build -o bin/goboomah
 
+wsl: vet
+	GOOS=windows go build -o bin/goboomah
+	./bin/goboomah
+
 test:
 	go test
 

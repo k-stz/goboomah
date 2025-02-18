@@ -21,8 +21,8 @@ You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 - [x] derive solid tiles from the Arena tilemap and add to "resolv" collision space
 - [x] add default player sprite, so it runs without dependencies 
 - [x] Deploy game in browser in WASM
-- [ ] add Makefile default target for windows/wsl `GOOS=windows` suffices
-- [ ] Add enemies/npc with very simple AI
+- [x] add Makefile default target for windows/wsl `GOOS=windows` suffices
+- [x] Add enemies/npc with very simple AI
 - [ ] Add winning condition to be able to clear a level and beat the game
 - [ ] Add Level Editor: based on textfile to load level
 - [ ] Input via joystick or Touchscreen (for Phones)
