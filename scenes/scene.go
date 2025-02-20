@@ -47,12 +47,42 @@ var GameOverMessage = []string{
 	"Thanks for playing!",
 }
 
+var EndingCredits = []string{
+	"You cleared your burrow.",
+	"",
+	"You Won!",
+	"",
+	"Thanks for playing!",
+}
+
+// simply checks if any Enemies are left on the field
+func CheckWinCondition(ecs *ecs.ECS) bool {
+	_, ok := tags.Enemy.First(ecs.World)
+	return !ok
+}
+
 func (gs *GameScene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{20, 20, 40, 255})
+	if CheckWinCondition(gs.ecs) {
+		fontFace := &text.GoTextFace{
+			Source:    assets.FiraSansRegularSource,
+			Direction: text.DirectionLeftToRight,
+			Size:      36,
+			Language:  language.English,
+		}
+		gs.TextY -= 1
+		for i, message := range EndingCredits {
+			op := &text.DrawOptions{}
+			offset := float64(i * 40)
+			op.GeoM.Translate(gs.TextX, gs.TextY+offset)
+			text.Draw(screen, message, fontFace, op)
+
+		}
+		return
+	}
 	if systems.GetPlayer(gs.ecs).Lives > 0 {
 		gs.ecs.Draw(screen)
 	} else {
-		//ticks := systems.GetTickCount(gs.ecs)
 		fontFace := &text.GoTextFace{
 			Source:    assets.FiraSansRegularSource,
 			Direction: text.DirectionLeftToRight,

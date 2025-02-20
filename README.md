@@ -23,7 +23,7 @@ You're a gopher in a 2d-burrow-maze placing bombs to clear out obstacles.
 - [x] Deploy game in browser in WASM
 - [x] add Makefile default target for windows/wsl `GOOS=windows` suffices
 - [x] Add enemies/npc with very simple AI
-- [ ] Add winning condition to be able to clear a level and beat the game
+- [x] Add winning condition to be able to clear a level and beat the game
 - [ ] Add Level Editor: based on textfile to load level
 - [ ] Input via joystick or Touchscreen (for Phones)
 

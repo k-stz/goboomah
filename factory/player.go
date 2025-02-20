@@ -18,7 +18,7 @@ import (
 func CreatePlayer(ecs *ecs.ECS, arenaEntry *donburi.Entry) *donburi.Entry {
 	playerEntry := archtypes.Player.Spawn(ecs)
 	// Set Player Data
-	components.Player.Set(playerEntry, components.NewPlayer(10, 3, 1))
+	components.Player.Set(playerEntry, components.NewPlayer(10, 3, 3))
 	// Sprite
 	playerSprite := components.Sprite.Get(playerEntry)
 	playerSprite.Image = assets.Player
