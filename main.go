@@ -22,9 +22,9 @@ type Scene interface {
 type Game struct {
 	stage Stage
 	// ecs test
-	bounds                   image.Rectangle
-	scene                    Scene
-	ScreenWidth, ScreenHeigh int
+	bounds                    image.Rectangle
+	scene                     Scene
+	ScreenWidth, ScreenHeight int
 }
 
 var count int = 10000
@@ -122,11 +122,13 @@ func NewGame(config Config) *Game {
 	g := &Game{
 		bounds: image.Rectangle{},
 		scene: &scenes.GameScene{
-			ScreenWidth: config.ScreenWidth,
-			ScreenHeigh: config.ScreenHeight,
+			ScreenWidth:  config.ScreenWidth,
+			ScreenHeight: config.ScreenHeight,
+			TextX:        (float64(config.ScreenWidth) / 3),
+			TextY:        float64(config.ScreenHeight) / 2,
 		},
-		ScreenWidth: config.ScreenWidth,
-		ScreenHeigh: config.ScreenHeight,
+		ScreenWidth:  config.ScreenWidth,
+		ScreenHeight: config.ScreenHeight,
 	}
 	return g
 }

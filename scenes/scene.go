@@ -22,9 +22,13 @@ import (
 )
 
 type GameScene struct {
-	ecs                      *ecs.ECS
-	once                     sync.Once
-	ScreenWidth, ScreenHeigh int
+	ecs                       *ecs.ECS
+	once                      sync.Once
+	ScreenWidth, ScreenHeight int
+	// Game Over and Credit screen
+	// Text offests
+	TextY float64
+	TextX float64
 }
 
 func (gs *GameScene) Update() {
@@ -35,25 +39,34 @@ func (gs *GameScene) Update() {
 	}
 }
 
+var GameOverMessage = []string{
+	"Our hero gave up.",
+	"",
+	"Game Over",
+	"",
+	"Thanks for playing!",
+}
+
 func (gs *GameScene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{20, 20, 40, 255})
 	if systems.GetPlayer(gs.ecs).Lives > 0 {
 		gs.ecs.Draw(screen)
 	} else {
 		//ticks := systems.GetTickCount(gs.ecs)
-		// Draw Game Over here
-		ebitenutil.DebugPrint(screen, "GAME OVER")
-
 		fontFace := &text.GoTextFace{
 			Source:    assets.FiraSansRegularSource,
 			Direction: text.DirectionLeftToRight,
 			Size:      36,
 			Language:  language.English,
 		}
-		op := &text.DrawOptions{}
-		op.GeoM.Translate(0.0, 0.0)
-		text.Draw(screen, "GAME OVER", fontFace, op)
+		gs.TextY -= 1
+		for i, message := range GameOverMessage {
+			op := &text.DrawOptions{}
+			offset := float64(i * 40)
+			op.GeoM.Translate(gs.TextX, gs.TextY+offset)
+			text.Draw(screen, message, fontFace, op)
 
+		}
 		return
 	}
 	// Render player debugging information
@@ -123,7 +136,7 @@ func (gs *GameScene) configure() {
 	// the Cells at specific positions contain (or would contain)
 	// Objects. This is a broad, simplified approach to collision
 	// detection.
-	spaceEntry := factory.CreateSpace(gs.ecs, gs.ScreenWidth, gs.ScreenHeigh)
+	spaceEntry := factory.CreateSpace(gs.ecs, gs.ScreenWidth, gs.ScreenHeight)
 
 	// Create objects
 	arenaEntry := factory.CreateArena(gs.ecs)

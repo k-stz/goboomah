@@ -8,6 +8,7 @@ require (
 	github.com/yohamta/donburi v1.15.6
 	github.com/yohamta/ganim8/v2 v2.1.29
 	golang.org/x/exp v0.0.0-20221126150942-6ab00d035af9
+	golang.org/x/text v0.18.0
 )
 
 require (
@@ -19,5 +20,4 @@ require (
 	golang.org/x/image v0.20.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
-	golang.org/x/text v0.18.0 // indirect
 )
