@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/yohamta/ganim8/v2"
 )
 
@@ -26,6 +27,8 @@ var (
 	Player             *ebiten.Image
 	Bomb_tile          *ebiten.Image
 	ExplosionAnimation *Animation
+
+	FiraSansRegularSource *text.GoTextFaceSource
 )
 
 type Animation struct {
@@ -89,6 +92,23 @@ func MustLoadAssets() {
 	Bomb_tile = mustLoadImage("tiles/bomb.png")
 	Blob_npc = mustLoadImage("pics/blob.png")
 	ExplosionAnimation = NewExplosionAnimation("explosion.png")
+	FiraSansRegularSource = mustLoadFont("fonts/FiraSans-Regular.ttf")
+}
+
+func mustLoadFont(name string) *text.GoTextFaceSource {
+	fmt.Println("assetsfs:", assetsFS)
+	f, err := assetsFS.Open(name)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	source, err := text.NewGoTextFaceSource(f)
+	if err != nil {
+		panic(err)
+	}
+
+	return source
 }
 
 func mustLoadImage(name string) *ebiten.Image {

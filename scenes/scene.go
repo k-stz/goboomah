@@ -1,12 +1,15 @@
 package scenes
 
 import (
+	_ "embed"
 	"fmt"
 	"image/color"
 	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
+	"github.com/k-stz/goboomah/assets"
 	"github.com/k-stz/goboomah/collisions"
 	"github.com/k-stz/goboomah/components"
 	"github.com/k-stz/goboomah/factory"
@@ -15,6 +18,7 @@ import (
 	"github.com/k-stz/goboomah/tags"
 	"github.com/yohamta/donburi"
 	"github.com/yohamta/donburi/ecs"
+	"golang.org/x/text/language"
 )
 
 type GameScene struct {
@@ -36,8 +40,20 @@ func (gs *GameScene) Draw(screen *ebiten.Image) {
 	if systems.GetPlayer(gs.ecs).Lives > 0 {
 		gs.ecs.Draw(screen)
 	} else {
+		//ticks := systems.GetTickCount(gs.ecs)
 		// Draw Game Over here
 		ebitenutil.DebugPrint(screen, "GAME OVER")
+
+		fontFace := &text.GoTextFace{
+			Source:    assets.FiraSansRegularSource,
+			Direction: text.DirectionLeftToRight,
+			Size:      36,
+			Language:  language.English,
+		}
+		op := &text.DrawOptions{}
+		op.GeoM.Translate(0.0, 0.0)
+		text.Draw(screen, "GAME OVER", fontFace, op)
+
 		return
 	}
 	// Render player debugging information
