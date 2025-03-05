@@ -57,7 +57,7 @@ Objects that require physics-based collision detection and response will be mana
 
 Spatial Partitioning and Complexity: Recognizing that objects usually interact with nearby objects, we can use a common pattern to group them for efficient lookup and manipulation. This technique is known as spatial partitioning (https://gameprogrammingpatterns.com/spatial-partition.html). 
 
-As is commmon in computer science, this optimization involves a **space-time tradeoff**: We trade **CPU cycles (time) for memory (Space)**, by organizing the collision space into a more efficiently searchable memory construct. This can reduces collision detection complexity from a native implementation needing O(n²) to an O(n log n) using quadtree and even O(1) for Spatial hashing in the best case!
+As is commmon in computer science, this optimization involves a **space-time tradeoff**: We trade **CPU cycles (time) for memory (Space)**, by organizing the collision space into a more efficiently searchable memory construct. This can reduces collision detection complexity from a brute-force implementation needing O(n²) to an O(n log n) using quadtree and even O(1) for Spatial hashing in the best case!
 
 > Complexity: Why `O(n log n)`: 
 - if using a quadtree, inserting and retreiving each object takges `O(log n)` 
